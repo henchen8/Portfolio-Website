@@ -62,7 +62,7 @@ function App() {
                 Aspiring Robotics Engineer and Entrepreneur
               </p>
               <p className="hero-description">
-                I'm a Student at the University fo Pennsylvania, studying Mechanical Engineering 
+                I'm a Student at the University of Pennsylvania, studying Mechanical Engineering 
                 concentrating in Dynamics, Controls, and Robotics.
               </p>
               <div className="hero-buttons">
