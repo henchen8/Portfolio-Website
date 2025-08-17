@@ -1,12 +1,34 @@
 import './App.css';
+import profileImage from './assets/profile.jpeg';
 
 function App() {
+  const scrollToAbout = () => {
+    const aboutSection = document.getElementById('about');
+    if (aboutSection) {
+      aboutSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const scrollToProjects = () => {
+    const projectsSection = document.getElementById('projects');
+    if (projectsSection) {
+      projectsSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const scrollToContact = () => {
+    const contactSection = document.getElementById('contact');
+    if (contactSection) {
+      contactSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <div className="App">
       <nav className="navbar">
         <div className="nav-container">
           <div className="nav-logo">
-            <span className="logo-text">HC</span>
+            <span className="logo-text">Henry Chen</span>
           </div>
           <ul className="nav-menu">
             <li className="nav-item">
@@ -34,22 +56,22 @@ function App() {
           <div className="hero-container">
             <div className="hero-content">
               <h1 className="hero-title">
-                Hi, I'm <span className="highlight">Henry Chen</span>
+                Hi, I'm <span className="highlight">Henry!</span>
               </h1>
               <p className="hero-subtitle">
-                Full-Stack Developer & Software Engineer
+                Aspiring Robotics Engineer and Entrepreneur
               </p>
               <p className="hero-description">
-                I build exceptional digital experiences that combine elegant design with powerful functionality.
+                I'm a Student at the University fo Pennsylvania, where I plan to study Mechanical Engineering concentrating in Dynamics, Controls, and Robotics.
               </p>
               <div className="hero-buttons">
-                <button className="btn btn-primary">View My Work</button>
-                <button className="btn btn-secondary">Get In Touch</button>
+                <button className="btn btn-primary" onClick={scrollToProjects}>View My Work</button>
+                <button className="btn btn-secondary" onClick={scrollToContact}>Get In Touch</button>
               </div>
             </div>
             <div className="hero-image">
-              <div className="profile-placeholder">
-                <span>HC</span>
+              <div className="profile-placeholder" onClick={scrollToAbout}>
+                <img src={profileImage} alt="Henry Chen" className="profile-image" />
               </div>
             </div>
           </div>
