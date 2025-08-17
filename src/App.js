@@ -62,8 +62,8 @@ function App() {
                 Aspiring Robotics Engineer and Entrepreneur
               </p>
               <p className="hero-description">
-                I'm a Student at the University fo Pennsylvania, where I plan to study Mechanical Engineering and Robotics, while also competing
-                on the varsity golf team.
+                I'm a Student at the University fo Pennsylvania, studying Mechanical Engineering 
+                concentrating in Dynamics, Controls, and Robotics.
               </p>
               <div className="hero-buttons">
                 <button className="btn btn-primary" onClick={scrollToProjects}>View My Work</button>
