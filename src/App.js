@@ -235,7 +235,7 @@ function App() {
                 <div className="project-content">
                   <h3>FitBox</h3>
                   <p>
-                    Revolutionary portable workout solution.
+                    A revolutionary portable workout solution.
                   </p>
                   <div className="project-tech">
                     <span className="tech-tag">Financial Modelling</span>
