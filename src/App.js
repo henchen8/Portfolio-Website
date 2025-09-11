@@ -128,7 +128,14 @@ function App() {
         {/* Gap Section with Assembly Image */}
         <section className="gap-section">
           <div className="gap-container">
-            <img src={rubiksAssembly} alt="Rubik's Cube Assembly" className="assembly-image" />
+            <a 
+              href="https://cad.onshape.com/documents/e64e9adb0ff9466627b47f67/w/74a34c291195daf66dba9b40/e/efd1feba32d209e2a89099f3" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="assembly-link"
+            >
+              <img src={rubiksAssembly} alt="Rubik's Cube Assembly" className="assembly-image" />
+            </a>
           </div>
         </section>
         
@@ -154,7 +161,7 @@ function App() {
                   </div>
                   <div className="project-links" onClick={(e) => e.stopPropagation()}>
                     <a href="https://www.youtube.com/shorts/J1a7RxK03xU" target="_blank" rel="noopener noreferrer" className="project-link-btn">Live Demo</a>
-                    <a href="https://cad.onshape.com/documents/e64e9adb0ff9466627b47f67/w/74a34c291195daf66dba9b40/e/efd1feba32d209e2a89099f3" target="_blank" rel="noopener noreferrer" className="project-link-btn">CAD</a>
+                    <a href="https://cad.onshape.com/documents/e64e9adb0ff9466627b47f67/w/74a34c291195daf66dba9b40/e/ef19ed1914f1db15c2699f69" target="_blank" rel="noopener noreferrer" className="project-link-btn">CAD</a>
                     <a href="https://docs.google.com/presentation/d/12Rsq6fVtxUd_KKTxoM-D5vIqgpLokWzd/edit?slide=id.p30#slide=id.p30" target="_blank" rel="noopener noreferrer" className="project-link-btn">Slides</a>
                   </div>
                 </div>
