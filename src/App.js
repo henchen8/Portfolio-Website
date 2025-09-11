@@ -24,6 +24,7 @@ function App() {
 
 
 
+
   return (
     <div className="App">
       <nav className="navbar">
@@ -74,7 +75,7 @@ function App() {
 
 
         {/* Experience Section */}
-        <section id="experience" className="section experience-section" style={{ backgroundImage: `url(${rubiksDrawing})`, backgroundSize: 'contain', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }}>
+        <section id="experience" className="section experience-section">
           <div className="container">
             <h2 className="section-title">Experience</h2>
             <div className="timeline">
@@ -86,8 +87,9 @@ function App() {
                   <p>
                     
 
-                    Leading development of enterprise-level applications using React and Node.js. 
-                    Mentoring junior developers and implementing best practices across the team.
+                  Designed custom swerve drivetrain for an industrial rover capable of indoor and outdoor operation, 
+                  along with a custom onboard trash compression mechanism optimized for tight packaging.
+
                   </p>
                 </div>
               </div>
@@ -98,11 +100,10 @@ function App() {
                   <p className="timeline-company">Management and Technology Summer Institute
                      • June 2024 - July 2024</p>
                   <p>
-                    Participated in 3-week for-credit course run by the Jerome Fisher Program 
-                    in Management and Technology
+                    Three-week for-credit course (EAS 00280) run by the Jerome Fisher Program in Management and Technology (M&T).
+                    Co-Founder and Mechanical Lead for FitBox—a revolutionary portable workout solution. Designed GTM strategy 
+                    and built MVP.
 
-                    Built and maintained multiple web applications from concept to deployment. 
-                    Collaborated with cross-functional teams to deliver high-quality products.
                   </p>
                 </div>
               </div>
@@ -113,8 +114,10 @@ function App() {
                   <p className="timeline-company">Crystal Springs Uplands School Robotics Team
                      • Aug 2021 - May 2025</p>
                   <p>
-                    Developed responsive websites and web applications for various clients. 
-                    Gained experience with modern development workflows and tools.
+
+                    Oversaw all mechanical tasks on the team as Senior Mechanical Engineer. Lead design of mechanical systems on robot.
+                    Operate robot during competition. 
+
                   </p>
                 </div>
               </div>
