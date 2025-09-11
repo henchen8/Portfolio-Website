@@ -363,14 +363,14 @@ body {
 
 /* Gap Section */
 .gap-section {
-  padding: 0;
+  padding: 20px 0 15px 0;
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
   z-index: 2;
-  margin-top: calc(-5rem + 50px);
-  margin-bottom: -5rem;
+  margin-top: calc(-5rem + 50px + 20px);
+  margin-bottom: calc(-5rem + 15px + 30px); /* Add 30px to bottom margin */
 }
 
 .gap-container {
@@ -437,6 +437,18 @@ body {
 /* Projects Section */
 .projects-section {
   position: relative;
+  margin-top: 130px; /* Reduced from 230px to 130px (moved up 100px) */
+  padding-top: calc(5rem + 30px); /* Reset to original 30px top padding */
+}
+
+/* Force spacing changes to be visible */
+.experience-section {
+  padding-bottom: calc(5rem + 20px) !important; /* Force 20px additional bottom spacing */
+}
+
+.projects-section {
+  padding-top: calc(5rem - 75px) !important; /* Force 30px additional top spacing */
+  margin-top: 130px !important; /* Force move up by 100px */
 }
 
 
@@ -448,7 +460,8 @@ body {
 /* Experience Section */
 .experience-section {
   position: relative;
-  padding-bottom: 0;
+  padding: 5rem 0 5rem 0; /* Override section padding */
+  padding-bottom: calc(5rem + 20px); /* Add 20px to bottom */
 }
 
 .experience-section .container {
