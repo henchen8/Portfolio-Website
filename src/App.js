@@ -3,14 +3,10 @@ import profileImage from './assets/profile.jpeg';
 import rubiksImage from './assets/rubiks1.jpeg';
 import srprojImage from './assets/srproj.jpeg';
 import fitboxImage from './assets/FitBoxlogo.png';
+import rubiksDrawing from './assets/rubiksdrawing.png';
+import rubiksAssembly from './assets/rubiks_assembly7.png';
 
 function App() {
-  const scrollToAbout = () => {
-    const aboutSection = document.getElementById('about');
-    if (aboutSection) {
-      aboutSection.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
 
   const scrollToProjects = () => {
     const projectsSection = document.getElementById('projects');
@@ -19,12 +15,14 @@ function App() {
     }
   };
 
-  const scrollToContact = () => {
-    const contactSection = document.getElementById('contact');
-    if (contactSection) {
-      contactSection.scrollIntoView({ behavior: 'smooth' });
+  const scrollToExperience = () => {
+    const experienceSection = document.getElementById('experience');
+    if (experienceSection) {
+      experienceSection.scrollIntoView({ behavior: 'smooth' });
     }
   };
+
+
 
   return (
     <div className="App">
@@ -38,16 +36,10 @@ function App() {
               <a href="#home" className="nav-link">Home</a>
             </li>
             <li className="nav-item">
-              <a href="#about" className="nav-link">About</a>
-            </li>
-            <li className="nav-item">
               <a href="#experience" className="nav-link">Experience</a>
             </li>
             <li className="nav-item">
               <a href="#projects" className="nav-link">Projects</a>
-            </li>
-            <li className="nav-item">
-              <a href="#contact" className="nav-link">Contact</a>
             </li>
           </ul>
         </div>
@@ -70,70 +62,19 @@ function App() {
               </p>
               <div className="hero-buttons">
                 <button className="btn btn-primary" onClick={scrollToProjects}>View My Work</button>
-                <button className="btn btn-secondary" onClick={scrollToContact}>Get In Touch</button>
               </div>
             </div>
             <div className="hero-image">
-              <div className="profile-placeholder" onClick={scrollToAbout}>
+              <div className="profile-placeholder" onClick={scrollToExperience}>
                 <img src={profileImage} alt="Henry Chen" className="profile-image" />
               </div>
             </div>
           </div>
         </section>
 
-        {/* About Section */}
-        <section id="about" className="section">
-          <div className="container">
-            <h2 className="section-title">About Me</h2>
-            <div className="about-content">
-              <div className="about-text">
-                <p>
-                  I am a passionate and detail-oriented developer with a strong foundation in modern web technologies. 
-                  My expertise lies in creating scalable, maintainable applications that deliver exceptional user experiences.
-                </p>
-                <p>
-                  With a background in both frontend and backend development, I bring a holistic approach to software engineering. 
-                  I'm constantly learning and adapting to new technologies to stay at the forefront of industry best practices.
-                </p>
-                <div className="skills">
-                  <h3>Technical Skills</h3>
-                  <div className="skills-grid">
-                    <div className="skill-category">
-                      <h4>Frontend</h4>
-                      <ul>
-                        <li>React.js</li>
-                        <li>JavaScript (ES6+)</li>
-                        <li>HTML5 & CSS3</li>
-                        <li>TypeScript</li>
-                      </ul>
-                    </div>
-                    <div className="skill-category">
-                      <h4>Backend</h4>
-                      <ul>
-                        <li>Node.js</li>
-                        <li>Express.js</li>
-                        <li>Python</li>
-                        <li>RESTful APIs</li>
-                      </ul>
-                    </div>
-                    <div className="skill-category">
-                      <h4>Tools & Others</h4>
-                      <ul>
-                        <li>Git & GitHub</li>
-                        <li>Docker</li>
-                        <li>AWS</li>
-                        <li>MongoDB</li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
 
         {/* Experience Section */}
-        <section id="experience" className="section">
+        <section id="experience" className="section experience-section" style={{ backgroundImage: `url(${rubiksDrawing})`, backgroundSize: 'contain', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }}>
           <div className="container">
             <h2 className="section-title">Experience</h2>
             <div className="timeline">
@@ -181,12 +122,19 @@ function App() {
           </div>
         </section>
         
+        {/* Gap Section with Assembly Image */}
+        <section className="gap-section">
+          <div className="gap-container">
+            <img src={rubiksAssembly} alt="Rubik's Cube Assembly" className="assembly-image" />
+          </div>
+        </section>
+        
         {/* Projects Section */}
-        <section id="projects" className="section">
+        <section id="projects" className="section projects-section">
           <div className="container">
             <h2 className="section-title">Featured Projects</h2>
             <div className="projects-grid">
-              <div className="project-card" onClick={() => window.open('https://drive.google.com/file/d/1zb0k67s5g8Q-zFHlwFMNzDjSl_C-2LFm/view?usp=sharing', '_blank', 'noopener,noreferrer')}>
+              <div className="project-card" onClick={() => window.open('https://www.youtube.com/shorts/J1a7RxK03xU', '_blank', 'noopener,noreferrer')}>
                 <div className="project-image" style={{ backgroundImage: `url(${rubiksImage})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
                 </div>
                 <div className="project-content">
@@ -202,13 +150,14 @@ function App() {
                     <span className="tech-tag">C++</span>
                   </div>
                   <div className="project-links" onClick={(e) => e.stopPropagation()}>
-                    <a href="https://drive.google.com/file/d/1zb0k67s5g8Q-zFHlwFMNzDjSl_C-2LFm/view?usp=sharing" target="_blank" rel="noopener noreferrer" className="project-link">Live Demo</a>
-                    <a href="#" className="project-link">GitHub</a>
+                    <a href="https://www.youtube.com/shorts/J1a7RxK03xU" target="_blank" rel="noopener noreferrer" className="project-link-btn">Live Demo</a>
+                    <a href="https://cad.onshape.com/documents/e64e9adb0ff9466627b47f67/w/74a34c291195daf66dba9b40/e/efd1feba32d209e2a89099f3" target="_blank" rel="noopener noreferrer" className="project-link-btn">CAD</a>
+                    <a href="https://docs.google.com/presentation/d/12Rsq6fVtxUd_KKTxoM-D5vIqgpLokWzd/edit?slide=id.p30#slide=id.p30" target="_blank" rel="noopener noreferrer" className="project-link-btn">Slides</a>
                   </div>
                 </div>
               </div>
 
-              <div className="project-card" onClick={() => window.open('https://drive.google.com/file/d/15mUVgrH3oLfRGmtUrDi4JjtfDlyLuPPy/view?usp=sharing', '_blank', 'noopener,noreferrer')}>
+              <div className="project-card" onClick={() => window.open('https://youtu.be/doYoJWpjqiU', '_blank', 'noopener,noreferrer')}>
                 <div className="project-image" style={{ backgroundImage: `url(${srprojImage})`, backgroundSize: 'cover', backgroundPosition: 'center 35%' }}>
                 </div>
                 <div className="project-content">
@@ -218,18 +167,21 @@ function App() {
                     through CAPM, PCA, and Black Scholes Merton options model.
                   </p>
                   <div className="project-tech">
-                    <span className="tech-tag">React</span>
-                    <span className="tech-tag">Socket.io</span>
-                    <span className="tech-tag">Express</span>
+                    <span className="tech-tag">Financial Derivatives</span>
+                    <span className="tech-tag">PC Analysis</span>
+                    <span className="tech-tag">Numerical Methods</span>
+                    <span className="tech-tag">Linear Algebra</span>
+                    <span className="tech-tag">Differential Equations</span>
                   </div>
                   <div className="project-links" onClick={(e) => e.stopPropagation()}>
-                    <a href="https://drive.google.com/file/d/15mUVgrH3oLfRGmtUrDi4JjtfDlyLuPPy/view?usp=sharing" target="_blank" rel="noopener noreferrer" className="project-link">Live Demo</a>
-                    <a href="#" className="project-link">GitHub</a>
+                    <a href="https://youtu.be/doYoJWpjqiU" target="_blank" rel="noopener noreferrer" className="project-link-btn">Live Presentation</a>
+                    <a href="https://docs.google.com/presentation/d/placeholder" target="_blank" rel="noopener noreferrer" className="project-link-btn">Slides</a>
+                    <a href="https://docs.google.com/document/d/1O5VnQPQPrbvbTIRUn-OBa9-4rOL6O1LAE2362aLJe6o/edit?tab=t.0" target="_blank" rel="noopener noreferrer" className="project-link-btn">Research Notes</a>
                   </div>
                 </div>
               </div>
 
-              <div className="project-card">
+              <div className="project-card" onClick={() => window.open('https://youtu.be/JnfntLZAGBE', '_blank', 'noopener,noreferrer')}>
                 <div className="project-image" style={{ backgroundImage: `url(${fitboxImage})`, backgroundSize: 'contain', backgroundPosition: 'center', backgroundColor: 'white', backgroundRepeat: 'no-repeat' }}>
                 </div>
                 <div className="project-content">
@@ -244,9 +196,12 @@ function App() {
                     <span className="tech-tag">C</span>
                     <span className="tech-tag">Arduino</span>
                   </div>
-                  <div className="project-links">
-                    <a href="#" className="project-link">Live Demo</a>
-                    <a href="#" className="project-link">GitHub</a>
+                  <div className="project-links" onClick={(e) => e.stopPropagation()}>
+                    <a href="https://youtu.be/JnfntLZAGBE" target="_blank" rel="noopener noreferrer" className="project-link-btn">Live Demo</a>
+                    <a href="https://docs.google.com/presentation/d/1XXMJS2hofXJqpHwX3uvxKPht97CCMyoBtOF3lLLi4Bc/edit?usp=sharing" target="_blank" rel="noopener noreferrer" className="project-link-btn">Slides</a>
+                    <a href="https://cad.onshape.com/documents/cfd0d20e2c53157ccca464c4/w/7b40b5013232732c438b29e9/e/784c86c2b4418326fd73f6e6" target="_blank" rel="noopener noreferrer" className="project-link-btn">CAD</a>
+                    <a href="https://docs.google.com/spreadsheets/d/1uZ32Qh6mbSQrWwkWwTfcECNh_2IvQMew/edit?usp=sharing&ouid=108470188565309865197&rtpof=true&sd=true" target="_blank" rel="noopener noreferrer" className="project-link-btn">Financial Modelling</a>
+                    <a href="https://docs.google.com/document/d/16BLjd1bWl2OHBLal30bFIdV5pIzva3wmQyLRJ9i1YFM/edit?tab=t.0" target="_blank" rel="noopener noreferrer" className="project-link-btn">Executive Summary</a>
                   </div>
                 </div>
               </div>
@@ -254,49 +209,6 @@ function App() {
           </div>
         </section>
         
-        {/* Contact Section */}
-        <section id="contact" className="section">
-          <div className="container">
-            <h2 className="section-title">Get In Touch</h2>
-            <div className="contact-content">
-              <div className="contact-info">
-                <h3>Let's work together</h3>
-                <p>
-                  I'm always interested in new opportunities and exciting projects. 
-                  Whether you have a question or just want to say hi, feel free to reach out!
-                </p>
-                <div className="contact-details">
-                  <div className="contact-item">
-                    <span className="contact-icon">📧</span>
-                    <span>henwchen@gmail.com</span>
-                  </div>
-                  <div className="contact-item">
-                    <span className="contact-icon">📱</span>
-                    <span>+1 (650) 888-9265</span>
-                  </div>
-                  <div className="contact-item">
-                    <span className="contact-icon">📍</span>
-                    <span>San Francisco, CA</span>
-                  </div>
-                </div>
-              </div>
-              <div className="contact-form">
-                <form>
-                  <div className="form-group">
-                    <input type="text" placeholder="Your Name" className="form-input" />
-                  </div>
-                  <div className="form-group">
-                    <input type="email" placeholder="Your Email" className="form-input" />
-                  </div>
-                  <div className="form-group">
-                    <textarea placeholder="Your Message" rows="5" className="form-input"></textarea>
-                  </div>
-                  <button type="submit" className="btn btn-primary">Send Message</button>
-                </form>
-              </div>
-            </div>
-          </div>
-        </section>
       </main>
 
       <footer className="footer">

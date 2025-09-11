@@ -30,7 +30,7 @@ body {
   position: fixed;
   top: 0;
   width: 100%;
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.75);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid #e0e0e0;
   z-index: 1000;
@@ -323,7 +323,54 @@ body {
   line-height: 1.6;
 }
 
+/* Gap Section */
+.gap-section {
+  padding: 3rem 0;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gap-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  text-align: center;
+}
+
+.assembly-image {
+  max-width: 100%;
+  height: auto;
+  max-height: 400px;
+}
+
 /* Projects Section */
+.projects-section {
+  position: relative;
+}
+
+/* Experience Section */
+.experience-section {
+  position: relative;
+}
+
+.experience-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.9);
+  z-index: 1;
+}
+
+.experience-section .container {
+  position: relative;
+  z-index: 2;
+}
+
 .projects-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
@@ -335,8 +382,8 @@ body {
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease, border-width 0.3s ease;
-  border: 1px solid transparent;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 3px solid transparent;
   cursor: pointer;
 }
 
@@ -396,7 +443,9 @@ body {
 
 .project-links {
   display: flex;
-  gap: 1rem;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1rem;
 }
 
 .project-link {
@@ -408,6 +457,28 @@ body {
 
 .project-link:hover {
   color: #666;
+}
+
+.project-link-btn {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  background: #000000;
+  color: #ffffff;
+  text-decoration: none;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  border: 2px solid #000000;
+  text-align: center;
+  min-width: 100px;
+}
+
+.project-link-btn:hover {
+  background: #ffffff;
+  color: #000000;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 /* Contact Section */
