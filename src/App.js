@@ -27,13 +27,27 @@ function App() {
   useEffect(() => {
     const handleScroll = () => {
       const scrollY = window.scrollY;
-      const documentHeight = document.documentElement.scrollHeight - window.innerHeight;
-      const scrollProgress = Math.min(scrollY / documentHeight, 1);
+      const projectsSection = document.getElementById('projects');
       
       // Calculate opacity: starts at 0.075, ends at 0.01
       const startOpacity = 0.075;
       const endOpacity = 0.01;
-      const currentOpacity = startOpacity - (scrollProgress * (startOpacity - endOpacity));
+      let currentOpacity = startOpacity;
+      
+      // Only start transitioning when projects section is in view
+      if (projectsSection) {
+        const projectsRect = projectsSection.getBoundingClientRect();
+        const projectsTop = projectsRect.top + scrollY;
+        const projectsBottom = projectsTop + projectsRect.height;
+        
+        // If we've scrolled past the start of projects section, begin transition
+        if (scrollY > projectsTop) {
+          const transitionStart = projectsTop;
+          const transitionEnd = projectsBottom;
+          const transitionProgress = Math.min((scrollY - transitionStart) / (transitionEnd - transitionStart), 1);
+          currentOpacity = startOpacity - (transitionProgress * (startOpacity - endOpacity));
+        }
+      }
       
       // Apply opacity to background pseudo-elements
       const style = document.createElement('style');
@@ -215,7 +229,7 @@ function App() {
                   <div className="project-links" onClick={(e) => e.stopPropagation()}>
                     <a href="https://www.youtube.com/shorts/J1a7RxK03xU" target="_blank" rel="noopener noreferrer" className="project-link-btn">Live Demo</a>
                     <a href="https://cad.onshape.com/documents/e64e9adb0ff9466627b47f67/w/74a34c291195daf66dba9b40/e/ef19ed1914f1db15c2699f69" target="_blank" rel="noopener noreferrer" className="project-link-btn">CAD</a>
-                    <a href="https://docs.google.com/presentation/d/12Rsq6fVtxUd_KKTxoM-D5vIqgpLokWzd/edit?slide=id.p30#slide=id.p30" target="_blank" rel="noopener noreferrer" className="project-link-btn">Slides</a>
+                    <a href="https://docs.google.com/presentation/d/12Rsq6fVtxUd_KKTxoM-D5vIqgpLokWzd/edit?slide=id.p1#slide=id.p1" target="_blank" rel="noopener noreferrer" className="project-link-btn">Slides</a>
                   </div>
                 </div>
               </div>
