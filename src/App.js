@@ -66,9 +66,14 @@ function App() {
               </div>
             </div>
             <div className="hero-image">
-              <div className="profile-placeholder" onClick={scrollToExperience}>
+              <a 
+                href="https://linkedin.com/in/henry-w-chen" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="profile-placeholder"
+              >
                 <img src={profileImage} alt="Henry Chen" className="profile-image" />
-              </div>
+              </a>
             </div>
           </div>
         </section>
