@@ -353,14 +353,15 @@ body {
 
 .timeline-company {
   font-size: 1rem;
-  color: #666;
+  color: #333;
   margin-bottom: 1rem;
   font-weight: 600;
 }
 
 .timeline-content p {
-  color: #555;
+  color: #222;
   line-height: 1.6;
+  font-weight: 500;
 }
 
 /* Gap Section */

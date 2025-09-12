@@ -30,8 +30,8 @@ function App() {
       const documentHeight = document.documentElement.scrollHeight - window.innerHeight;
       const scrollProgress = Math.min(scrollY / documentHeight, 1);
       
-      // Calculate opacity: starts at 0.1, ends at 0.01
-      const startOpacity = 0.1;
+      // Calculate opacity: starts at 0.075, ends at 0.01
+      const startOpacity = 0.075;
       const endOpacity = 0.01;
       const currentOpacity = startOpacity - (scrollProgress * (startOpacity - endOpacity));
       
