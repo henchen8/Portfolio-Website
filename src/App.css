@@ -297,9 +297,10 @@ body {
   background-position: center calc(20% + 65px);
   background-repeat: no-repeat;
   background-attachment: fixed;
-  opacity: 0.05; /* Make background image more transparent */
+  opacity: 0.1; /* Starting opacity - will be dynamically updated */
   z-index: -1;
   pointer-events: none;
+  transition: opacity 0.1s ease-out; /* Smooth transition for opacity changes */
 }
 
 /* Ensure hero section has a higher z-index to stay above the background */
@@ -652,11 +653,15 @@ body {
 
 /* Footer */
 .footer {
-  background: #000000;
+  background: #000000 !important;
   color: white;
   text-align: center;
   padding: 2rem 0;
   margin-top: 2rem;
+  position: relative;
+  z-index: 1000;
+  background-image: none !important;
+  background-attachment: initial !important;
 }
 
 /* Anchor offset for section targets */

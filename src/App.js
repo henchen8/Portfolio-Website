@@ -1,4 +1,5 @@
 import './App.css';
+import { useEffect } from 'react';
 import profileImage from './assets/profile.jpeg';
 import rubiksImage from './assets/rubiks1.jpeg';
 import srprojImage from './assets/srproj.jpeg';
@@ -21,6 +22,53 @@ function App() {
       experienceSection.scrollIntoView({ behavior: 'smooth' });
     }
   };
+
+  // Handle scroll-based opacity transition
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+      const documentHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const scrollProgress = Math.min(scrollY / documentHeight, 1);
+      
+      // Calculate opacity: starts at 0.1, ends at 0.01
+      const startOpacity = 0.1;
+      const endOpacity = 0.01;
+      const currentOpacity = startOpacity - (scrollProgress * (startOpacity - endOpacity));
+      
+      // Apply opacity to background pseudo-elements
+      const style = document.createElement('style');
+      style.textContent = `
+        .experience-section::before,
+        .gap-section::before,
+        .projects-section::before {
+          opacity: ${currentOpacity} !important;
+        }
+      `;
+      
+      // Remove existing style and add new one
+      const existingStyle = document.getElementById('dynamic-opacity-style');
+      if (existingStyle) {
+        existingStyle.remove();
+      }
+      style.id = 'dynamic-opacity-style';
+      document.head.appendChild(style);
+    };
+
+    // Add scroll event listener
+    window.addEventListener('scroll', handleScroll);
+    
+    // Initial call to set starting opacity
+    handleScroll();
+
+    // Cleanup
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      const existingStyle = document.getElementById('dynamic-opacity-style');
+      if (existingStyle) {
+        existingStyle.remove();
+      }
+    };
+  }, []);
 
 
 
