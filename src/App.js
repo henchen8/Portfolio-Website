@@ -171,7 +171,7 @@ function App() {
                 <div className="project-image" style={{ backgroundImage: `url(${srprojImage})`, backgroundSize: 'cover', backgroundPosition: 'center 35%' }}>
                 </div>
                 <div className="project-content">
-                  <h3>Financial Derivatives Pricing</h3>
+                  <h3>Pricing Financial Derivatives</h3>
                   <p>
                     Conducted a brief exploration of the world of mathematical/quanatative finance
                     through CAPM, PCA, and Black Scholes Merton options model.
@@ -185,7 +185,7 @@ function App() {
                   </div>
                   <div className="project-links" onClick={(e) => e.stopPropagation()}>
                     <a href="https://youtu.be/doYoJWpjqiU" target="_blank" rel="noopener noreferrer" className="project-link-btn">Live Presentation</a>
-                    <a href="https://docs.google.com/presentation/d/placeholder" target="_blank" rel="noopener noreferrer" className="project-link-btn">Slides</a>
+                    <a href="https://docs.google.com/presentation/d/129P1cS45KJAWDq-8KD_RfFEJdXTyp73k/edit?slide=id.p1#slide=id.p1" target="_blank" rel="noopener noreferrer" className="project-link-btn">Slides</a>
                     <a href="https://docs.google.com/document/d/1O5VnQPQPrbvbTIRUn-OBa9-4rOL6O1LAE2362aLJe6o/edit?tab=t.0" target="_blank" rel="noopener noreferrer" className="project-link-btn">Research Notes</a>
                   </div>
                 </div>

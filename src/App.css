@@ -443,7 +443,7 @@ body {
 
 /* Force spacing changes to be visible */
 .experience-section {
-  padding-bottom: calc(5rem + 20px) !important; /* Force 20px additional bottom spacing */
+  padding-bottom: calc(5rem + 0px) !important; /* Force 20px additional bottom spacing */
 }
 
 .projects-section {
