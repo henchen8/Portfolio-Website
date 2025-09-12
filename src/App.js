@@ -27,27 +27,13 @@ function App() {
   useEffect(() => {
     const handleScroll = () => {
       const scrollY = window.scrollY;
-      const projectsSection = document.getElementById('projects');
+      const documentHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const scrollProgress = Math.min(scrollY / documentHeight, 1);
       
-      // Calculate opacity: starts at 0.075, ends at 0.01
+      // Calculate opacity: starts at 0.075, ends at 0
       const startOpacity = 0.075;
-      const endOpacity = 0.01;
-      let currentOpacity = startOpacity;
-      
-      // Only start transitioning when projects section is in view
-      if (projectsSection) {
-        const projectsRect = projectsSection.getBoundingClientRect();
-        const projectsTop = projectsRect.top + scrollY;
-        const projectsBottom = projectsTop + projectsRect.height;
-        
-        // If we've scrolled past the start of projects section, begin transition
-        if (scrollY > projectsTop) {
-          const transitionStart = projectsTop;
-          const transitionEnd = projectsBottom;
-          const transitionProgress = Math.min((scrollY - transitionStart) / (transitionEnd - transitionStart), 1);
-          currentOpacity = startOpacity - (transitionProgress * (startOpacity - endOpacity));
-        }
-      }
+      const endOpacity = 0;
+      const currentOpacity = startOpacity - (scrollProgress * (startOpacity - endOpacity));
       
       // Apply opacity to background pseudo-elements
       const style = document.createElement('style');
