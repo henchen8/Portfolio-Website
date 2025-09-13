@@ -1,5 +1,6 @@
 import './App.css';
 import { useEffect } from 'react';
+import { Analytics } from '@vercel/analytics/react';
 import profileImage from './assets/profile.jpeg';
 import rubiksImage from './assets/rubiks1.jpeg';
 import srprojImage from './assets/srproj.jpeg';
@@ -279,6 +280,7 @@ function App() {
           <p>&copy; 2025 Henry Chen. All rights reserved.</p>
       </div>
       </footer>
+      <Analytics />
     </div>
   );
 }
