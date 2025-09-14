@@ -14,7 +14,7 @@ function App() {
     const projectsSection = document.getElementById('projects');
     if (projectsSection) {
       projectsSection.scrollIntoView({ behavior: 'smooth' });
-    }
+    } 
   };
 
   const scrollToExperience = () => {
