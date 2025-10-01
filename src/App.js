@@ -11,9 +11,15 @@ import rubiksAssembly from './assets/rubiks_assembly7.png';
 function App() {
 
   const scrollToProjects = () => {
-    const projectsSection = document.getElementById('projects');
+    const projectsSection = document.getElementById('projectnows');
     if (projectsSection) {
-      projectsSection.scrollIntoView({ behavior: 'smooth' });
+      const elementPosition = projectsSection.getBoundingClientRect().top + window.pageYOffset;
+      const offsetPosition = elementPosition - 75;
+      
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
     } 
   };
 
@@ -29,20 +35,133 @@ function App() {
     const handleScroll = () => {
       const scrollY = window.scrollY;
       const documentHeight = document.documentElement.scrollHeight - window.innerHeight;
-      const scrollProgress = Math.min(scrollY / documentHeight, 1);
       
-      // Calculate opacity: starts at 0.075, ends at 0
-      const startOpacity = 0.075;
-      const endOpacity = 0;
-      const currentOpacity = startOpacity - (scrollProgress * (startOpacity - endOpacity));
+      // Get max opacity from CSS variable
+      const maxOpacity = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--background-image-opacity'));
       
-      // Apply opacity to background pseudo-elements
+      let currentOpacity = 0;
+      
+      // Define animation phases based on pixel positions
+      const FADE_IN_START = 800;    // Start fading in at 800px scroll
+      const FADE_IN_END = 1600;     // Reach max opacity at 1600px scroll (moved lower)
+      const FADE_OUT_START = 1800;  // Start fading out at 1800px scroll
+      const FADE_OUT_END = 2700;    // Fully faded out at 2700px scroll (moved 300px lower)
+      
+      if (scrollY < FADE_IN_START) {
+        // Before fade-in starts
+        currentOpacity = 0;
+      } else if (scrollY <= FADE_IN_END) {
+        // Fade in phase (800px to 1200px)
+        const fadeInProgress = (scrollY - FADE_IN_START) / (FADE_IN_END - FADE_IN_START);
+        // Use quadratic curve for smooth fade-in
+        const curveProgress = Math.pow(fadeInProgress, 2);
+        currentOpacity = curveProgress * maxOpacity;
+      } else if (scrollY <= FADE_OUT_START) {
+        // Maintain maximum opacity during plateau (1200px to 1800px)
+        currentOpacity = maxOpacity;
+      } else if (scrollY <= FADE_OUT_END) {
+        // Fade out phase (1800px to 2200px)
+        const fadeOutProgress = (scrollY - FADE_OUT_START) / (FADE_OUT_END - FADE_OUT_START);
+        // Use smoother curve for fade-out
+        const curveProgress = Math.pow(1 - fadeOutProgress, 1.2);
+        currentOpacity = Math.max(0, curveProgress * maxOpacity);
+      } else {
+        // After fade-out is complete
+        currentOpacity = 0;
+      }
+      
+      // Calculate fade-in and fade-out for experience section based on pixel positions
+      const experienceSection = document.getElementById('experience');
+      let experienceOpacity = 0;
+      
+      if (experienceSection) {
+        const experienceRect = experienceSection.getBoundingClientRect();
+        const experienceTop = experienceRect.top;
+        const experienceBottom = experienceRect.bottom;
+        
+        // Define experience fade-in based on pixel positions from viewport (gradual over longer distance)
+        const EXPERIENCE_FADE_IN_START = 1000;   // Start fading in when top is 1000px from top of viewport
+        const EXPERIENCE_FADE_IN_END = 200;      // Fully visible when top is 200px from top of viewport (longer fade-in distance)
+        const EXPERIENCE_FADE_OUT_START = 1000;  // Start fading out when bottom is 1000px from top of viewport
+        const EXPERIENCE_FADE_OUT_END = 600;     // Fully faded when bottom is 600px from top of viewport
+        
+        // Handle fade-in phase (0 to 1 over longer distance)
+        if (experienceTop < EXPERIENCE_FADE_IN_START && experienceTop > EXPERIENCE_FADE_IN_END) {
+          const fadeInProgress = (EXPERIENCE_FADE_IN_START - experienceTop) / (EXPERIENCE_FADE_IN_START - EXPERIENCE_FADE_IN_END);
+          // Use very gentle curve for gradual fade-in over longer distance
+          const curveProgress = Math.pow(fadeInProgress, 3);
+          experienceOpacity = curveProgress;
+        } else if (experienceTop <= EXPERIENCE_FADE_IN_END) {
+          experienceOpacity = 1;
+        }
+        
+        // Handle fade-out phase (only if already visible)
+        if (experienceOpacity > 0 && experienceBottom < EXPERIENCE_FADE_OUT_START && experienceBottom > EXPERIENCE_FADE_OUT_END) {
+          const fadeOutProgress = (EXPERIENCE_FADE_OUT_START - experienceBottom) / (EXPERIENCE_FADE_OUT_START - EXPERIENCE_FADE_OUT_END);
+          const curveProgress = Math.pow(fadeOutProgress, 2);
+          experienceOpacity = 1 - curveProgress;
+        } else if (experienceBottom <= EXPERIENCE_FADE_OUT_END) {
+          experienceOpacity = 0;
+        }
+      }
+      
+      // Calculate fade-in for projects section based on pixel positions
+      const projectsSection = document.getElementById('projects');
+      let projectsOpacity = 0;
+      
+      if (projectsSection) {
+        const projectsRect = projectsSection.getBoundingClientRect();
+        const projectsTop = projectsRect.top;
+        
+        // Define projects fade-in based on pixel positions from viewport
+        const PROJECTS_FADE_START = 300;    // Start fading when top is 300px from top of viewport (less delay)
+        const PROJECTS_FADE_END = -100;     // Fully visible when top is -100px from top of viewport (less delay)
+        
+        if (projectsTop < PROJECTS_FADE_START && projectsTop > PROJECTS_FADE_END) {
+          // Calculate fade progress
+          const fadeProgress = (PROJECTS_FADE_START - projectsTop) / (PROJECTS_FADE_START - PROJECTS_FADE_END);
+          // Use very gentle curve for slow beginning, more gradual fade-in
+          const curveProgress = Math.pow(fadeProgress, 2.5);
+          projectsOpacity = curveProgress;
+        } else if (projectsTop <= PROJECTS_FADE_END) {
+          projectsOpacity = 1;
+        }
+      }
+      
+      
+      // Control scroll-based background color
+      const scrollBackground = document.querySelector('.scroll-background');
+      if (scrollBackground) {
+        const footer = document.querySelector('.footer');
+        const heroSection = document.querySelector('.hero-section');
+        
+        if (scrollY < 0) {
+          // Scrolling up beyond content - show light background matching hero section
+          scrollBackground.style.background = 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)';
+        } else if (footer && scrollY > (footer.offsetTop + footer.offsetHeight)) {
+          // Scrolling down past footer - show black background
+          scrollBackground.style.background = '#000000';
+        } else {
+          // Normal content area - transparent background
+          scrollBackground.style.background = 'transparent';
+        }
+      }
+
+      // Apply opacity to background pseudo-elements and sections
       const style = document.createElement('style');
       style.textContent = `
         .experience-section::before,
         .gap-section::before,
         .projects-section::before {
           opacity: ${currentOpacity} !important;
+        }
+        .experience-section .container {
+          opacity: ${experienceOpacity} !important;
+          transition: opacity 0.1s ease-out !important;
+        }
+        .projects-section .container {
+          opacity: ${projectsOpacity} !important;
+          transition: opacity 0.1s ease-out !important;
         }
       `;
       
@@ -76,6 +195,7 @@ function App() {
 
   return (
     <div className="App">
+      <div className="scroll-background"></div>
       <nav className="navbar">
         <div className="nav-container">
           <div className="nav-logo">
@@ -89,7 +209,10 @@ function App() {
               <a href="#experience" className="nav-link">Experience</a>
             </li>
             <li className="nav-item">
-              <a href="#projects" className="nav-link">Projects</a>
+              <a href="#projects" className="nav-link" onClick={(e) => {
+                e.preventDefault();
+                scrollToProjects();
+              }}>Projects</a>
             </li>
           </ul>
         </div>
@@ -277,8 +400,34 @@ function App() {
 
       <footer className="footer">
         <div className="container">
-          <p>&copy; 2025 Henry Chen. All rights reserved.</p>
-      </div>
+          <div className="footer-content">
+            <div className="footer-social">
+              <a 
+                href="https://mail.google.com/mail/?view=cm&fs=1&to=henwchen@gmail.com&su="
+                target="_blank"
+                rel="noopener noreferrer"
+                className="email-icon"
+                aria-label="Send Email via Gmail"
+              >
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.89 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                </svg>
+              </a>
+              <a 
+                href="https://linkedin.com/in/henry-w-chen" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="linkedin-icon"
+                aria-label="LinkedIn Profile"
+              >
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                </svg>
+              </a>
+            </div>
+            <p>&copy; 2025 Henry Chen. All rights reserved.</p>
+          </div>
+        </div>
       </footer>
       <Analytics />
     </div>
