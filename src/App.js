@@ -11,10 +11,10 @@ import rubiksAssembly from './assets/rubiks_assembly7.png';
 function App() {
 
   const scrollToProjects = () => {
-    const projectsSection = document.getElementById('projectnows');
+    const projectsSection = document.getElementById('projects');
     if (projectsSection) {
       const elementPosition = projectsSection.getBoundingClientRect().top + window.pageYOffset;
-      const offsetPosition = elementPosition - 75;
+      const offsetPosition = elementPosition + 250; // Scroll 250px lower than projects section (100px higher than 350px)
       
       window.scrollTo({
         top: offsetPosition,
@@ -40,6 +40,14 @@ function App() {
       const maxOpacity = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--background-image-opacity'));
       
       let currentOpacity = 0;
+      
+      // Ensure elements exist before calculating animations
+      const experienceSection = document.getElementById('experience');
+      const projectsSection = document.getElementById('projects');
+      
+      if (!experienceSection || !projectsSection) {
+        return; // Exit early if elements aren't ready
+      }
       
       // Define animation phases based on pixel positions
       const FADE_IN_START = 800;    // Start fading in at 800px scroll
@@ -71,9 +79,9 @@ function App() {
       }
       
       // Calculate fade-in and fade-out for experience section based on pixel positions
-      const experienceSection = document.getElementById('experience');
       let experienceOpacity = 0;
       
+      // experienceSection already defined above
       if (experienceSection) {
         const experienceRect = experienceSection.getBoundingClientRect();
         const experienceTop = experienceRect.top;
@@ -82,8 +90,8 @@ function App() {
         // Define experience fade-in based on pixel positions from viewport (gradual over longer distance)
         const EXPERIENCE_FADE_IN_START = 1000;   // Start fading in when top is 1000px from top of viewport
         const EXPERIENCE_FADE_IN_END = 200;      // Fully visible when top is 200px from top of viewport (longer fade-in distance)
-        const EXPERIENCE_FADE_OUT_START = 1000;  // Start fading out when bottom is 1000px from top of viewport
-        const EXPERIENCE_FADE_OUT_END = 600;     // Fully faded when bottom is 600px from top of viewport
+        const EXPERIENCE_FADE_OUT_START = 1200;  // Start fading out when bottom is 1200px from top of viewport (earlier)
+        const EXPERIENCE_FADE_OUT_END = 800;     // Fully faded when bottom is 800px from top of viewport (earlier)
         
         // Handle fade-in phase (0 to 1 over longer distance)
         if (experienceTop < EXPERIENCE_FADE_IN_START && experienceTop > EXPERIENCE_FADE_IN_END) {
@@ -106,25 +114,32 @@ function App() {
       }
       
       // Calculate fade-in for projects section based on pixel positions
-      const projectsSection = document.getElementById('projects');
       let projectsOpacity = 0;
       
+      // projectsSection already defined above
       if (projectsSection) {
         const projectsRect = projectsSection.getBoundingClientRect();
         const projectsTop = projectsRect.top;
         
         // Define projects fade-in based on pixel positions from viewport
-        const PROJECTS_FADE_START = 300;    // Start fading when top is 300px from top of viewport (less delay)
-        const PROJECTS_FADE_END = -100;     // Fully visible when top is -100px from top of viewport (less delay)
+        const PROJECTS_FADE_START = 500;    // Start fading when top is 500px from top of viewport (sooner)
+        const PROJECTS_FADE_END = -200;     // Fully visible when top is -200px from top of viewport (longer fade duration)
         
-        if (projectsTop < PROJECTS_FADE_START && projectsTop > PROJECTS_FADE_END) {
+        // Ensure projectsTop is a valid number to prevent glitches
+        if (isNaN(projectsTop) || projectsTop === undefined) {
+          projectsOpacity = 0; // Default to invisible if position is invalid
+        } else if (projectsTop < PROJECTS_FADE_START && projectsTop > PROJECTS_FADE_END) {
           // Calculate fade progress
           const fadeProgress = (PROJECTS_FADE_START - projectsTop) / (PROJECTS_FADE_START - PROJECTS_FADE_END);
+          // Clamp fadeProgress between 0 and 1 to prevent glitches
+          const clampedProgress = Math.max(0, Math.min(1, fadeProgress));
           // Use very gentle curve for slow beginning, more gradual fade-in
-          const curveProgress = Math.pow(fadeProgress, 2.5);
+          const curveProgress = Math.pow(clampedProgress, 2.5);
           projectsOpacity = curveProgress;
         } else if (projectsTop <= PROJECTS_FADE_END) {
           projectsOpacity = 1;
+        } else {
+          projectsOpacity = 0; // Default to invisible if not in fade range
         }
       }
       
@@ -177,12 +192,24 @@ function App() {
     // Add scroll event listener
     window.addEventListener('scroll', handleScroll);
     
-    // Initial call to set starting opacity
-    handleScroll();
+    // Initial call to set starting opacity with a small delay to ensure DOM is ready
+    const initializeAnimations = () => {
+      // Small delay to ensure all elements are positioned correctly
+      setTimeout(() => {
+        handleScroll();
+      }, 100);
+    };
+    
+    // Initialize animations
+    initializeAnimations();
+    
+    // Also initialize on window load as backup
+    window.addEventListener('load', initializeAnimations);
 
     // Cleanup
     return () => {
       window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('load', initializeAnimations);
       const existingStyle = document.getElementById('dynamic-opacity-style');
       if (existingStyle) {
         existingStyle.remove();
