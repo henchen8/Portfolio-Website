@@ -28,6 +28,8 @@ body {
 .App {
   min-height: 100vh;
   background: white;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Dynamic scroll-based background */
@@ -67,6 +69,15 @@ body {
   font-size: 1.5rem;
   font-weight: 700;
   color: #000000;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.logo-icon {
+  height: 40px;
+  width: auto;
+  object-fit: contain;
 }
 
 .nav-menu {
@@ -89,6 +100,7 @@ body {
 /* Main content */
 .main-content {
   margin-top: 0;
+  flex: 1;
 }
 
 /* Hero Section */
@@ -686,15 +698,16 @@ body {
 
 /* Footer */
 .footer {
-  background: #000000 !important;
-  color: white;
+  background: #f8f9fa !important;
+  color: #333;
   text-align: center;
-  padding: 2rem 0;
-  margin-top: 2rem;
+  padding: 1.5rem 0;
+  margin-top: auto;
   position: relative;
   z-index: 1000;
   background-image: none !important;
   background-attachment: initial !important;
+  min-height: 120px;
 }
 
 
@@ -719,26 +732,37 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 60px;
-  height: 60px;
+  width: 80px;
+  height: 80px;
   background: transparent;
-  color: white;
+  color: #333;
   text-decoration: none;
-  font-size: 32px;
+  font-size: 42px;
   transition: all 0.3s ease;
+}
+
+.email-icon {
+  width: 100px;
+  height: 100px;
+  font-size: 52px;
 }
 
 .linkedin-icon:hover,
 .email-icon:hover {
-  color: #cccccc;
+  color: #000000;
   transform: scale(1.1);
 }
 
 .linkedin-icon svg,
 .email-icon svg {
-  width: 36px;
-  height: 36px;
+  width: 48px;
+  height: 48px;
   fill: currentColor;
+}
+
+.email-icon svg {
+  width: 60px;
+  height: 60px;
 }
 
 /* Anchor offset for section targets */

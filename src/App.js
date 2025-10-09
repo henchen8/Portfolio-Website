@@ -14,7 +14,7 @@ function App() {
     const projectsSection = document.getElementById('projects');
     if (projectsSection) {
       const elementPosition = projectsSection.getBoundingClientRect().top + window.pageYOffset;
-      const offsetPosition = elementPosition + 250; // Scroll 250px lower than projects section (100px higher than 350px)
+      const offsetPosition = elementPosition + 300; // Scroll 300px lower than projects section
       
       window.scrollTo({
         top: offsetPosition,
@@ -226,7 +226,8 @@ function App() {
       <nav className="navbar">
         <div className="nav-container">
           <div className="nav-logo">
-            <span className="logo-text">Henry Chen</span>
+            <img src="/RoboIconImage.png" alt="Logo" className="logo-icon" />
+            Henry Chen
           </div>
           <ul className="nav-menu">
             <li className="nav-item">
