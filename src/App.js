@@ -1,7 +1,7 @@
 import './App.css';
 import { useEffect } from 'react';
 import { Analytics } from '@vercel/analytics/react';
-import profileImage from './assets/profile.jpeg';
+import profileImage from './assets/profile.png';
 import rubiksImage from './assets/rubiks1.jpeg';
 import srprojImage from './assets/srproj.jpeg';
 import fitboxImage from './assets/FitBoxlogo.png';
@@ -30,9 +30,35 @@ function App() {
     }
   };
 
-  // Handle scroll-based opacity transition
+  // Handle scroll-based opacity transition and navbar visibility
   useEffect(() => {
+    let lastScrollY = window.scrollY;
+    let ticking = false;
+    
     const handleScroll = () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          const currentScrollY = window.scrollY;
+          const navbar = document.querySelector('.navbar');
+          const scrollDifference = Math.abs(currentScrollY - lastScrollY);
+          
+          // Navbar hide/show logic with larger buffer
+          if (navbar && scrollDifference > 10) { // Only trigger if scrolled more than 10px
+            if (currentScrollY > lastScrollY && currentScrollY > 150) {
+              // Scrolling down and past 150px - hide navbar
+              navbar.classList.add('navbar-hidden');
+            } else if (currentScrollY < lastScrollY || currentScrollY < 100) {
+              // Scrolling up OR near top - show navbar
+              navbar.classList.remove('navbar-hidden');
+            }
+          }
+          
+          lastScrollY = currentScrollY;
+          ticking = false;
+        });
+        ticking = true;
+      }
+      
       const scrollY = window.scrollY;
       const documentHeight = document.documentElement.scrollHeight - window.innerHeight;
       
@@ -90,8 +116,8 @@ function App() {
         // Define experience fade-in based on pixel positions from viewport (gradual over longer distance)
         const EXPERIENCE_FADE_IN_START = 1000;   // Start fading in when top is 1000px from top of viewport
         const EXPERIENCE_FADE_IN_END = 200;      // Fully visible when top is 200px from top of viewport (longer fade-in distance)
-        const EXPERIENCE_FADE_OUT_START = 1200;  // Start fading out when bottom is 1200px from top of viewport (earlier)
-        const EXPERIENCE_FADE_OUT_END = 800;     // Fully faded when bottom is 800px from top of viewport (earlier)
+        const EXPERIENCE_FADE_OUT_START = 1000;  // Start fading out when bottom is 1200px from top of viewport (earlier)
+        const EXPERIENCE_FADE_OUT_END = 500;     // Fully faded when bottom is 800px from top of viewport (earlier)
         
         // Handle fade-in phase (0 to 1 over longer distance)
         if (experienceTop < EXPERIENCE_FADE_IN_START && experienceTop > EXPERIENCE_FADE_IN_END) {
@@ -113,33 +139,38 @@ function App() {
         }
       }
       
-      // Calculate fade-in for projects section based on pixel positions
+      // Calculate fade-in and fade-out for projects section based on pixel positions
       let projectsOpacity = 0;
       
       // projectsSection already defined above
       if (projectsSection) {
         const projectsRect = projectsSection.getBoundingClientRect();
         const projectsTop = projectsRect.top;
+        const projectsBottom = projectsRect.bottom;
         
-        // Define projects fade-in based on pixel positions from viewport
-        const PROJECTS_FADE_START = 500;    // Start fading when top is 500px from top of viewport (sooner)
-        const PROJECTS_FADE_END = -200;     // Fully visible when top is -200px from top of viewport (longer fade duration)
+        // Define projects fade-in based on pixel positions from viewport (similar to experience section)
+        const PROJECTS_FADE_IN_START = 750;   // Start fading in when top is 1000px from top of viewport
+        const PROJECTS_FADE_IN_END = -500;      // Fully visible when top is 200px from top of viewport
+        const PROJECTS_FADE_OUT_START = 1000;  // Start fading out when bottom is 1000px from top of viewport
+        const PROJECTS_FADE_OUT_END = 0;     // Fully faded when bottom is 600px from top of viewport
         
-        // Ensure projectsTop is a valid number to prevent glitches
-        if (isNaN(projectsTop) || projectsTop === undefined) {
-          projectsOpacity = 0; // Default to invisible if position is invalid
-        } else if (projectsTop < PROJECTS_FADE_START && projectsTop > PROJECTS_FADE_END) {
-          // Calculate fade progress
-          const fadeProgress = (PROJECTS_FADE_START - projectsTop) / (PROJECTS_FADE_START - PROJECTS_FADE_END);
-          // Clamp fadeProgress between 0 and 1 to prevent glitches
-          const clampedProgress = Math.max(0, Math.min(1, fadeProgress));
-          // Use very gentle curve for slow beginning, more gradual fade-in
-          const curveProgress = Math.pow(clampedProgress, 2.5);
+        // Handle fade-in phase (0 to 1)
+        if (projectsTop < PROJECTS_FADE_IN_START && projectsTop > PROJECTS_FADE_IN_END) {
+          const fadeInProgress = (PROJECTS_FADE_IN_START - projectsTop) / (PROJECTS_FADE_IN_START - PROJECTS_FADE_IN_END);
+          // Use gentle curve for gradual fade-in
+          const curveProgress = Math.pow(fadeInProgress, 2);
           projectsOpacity = curveProgress;
-        } else if (projectsTop <= PROJECTS_FADE_END) {
+        } else if (projectsTop <= PROJECTS_FADE_IN_END) {
           projectsOpacity = 1;
-        } else {
-          projectsOpacity = 0; // Default to invisible if not in fade range
+        }
+        
+        // Handle fade-out phase (only if already visible)
+        if (projectsOpacity > 0 && projectsBottom < PROJECTS_FADE_OUT_START && projectsBottom > PROJECTS_FADE_OUT_END) {
+          const fadeOutProgress = (PROJECTS_FADE_OUT_START - projectsBottom) / (PROJECTS_FADE_OUT_START - PROJECTS_FADE_OUT_END);
+          const curveProgress = Math.pow(fadeOutProgress, 2);
+          projectsOpacity = 1 - curveProgress;
+        } else if (projectsBottom <= PROJECTS_FADE_OUT_END) {
+          projectsOpacity = 0;
         }
       }
       
@@ -429,6 +460,9 @@ function App() {
       <footer className="footer">
         <div className="container">
           <div className="footer-content">
+            <div className="footer-logo">
+              <img src="/RoboIconImage.png" alt="Logo" className="footer-logo-img" />
+            </div>
             <div className="footer-social">
               <a 
                 href="https://mail.google.com/mail/?view=cm&fs=1&to=henwchen@gmail.com&su="

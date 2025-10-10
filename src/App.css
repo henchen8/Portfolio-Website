@@ -54,6 +54,12 @@ body {
   border-bottom: 1px solid #e0e0e0;
   z-index: 1000;
   padding: 0.5rem 0;
+  transform: translateY(0);
+  transition: transform 0.3s ease-in-out;
+}
+
+.navbar-hidden {
+  transform: translateY(-100%);
 }
 
 .nav-container {
@@ -701,13 +707,13 @@ body {
   background: #f8f9fa !important;
   color: #333;
   text-align: center;
-  padding: 1.5rem 0;
+  padding: 1rem 0;
   margin-top: auto;
   position: relative;
   z-index: 1000;
   background-image: none !important;
   background-attachment: initial !important;
-  min-height: 120px;
+  min-height: 80px;
 }
 
 
@@ -717,11 +723,25 @@ body {
   align-items: center;
   width: 100%;
   position: relative;
+  min-height: 80px;
+}
+
+.footer-logo {
+  position: absolute;
+  left: 0;
+  display: flex;
+  align-items: center;
+}
+
+.footer-logo-img {
+  height: 50px;
+  width: auto;
+  object-fit: contain;
 }
 
 .footer-social {
   position: absolute;
-  left: -30px;
+  right: 0;
   display: flex;
   align-items: center;
   gap: 1rem;
@@ -732,37 +752,30 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 80px;
-  height: 80px;
+  width: 32px;
+  height: 32px;
   background: transparent;
-  color: #333;
+  color: #000000;
   text-decoration: none;
-  font-size: 42px;
   transition: all 0.3s ease;
-}
-
-.email-icon {
-  width: 100px;
-  height: 100px;
-  font-size: 52px;
 }
 
 .linkedin-icon:hover,
 .email-icon:hover {
   color: #000000;
-  transform: scale(1.1);
+  transform: scale(1.05);
 }
 
 .linkedin-icon svg,
 .email-icon svg {
-  width: 48px;
-  height: 48px;
+  width: 24px;
+  height: 24px;
   fill: currentColor;
 }
 
-.email-icon svg {
-  width: 60px;
-  height: 60px;
+.linkedin-icon svg {
+  fill: #000000;
+  background: transparent;
 }
 
 /* Anchor offset for section targets */
