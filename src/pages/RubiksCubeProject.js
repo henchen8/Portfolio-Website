@@ -7,7 +7,7 @@ function RubiksCubeProject() {
   return (
     <div className="project-detail-page">
       <div className="project-detail-header">
-        <Link to="/#projects" className="back-button">Back to Home</Link>
+        <Link to="/#projects" className="back-button">Back to Projects</Link>
         <h1>Rubik's Cube Robot</h1>
       </div>
       
@@ -83,11 +83,12 @@ function RubiksCubeProject() {
             <a href="https://www.youtube.com/shorts/J1a7RxK03xU" target="_blank" rel="noopener noreferrer" className="project-link-btn">Live Demo</a>
             <a href="https://cad.onshape.com/documents/e64e9adb0ff9466627b47f67/w/74a34c291195daf66dba9b40/e/ef19ed1914f1db15c2699f69" target="_blank" rel="noopener noreferrer" className="project-link-btn">CAD</a>
             <a href="https://docs.google.com/presentation/d/12Rsq6fVtxUd_KKTxoM-D5vIqgpLokWzd/edit?slide=id.p1#slide=id.p1" target="_blank" rel="noopener noreferrer" className="project-link-btn">Slides</a>
+            <a href="#" target="_blank" rel="noopener noreferrer" className="project-link-btn">PCB</a>
           </div>
         </div>
         
         <div className="project-footer">
-          <Link to="/#projects" className="back-button">Back to Home</Link>
+          <Link to="/#projects" className="back-button">Back to Projects</Link>
         </div>
       </div>
     </div>

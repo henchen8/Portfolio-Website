@@ -241,7 +241,7 @@ function Home() {
                 <div className="timeline-marker"></div>
                 <div className="timeline-content">
                   <h3>Mechanical Engineering Intern</h3>
-                  <p className="timeline-company">Elytra Robotics • May 2025 - Present</p>
+                  <p className="timeline-company">Elytra Robotics • May 2025 - Aug 2025</p>
                   <p>
                     Designed custom swerve drivetrain for an industrial rover capable of indoor and outdoor operation, 
                     along with a custom onboard trash compression mechanism optimized for tight packaging.

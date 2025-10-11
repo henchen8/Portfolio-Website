@@ -1,6 +1,6 @@
 import './App.css';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Analytics } from '@vercel/analytics/react';
 import Home from './pages/Home';
 import RubiksCubeProject from './pages/RubiksCubeProject';
@@ -135,6 +135,17 @@ function Footer() {
 }
 
 function App() {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Hide loading screen after 2 seconds
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
   useEffect(() => {
     let lastScrollY = window.scrollY;
     let ticking = false;
@@ -172,21 +183,28 @@ function App() {
   }, []);
 
   return (
-    <Router>
-      <ScrollToTop />
-      <div className="App">
-        <div className="scroll-background"></div>
-        <Navbar />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/projects/rubiks-cube" element={<RubiksCubeProject />} />
-          <Route path="/projects/financial-derivatives" element={<FinancialDerivativesProject />} />
-          <Route path="/projects/fitbox" element={<FitBoxProject />} />
-        </Routes>
-        <Footer />
-        <Analytics />
-      </div>
-    </Router>
+    <>
+      {loading && (
+        <div className="loading-screen">
+          <img src="/roboiconimg.png" alt="Loading" className="loading-logo" />
+        </div>
+      )}
+      <Router>
+        <ScrollToTop />
+        <div className="App">
+          <div className="scroll-background"></div>
+          <Navbar />
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/projects/rubiks-cube" element={<RubiksCubeProject />} />
+            <Route path="/projects/financial-derivatives" element={<FinancialDerivativesProject />} />
+            <Route path="/projects/fitbox" element={<FitBoxProject />} />
+          </Routes>
+          <Footer />
+          <Analytics />
+        </div>
+      </Router>
+    </>
   );
 }
 

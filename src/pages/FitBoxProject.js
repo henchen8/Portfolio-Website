@@ -5,7 +5,7 @@ function FitBoxProject() {
   return (
     <div className="project-detail-page">
       <div className="project-detail-header">
-        <Link to="/#projects" className="back-button">Back to Home</Link>
+        <Link to="/#projects" className="back-button">Back to Projects</Link>
         <h1>FitBox</h1>
       </div>
       
@@ -60,7 +60,7 @@ function FitBoxProject() {
         </div>
         
         <div className="project-footer">
-          <Link to="/#projects" className="back-button">Back to Home</Link>
+          <Link to="/#projects" className="back-button">Back to Projects</Link>
         </div>
       </div>
     </div>
