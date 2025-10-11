@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import srprojImage from '../assets/srproj.png';
+import blackscholesImage from '../assets/blackscholes.png';
 
 function FinancialDerivativesProject() {
   return (
@@ -45,6 +46,13 @@ function FinancialDerivativesProject() {
             <span className="tech-tag">Numerical Methods</span>
             <span className="tech-tag">Linear Algebra</span>
             <span className="tech-tag">Differential Equations</span>
+          </div>
+        </div>
+        
+        <div className="project-section">
+          <h2>Black-Scholes Model</h2>
+          <div className="project-gallery">
+            <img src={blackscholesImage} alt="Black-Scholes Model Visualization" />
           </div>
         </div>
         

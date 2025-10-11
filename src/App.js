@@ -61,7 +61,7 @@ function Navbar() {
     <nav className="navbar">
       <div className="nav-container">
         <Link to="/" className="nav-logo">
-          <img src="/RoboIconImage.png" alt="Logo" className="logo-icon" />
+          <img src="/roboiconimg.png" alt="Logo" className="logo-icon" />
           Henry Chen
         </Link>
         <ul className="nav-menu">
@@ -101,7 +101,7 @@ function Footer() {
       <div className="container">
         <div className="footer-content">
           <div className="footer-logo">
-            <img src="/RoboIconImage.png" alt="Logo" className="footer-logo-img" />
+            <img src="/roboiconimg.png" alt="Logo" className="footer-logo-img" />
           </div>
           <div className="footer-social">
             <a 

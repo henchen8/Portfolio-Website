@@ -45,6 +45,15 @@ function RubiksCubeProject() {
         </div>
         
         <div className="project-section">
+          <h2>Live Demo</h2>
+          <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1.5rem' }}>
+            <a href="https://www.youtube.com/shorts/J1a7RxK03xU" target="_blank" rel="noopener noreferrer" className="project-link-btn" style={{ fontSize: '1.1rem', padding: '0.75rem 1.5rem' }}>
+              Watch on YouTube →
+            </a>
+          </div>
+        </div>
+        
+        <div className="project-section">
           <h2>Technical Details</h2>
           <p>
             The design features precision-engineered grippers and servo motors that work in harmony to execute 
