@@ -4,22 +4,26 @@ import rubiksDrawing from '../assets/rubiksdrawing.png';
 import rubiksAssembly from '../assets/rubiks_assembly7.png';
 
 function RubiksCubeProject() {
+  const handleBackClick = () => {
+    sessionStorage.setItem('returnToHome', 'true');
+  };
+
   return (
     <div className="project-detail-page">
       <div className="project-detail-header">
-        <Link to="/#projects" className="back-button">Back to Projects</Link>
+        <Link to="/#projects" className="back-button" onClick={handleBackClick}>Back to Projects</Link>
         <h1>Rubik's Cube Robot</h1>
       </div>
       
       <div className="project-detail-content">
         <div className="project-hero-image">
-          <img src={rubiksImage} alt="Rubik's Cube Robot" />
+          <img src={rubiksImage} alt="Rubik's Cube Robot" loading="eager" />
         </div>
         
         <div className="project-section">
           <h2>Overview</h2>
           <p className="project-description">
-            Fully modular cube-solving robot with average solve times just over a second.
+            Fully modular, autonmous cube-solving robot.
           </p>
           <p>
             This project combines mechanical design, computer vision, and algorithmic problem-solving 
@@ -34,11 +38,11 @@ function RubiksCubeProject() {
           <div className="stats-grid">
             <div className="stat-card">
               <div className="stat-value">1s</div>
-              <div className="stat-label">Average Solve Time</div>
+              <div className="stat-label">Solve Times</div>
             </div>
             <div className="stat-card">
               <div className="stat-value">&lt;20</div>
-              <div className="stat-label">Face Turns
+              <div className="stat-label">Rotations Per Solve
               </div>
             </div>
           </div>
@@ -72,8 +76,8 @@ function RubiksCubeProject() {
         <div className="project-section">
           <h2>Design & Assembly</h2>
           <div className="project-gallery">
-            <img src={rubiksDrawing} alt="Rubik's Cube Robot Design" />
-            <img src={rubiksAssembly} alt="Rubik's Cube Robot Assembly" />
+            <img src={rubiksDrawing} alt="Rubik's Cube Robot Design" loading="lazy" />
+            <img src={rubiksAssembly} alt="Rubik's Cube Robot Assembly" loading="lazy" />
           </div>
         </div>
         
@@ -88,7 +92,7 @@ function RubiksCubeProject() {
         </div>
         
         <div className="project-footer">
-          <Link to="/#projects" className="back-button">Back to Projects</Link>
+          <Link to="/#projects" className="back-button" onClick={handleBackClick}>Back to Projects</Link>
         </div>
       </div>
     </div>

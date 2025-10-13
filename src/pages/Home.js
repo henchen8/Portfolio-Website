@@ -294,7 +294,9 @@ function Home() {
           <div className="container">
             <h2 className="section-title">Featured Projects</h2>
             <div className="projects-grid">
-              <div className="project-card" onClick={() => navigate('/projects/rubiks-cube')}>
+              <div className="project-card" onClick={() => {
+                navigate('/projects/rubiks-cube');
+              }}>
                 <div className="project-image" style={{ backgroundImage: `url(${rubiksImage})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
                 </div>
                 <div className="project-content">
@@ -316,7 +318,9 @@ function Home() {
                 </div>
               </div>
 
-              <div className="project-card" onClick={() => navigate('/projects/financial-derivatives')}>
+              <div className="project-card" onClick={() => {
+                navigate('/projects/financial-derivatives');
+              }}>
                 <div className="project-image" style={{ backgroundImage: `url(${srprojImage})`, backgroundSize: 'cover', backgroundPosition: 'center 35%' }}>
                 </div>
                 <div className="project-content">
@@ -336,7 +340,9 @@ function Home() {
                 </div>
               </div>
 
-              <div className="project-card" onClick={() => navigate('/projects/fitbox')}>
+              <div className="project-card" onClick={() => {
+                navigate('/projects/fitbox');
+              }}>
                 <div className="project-image" style={{ backgroundImage: `url(${fitboxImage})`, backgroundSize: 'contain', backgroundPosition: 'center', backgroundColor: 'white', backgroundRepeat: 'no-repeat' }}>
                 </div>
                 <div className="project-content">

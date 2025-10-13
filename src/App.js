@@ -11,30 +11,45 @@ function ScrollToTop() {
   const { pathname, hash } = useLocation();
 
   useEffect(() => {
-    // If we have a hash, scroll directly to it without going to top first
-    if (hash === '#projects') {
-      setTimeout(() => {
+    // Small delay to ensure DOM is ready
+    const timer = setTimeout(() => {
+      // Check if we're returning to home from a project page
+      const returnToHome = sessionStorage.getItem('returnToHome') === 'true';
+      
+      if (returnToHome && pathname === '/') {
+        sessionStorage.removeItem('returnToHome');
+        
+        // Scroll to the bottom of the page (distance 0px from bottom of viewing pane to bottom of page)
+        const maxScrollPosition = document.documentElement.scrollHeight - window.innerHeight;
+        window.scrollTo({ 
+          top: maxScrollPosition, 
+          left: 0, 
+          behavior: 'instant' 
+        });
+      } else if (hash === '#projects' && pathname === '/') {
+        // Handle hash navigation to projects section
         const section = document.getElementById('projects');
         if (section) {
           const elementPosition = section.getBoundingClientRect().top + window.pageYOffset;
           const offsetPosition = elementPosition + 300;
           window.scrollTo({ top: offsetPosition, behavior: 'instant' });
         }
-      }, 0);
-    } else if (hash === '#experience') {
-      setTimeout(() => {
+      } else if (hash === '#experience' && pathname === '/') {
+        // Handle hash navigation to experience section
         const section = document.getElementById('experience');
         if (section) {
           section.scrollIntoView({ behavior: 'instant' });
         }
-      }, 0);
-    } else if (!hash && pathname !== '/') {
-      // Only scroll to top if there's no hash and we're navigating to a non-home page
-      window.scrollTo({ top: 100, left: 0, behavior: 'instant' });
-    } else if (!hash && pathname === '/') {
-      // Navigating to home page without hash - scroll to top
-      window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
-    }
+      } else if (!hash && pathname !== '/') {
+        // Navigating to a project page - scroll to 90px
+        window.scrollTo({ top: 90, left: 0, behavior: 'instant' });
+      } else if (!hash && pathname === '/') {
+        // Navigating to home page without hash - scroll to top
+        window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+      }
+    }, 0);
+
+    return () => clearTimeout(timer);
   }, [pathname, hash]);
 
   return null;
@@ -138,12 +153,14 @@ function App() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Hide loading screen after 2 seconds
+    // Hide loading screen after animation
     const timer = setTimeout(() => {
       setLoading(false);
-    }, 2000);
+    }, 1225);
 
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+    };
   }, []);
 
   useEffect(() => {
@@ -186,7 +203,12 @@ function App() {
     <>
       {loading && (
         <div className="loading-screen">
-          <img src="/roboiconimg.png" alt="Loading" className="loading-logo" />
+          <div className="loading-content">
+            <img src="/roboiconimg.png" alt="Loading" className="loading-logo" />
+            <div className="loading-bar-container">
+              <div className="loading-bar"></div>
+            </div>
+          </div>
         </div>
       )}
       <Router>

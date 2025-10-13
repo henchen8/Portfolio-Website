@@ -2,10 +2,14 @@ import { Link } from 'react-router-dom';
 import fitboxImage from '../assets/FitBoxlogo.png';
 
 function FitBoxProject() {
+  const handleBackClick = () => {
+    sessionStorage.setItem('returnToHome', 'true');
+  };
+
   return (
     <div className="project-detail-page">
       <div className="project-detail-header">
-        <Link to="/#projects" className="back-button">Back to Projects</Link>
+        <Link to="/#projects" className="back-button" onClick={handleBackClick}>Back to Projects</Link>
         <h1>FitBox</h1>
       </div>
       
@@ -60,7 +64,7 @@ function FitBoxProject() {
         </div>
         
         <div className="project-footer">
-          <Link to="/#projects" className="back-button">Back to Projects</Link>
+          <Link to="/#projects" className="back-button" onClick={handleBackClick}>Back to Projects</Link>
         </div>
       </div>
     </div>

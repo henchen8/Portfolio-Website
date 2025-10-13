@@ -3,10 +3,14 @@ import srprojImage from '../assets/srproj.png';
 import blackscholesImage from '../assets/blackscholes.png';
 
 function FinancialDerivativesProject() {
+  const handleBackClick = () => {
+    sessionStorage.setItem('returnToHome', 'true');
+  };
+
   return (
     <div className="project-detail-page">
       <div className="project-detail-header">
-        <Link to="/#projects" className="back-button">Back to Projects</Link>
+        <Link to="/#projects" className="back-button" onClick={handleBackClick}>Back to Projects</Link>
         <h1>Pricing Financial Derivatives</h1>
       </div>
       
@@ -66,7 +70,7 @@ function FinancialDerivativesProject() {
         </div>
         
         <div className="project-footer">
-          <Link to="/#projects" className="back-button">Back to Projects</Link>
+          <Link to="/#projects" className="back-button" onClick={handleBackClick}>Back to Projects</Link>
         </div>
       </div>
     </div>
