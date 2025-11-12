@@ -10,7 +10,16 @@
 }
 
 html {
-  scroll-behavior: smooth;
+  scroll-behavior: auto;
+  background: #fafaf8;
+}
+
+/* Lock html during loading as well */
+html:has(body.loading) {
+  overflow: hidden !important;
+  position: fixed !important;
+  width: 100% !important;
+  height: 100% !important;
 }
 
 /* Loading Screen */
@@ -20,12 +29,49 @@ html {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: white;
+  background: #f0f0ed;
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 9999;
-  animation: fadeOut 0.225s ease-out 1.0s forwards;
+  z-index: 99999;
+  animation: fadeOut 0.2s ease-out 1.7s forwards;
+  overflow: hidden;
+}
+
+
+.loading-screen::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, #f0f0ed 0%, #f0f0ed 50%, black 50%, black 100%);
+  background-size: 200% 100%;
+  background-position: 0% 0%;
+  animation: backgroundSweep 1.7s cubic-bezier(0.95, 0, 0.05, 1) forwards;
+  z-index: 1;
+}
+
+@keyframes backgroundSweep {
+  0% {
+    background-position: 0% 0%;
+  }
+  15% {
+    background-position: 0% 0%;
+  }
+  40% {
+    background-position: 100% 0%;
+  }
+  60% {
+    background-position: 100% 0%;
+  }
+  85% {
+    background-position: 0% 0%;
+  }
+  100% {
+    background-position: 0% 0%;
+  }
 }
 
 @keyframes fadeOut {
@@ -40,12 +86,15 @@ html {
   flex-direction: column;
   align-items: center;
   gap: 2rem;
+  position: relative;
+  z-index: 2;
 }
 
 .loading-logo {
   width: 150px;
   height: auto;
-  animation: pulse 1.5s ease-in-out infinite;
+  filter: invert(0);
+  animation: pulse 1.5s ease-in-out infinite, logoColorChange 1.7s cubic-bezier(0.95, 0, 0.05, 1) forwards;
 }
 
 @keyframes pulse {
@@ -57,6 +106,27 @@ html {
   }
 }
 
+@keyframes logoColorChange {
+  0% {
+    filter: invert(0);
+  }
+  15% {
+    filter: invert(0);
+  }
+  40% {
+    filter: invert(1);
+  }
+  60% {
+    filter: invert(1);
+  }
+  85% {
+    filter: invert(0);
+  }
+  100% {
+    filter: invert(0);
+  }
+}
+
 .loading-bar-container {
   width: 150px;
   height: 5px;
@@ -65,6 +135,28 @@ html {
   overflow: hidden;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   will-change: transform;
+  animation: barContainerColorChange 1.7s cubic-bezier(0.95, 0, 0.05, 1) forwards;
+}
+
+@keyframes barContainerColorChange {
+  0% {
+    background: #e0e0e0;
+  }
+  15% {
+    background: #e0e0e0;
+  }
+  40% {
+    background: #333333;
+  }
+  60% {
+    background: #333333;
+  }
+  85% {
+    background: #e0e0e0;
+  }
+  100% {
+    background: #e0e0e0;
+  }
 }
 
 .loading-bar {
@@ -74,7 +166,7 @@ html {
   border-radius: 10px;
   transform: translateX(-100%);
   will-change: transform;
-  animation: fillBar 0.9s linear forwards;
+  animation: fillBar 1.7s linear forwards, barColorChange 1.7s cubic-bezier(0.95, 0, 0.05, 1) forwards;
 }
 
 @keyframes fillBar {
@@ -83,6 +175,27 @@ html {
   }
   to {
     transform: translateX(0);
+  }
+}
+
+@keyframes barColorChange {
+  0% {
+    background: #000000;
+  }
+  15% {
+    background: #000000;
+  }
+  40% {
+    background: #ffffff;
+  }
+  60% {
+    background: #ffffff;
+  }
+  85% {
+    background: #000000;
+  }
+  100% {
+    background: #000000;
   }
 }
 
@@ -95,14 +208,31 @@ body {
   line-height: 1.6;
   color: #333;
   min-height: 100vh;
-  background: transparent; /* Will be controlled dynamically */
+  background: #fafaf8;
+}
+
+/* Prevent scrolling and force position during loading */
+body.loading {
+  overflow: hidden !important;
+  position: fixed !important;
+  width: 100% !important;
+  height: 100% !important;
 }
 
 .App {
   min-height: 100vh;
-  background: white;
+  background: #fafaf8;
   display: flex;
   flex-direction: column;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.2s ease-in, visibility 0s linear 0s;
+}
+
+.App.app-loading {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  transition: opacity 0s, visibility 0s;
 }
 
 /* Dynamic scroll-based background */
@@ -122,7 +252,7 @@ body {
   position: fixed;
   top: 0;
   width: 100%;
-  background: rgba(255, 255, 255, 0.75);
+  background: #fafaf8;
   backdrop-filter: blur(10px);
   border-bottom: 1px solid #e0e0e0;
   z-index: 1000;
@@ -193,7 +323,7 @@ body {
   min-height: 90vh;
   display: flex;
   align-items: center;
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  background: linear-gradient(135deg, #fafaf8 0%, #f0f0ed 100%);
   color: #000000;
   padding: 80px 0 2rem 0;
 }
@@ -279,9 +409,9 @@ body {
 }
 
 .profile-placeholder {
-  width: 300px;
-  height: 300px;
-  background: #f8f9fa;
+  width: 320px;
+  height: 320px;
+  background: #fafaf8;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -289,7 +419,6 @@ body {
   font-size: 4rem;
   font-weight: 700;
   color: #000000;
-  border: 4px solid #e0e0e0;
   overflow: hidden;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -300,7 +429,6 @@ body {
 .profile-placeholder:hover {
   transform: scale(1.1);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-  border: 4px solid #000000;
 }
 
 .profile-image {
@@ -433,7 +561,7 @@ body {
 .hero-section {
   position: relative;
   z-index: 10;
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  background: linear-gradient(135deg, #fafaf8 0%, #f0f0ed 100%);
 }
 
 /* Experience Section */
@@ -446,48 +574,75 @@ body {
 .timeline::before {
   content: '';
   position: absolute;
-  left: 20px;
+  left: 24px;
   top: 0;
   bottom: 0;
-  width: 2px;
-  background: #e0e0e0;
+  width: 3px;
+  background: linear-gradient(180deg, #e0e0e0 0%, #f0f0ed 50%, #e0e0e0 100%);
+  border-radius: 2px;
 }
 
 .timeline-item {
   position: relative;
-  margin-bottom: 3rem;
-  padding-left: 60px;
+  margin-bottom: 2rem;
+  padding-left: 70px;
 }
 
 .timeline-marker {
   position: absolute;
-  left: 11px;
+  left: 8px;
   top: 0;
-  width: 20px;
-  height: 20px;
-  background: #000000;
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, #000000 0%, #333333 100%);
   border-radius: 50%;
-  border: 4px solid white;
-  box-shadow: 0 0 0 2px #e0e0e0;
+  border: 4px solid #fafaf8;
+  box-shadow: 0 0 0 3px #e0e0e0, 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 5;
+}
+
+.timeline-marker::before {
+  content: '';
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background: #fafaf8;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.timeline-item:hover .timeline-marker {
+  transform: scale(1.15);
+  box-shadow: 0 0 0 3px #000000, 0 6px 20px rgba(0, 0, 0, 0.25);
+}
+
+.timeline-item:hover .timeline-marker::before {
+  background: linear-gradient(135deg, #fafaf8 0%, #f0f0ed 100%);
+  transform: scale(1.1);
 }
 
 .timeline-content h3 {
   font-size: 1.3rem;
   margin-bottom: 0.5rem;
   color: #000000;
+  font-weight: 600;
 }
 
 .timeline-company {
   font-size: 1rem;
   color: #333;
   margin-bottom: 1rem;
-  font-weight: 600;
+  font-weight: normal;
 }
 
 .timeline-content p {
   color: #222;
   line-height: 1.6;
-  font-weight: 500;
+  font-weight: normal;
 }
 
 /* Gap Section */
@@ -569,8 +724,9 @@ body {
 /* Projects Section */
 .projects-section {
   position: relative;
-  margin-top: 50px; /* Reduced from 130px to 50px (moved up 80px more) */
-  padding-top: calc(5rem + 30px + 150px); /* Reduced from 300px to 150px spacing above projects */
+  margin-top: 30px; /* Further reduced from 50px to 30px */
+  padding-top: calc(5rem + 30px + 100px); /* Further reduced from 150px to 100px spacing above projects */
+  padding-bottom: 2rem; /* Reduced bottom padding significantly */
 }
 
 /* Force spacing changes to be visible */
@@ -579,8 +735,9 @@ body {
 }
 
 .projects-section {
-  padding-top: calc(5rem - 75px + 200px + 150px) !important; /* Reduced from 500px to 425px total spacing above projects */
-  margin-top: 50px !important; /* Reduced from 130px to 50px */
+  padding-top: calc(5rem - 75px + 200px + 100px) !important; /* Further reduced from 425px to 375px total spacing above projects */
+  margin-top: 30px !important; /* Further reduced from 50px to 30px */
+  padding-bottom: 2rem !important; /* Reduced bottom padding significantly */
 }
 
 
@@ -613,20 +770,19 @@ body {
   overflow: hidden;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  border: 3px solid transparent;
   cursor: pointer;
   margin-bottom: 25px;
+  transform: scale(1.02);
 }
 
 .project-card:hover {
   transform: scale(1.1);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-  border: 3px solid #000000;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
 }
 
 .project-image {
   height: 200px;
-  background: #f8f9fa;
+  background: #fafaf8;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -663,7 +819,7 @@ body {
 }
 
 .tech-tag {
-  background: #f8f9fa;
+  background: #fafaf8;
   color: #333;
   padding: 0.25rem 0.75rem;
   border-radius: 20px;
@@ -706,10 +862,8 @@ body {
 }
 
 .project-link-btn:hover {
-  background: #ffffff;
-  color: #000000;
+  background: #333333;
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 /* Contact Section */
@@ -784,11 +938,11 @@ body {
 
 /* Footer */
 .footer {
-  background: #f8f9fa !important;
+  background: #fafaf8 !important;
   color: #333;
   text-align: center;
   padding: 1rem 0;
-  margin-top: auto;
+  margin-top: 0; /* Removed auto margin to reduce gap from projects */
   position: relative;
   z-index: 1000;
   background-image: none !important;
@@ -883,8 +1037,8 @@ body {
   }
   
   .profile-placeholder {
-    width: 200px;
-    height: 200px;
+    width: 210px;
+    height: 210px;
     font-size: 3rem;
   }
   
@@ -943,7 +1097,7 @@ body {
 .project-detail-page {
   min-height: 100vh;
   padding-top: 80px;
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  background: #fafaf8;
 }
 
 .project-detail-header {
@@ -1115,7 +1269,7 @@ body {
 }
 
 .stat-card {
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  background: linear-gradient(135deg, #fafaf8 0%, #f0f0ed 100%);
   padding: 2rem;
   border-radius: 12px;
   text-align: center;
