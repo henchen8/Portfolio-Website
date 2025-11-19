@@ -117,25 +117,20 @@ function Home() {
         const projectsTop = projectsRect.top;
         const projectsBottom = projectsRect.bottom;
         
-        const PROJECTS_FADE_IN_START = 750;
-        const PROJECTS_FADE_IN_END = -500;
-        const PROJECTS_FADE_OUT_START = 1000;
-        const PROJECTS_FADE_OUT_END = 0;
+        // Check if we're near the bottom of the page
+        const distanceFromBottom = document.documentElement.scrollHeight - (window.scrollY + window.innerHeight);
+        const isNearBottom = distanceFromBottom < 200;
         
-        if (projectsTop < PROJECTS_FADE_IN_START && projectsTop > PROJECTS_FADE_IN_END) {
+        const PROJECTS_FADE_IN_START = 1200;
+        const PROJECTS_FADE_IN_END = -800;
+        
+        // Ensure full opacity when near bottom or past fade-in threshold
+        if (isNearBottom || projectsTop <= PROJECTS_FADE_IN_END) {
+          projectsOpacity = 1;
+        } else if (projectsTop < PROJECTS_FADE_IN_START && projectsTop > PROJECTS_FADE_IN_END) {
           const fadeInProgress = (PROJECTS_FADE_IN_START - projectsTop) / (PROJECTS_FADE_IN_START - PROJECTS_FADE_IN_END);
           const curveProgress = Math.pow(fadeInProgress, 2);
           projectsOpacity = curveProgress;
-        } else if (projectsTop <= PROJECTS_FADE_IN_END) {
-          projectsOpacity = 1;
-        }
-        
-        if (projectsOpacity > 0 && projectsBottom < PROJECTS_FADE_OUT_START && projectsBottom > PROJECTS_FADE_OUT_END) {
-          const fadeOutProgress = (PROJECTS_FADE_OUT_START - projectsBottom) / (PROJECTS_FADE_OUT_START - PROJECTS_FADE_OUT_END);
-          const curveProgress = Math.pow(fadeOutProgress, 2);
-          projectsOpacity = 1 - curveProgress;
-        } else if (projectsBottom <= PROJECTS_FADE_OUT_END) {
-          projectsOpacity = 0;
         }
       }
       
@@ -237,6 +232,17 @@ function Home() {
           <div className="container">
             <h2 className="section-title">Experience</h2>
             <div className="timeline">
+              <div className="timeline-item">
+                <div className="timeline-marker"></div>
+                <div className="timeline-content">
+                  <h3>Mechanical and Fluids Systems Engineer</h3>
+                  <p className="timeline-company">Penn Hyperloop • Sept 2024 - Present</p>
+                  <p>
+                    Working on the mechanical design and development of a high-speed hyperloop pod. 
+                    Contributing to subsystem integration, structural analysis, and prototype fabrication.
+                  </p>
+                </div>
+              </div>
               <div className="timeline-item">
                 <div className="timeline-marker"></div>
                 <div className="timeline-content">

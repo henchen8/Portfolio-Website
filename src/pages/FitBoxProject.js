@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import fitboxImage from '../assets/FitBoxlogo.png';
+import explosionDrawing from '../assets/website_m&tsi explosion drawing.png';
 
 function FitBoxProject() {
   const handleBackClick = () => {
@@ -31,24 +32,52 @@ function FitBoxProject() {
           </p>
         </div>
         
-        <div className="project-section">
-          <h2>Development Process</h2>
-          <p>
-            This project combined entrepreneurship with engineering to create an innovative fitness solution:
-          </p>
-          <ul>
-            <li><strong>Product Design:</strong> Created a compact, portable workout system using Onshape CAD</li>
-            <li><strong>Financial Modeling:</strong> Developed comprehensive financial projections and business models</li>
-            <li><strong>User Experience:</strong> Designed user interface and interaction flow using Figma</li>
-            <li><strong>Electronics:</strong> Integrated Arduino-based control system for smart functionality</li>
-            <li><strong>Business Strategy:</strong> Developed go-to-market strategy and executive summary</li>
-          </ul>
-          <div className="project-tech">
-            <span className="tech-tag">Financial Modelling</span>
-            <span className="tech-tag">Onshape</span>
-            <span className="tech-tag">Figma</span>
-            <span className="tech-tag">C</span>
-            <span className="tech-tag">Arduino</span>
+        <div style={{ 
+          display: 'flex', 
+          gap: '3rem', 
+          alignItems: 'flex-start', 
+          flexWrap: 'wrap', 
+          maxWidth: '1600px', 
+          margin: '0 auto',
+          width: 'calc(100vw - 4rem)',
+          marginLeft: '50%',
+          transform: 'translateX(-50%)',
+          padding: '0 2rem'
+        }}>
+          <div style={{ flex: '0 0 auto' }}>
+            <img 
+              src={explosionDrawing} 
+              alt="FitBox Explosion Drawing" 
+              style={{ 
+                maxWidth: '500px', 
+                width: '100%', 
+                height: 'auto', 
+                borderRadius: '8px' 
+              }} 
+            />
+          </div>
+          
+          <div style={{ flex: '1 1 500px', minWidth: '300px' }}>
+            <div className="project-section">
+              <h2>Development Process</h2>
+              <p>
+                This project combined entrepreneurship with engineering to create an innovative fitness solution:
+              </p>
+              <ul>
+                <li><strong>Product Design:</strong> Created a compact, portable workout system using Onshape CAD</li>
+                <li><strong>Financial Modeling:</strong> Developed comprehensive financial projections and business models</li>
+                <li><strong>User Experience:</strong> Designed user interface and interaction flow using Figma</li>
+                <li><strong>Electronics:</strong> Integrated Arduino-based control system for smart functionality</li>
+                <li><strong>Business Strategy:</strong> Developed go-to-market strategy and executive summary</li>
+              </ul>
+              <div className="project-tech">
+                <span className="tech-tag">Financial Modelling</span>
+                <span className="tech-tag">Onshape</span>
+                <span className="tech-tag">Figma</span>
+                <span className="tech-tag">C</span>
+                <span className="tech-tag">Arduino</span>
+              </div>
+            </div>
           </div>
         </div>
         

@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom';
 import rubiksImage from '../assets/rubiks1.jpeg';
-import rubiksDrawing from '../assets/rubiksdrawing.png';
+import rubiksDrawing from '../assets/1rubiksdrawing.png';
 import rubiksAssembly from '../assets/rubiks_assembly7.png';
+import rubiksGUI from '../assets/websiterubiksimg1.png';
 
 function RubiksCubeProject() {
   const handleBackClick = () => {
@@ -20,42 +21,88 @@ function RubiksCubeProject() {
           <img src={rubiksImage} alt="Rubik's Cube Robot" loading="eager" />
         </div>
         
-        <div className="project-section">
-          <h2>Overview</h2>
-          <p className="project-description">
-            Fully modular, autonmous cube-solving robot.
-          </p>
-          <p>
-          This project integrates mechanical design, electrical wiring and microcontoller programming, computer vision,
-          and algorithmic problem solving to create a high-performance Rubik's Cube solving system. The robot uses a custom-designed 
-            mechanical gripper system to manipulate the cube efficiently, with computer vision algorithms 
-            detecting the cube's current state and optimization algorithms calculating the optimal solving sequence.
+        <div style={{ 
+          display: 'flex', 
+          gap: '3rem', 
+          alignItems: 'flex-start', 
+          flexWrap: 'wrap', 
+          maxWidth: '1600px', 
+          margin: '0 auto',
+          width: 'calc(100vw - 4rem)',
+          marginLeft: '50%',
+          transform: 'translateX(-50%)',
+          padding: '0 2rem'
+        }}>
+          <div style={{ flex: '1 1 700px', minWidth: '300px' }}>
+            <div className="project-section">
+              <h2>Overview</h2>
+              <p className="project-description">
+                Fully modular, autonmous cube-solving robot.
+              </p>
+              <p>
+              This project integrates mechanical design, electrical wiring and microcontoller programming, computer vision,
+              and algorithmic problem solving to create a high-performance Rubik's Cube solving system. The robot uses a custom-designed 
+                mechanical gripper system to manipulate the cube efficiently, with computer vision algorithms 
+                detecting the cube's current state and optimization algorithms calculating the optimal solving sequence.
 
-           
-          </p>
-        </div>
-        
-        <div className="project-section">
-          <h2>Notable Stats</h2>
-          <div className="stats-grid">
-            <div className="stat-card">
-              <div className="stat-value">1s</div>
-              <div className="stat-label">Average Solve Times</div>
+               
+              </p>
             </div>
-            <div className="stat-card">
-              <div className="stat-value">&lt;20</div>
-              <div className="stat-label">Rotations Per Solve
+            
+            <div className="project-section">
+              <h2>Notable Stats</h2>
+              <div className="stats-grid">
+                <div className="stat-card">
+                  <div className="stat-value">1s</div>
+                  <div className="stat-label">Average Solve Times</div>
+                </div>
+                <div className="stat-card">
+                  <div className="stat-value">&lt;20</div>
+                  <div className="stat-label">Rotations Per Solve
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-        
-        <div className="project-section">
-          <h2>Live Demo</h2>
-          <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1.5rem' }}>
-            <a href="https://www.youtube.com/shorts/J1a7RxK03xU" target="_blank" rel="noopener noreferrer" className="project-link-btn" style={{ fontSize: '1.1rem', padding: '0.75rem 1.5rem' }}>
-              Watch on YouTube →
-            </a>
+          
+          <div style={{ flex: '0 0 auto' }}>
+            <div className="project-section">
+              <h2>Live Demo</h2>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '1.5rem' }}>
+                <video 
+                  width="315" 
+                  height="560" 
+                  loop
+                  autoPlay
+                  muted
+                  playsInline
+                  controls
+                  controlsList="nodownload nofullscreen noremoteplayback noplaybackrate"
+                  disablePictureInPicture={true}
+                  disableRemotePlayback
+                  className="no-pip-video"
+                  style={{ 
+                    maxWidth: '100%', 
+                    borderRadius: '8px', 
+                    cursor: 'pointer',
+                    objectFit: 'cover',
+                    objectPosition: 'center',
+                    height: '550px'
+                  }}
+                  onClick={(e) => {
+                    if (e.target.paused) {
+                      e.target.play();
+                    } else {
+                      e.target.pause();
+                    }
+                  }}
+                  onContextMenu={(e) => e.preventDefault()}
+                >
+                  <source src="/websiterubikssolve.mov" type="video/mp4" />
+                  Your browser does not support the video tag.
+                </video>
+              </div>
+            </div>
           </div>
         </div>
         
@@ -98,7 +145,7 @@ function RubiksCubeProject() {
             high-speed solving sequences.
           </p>
         </div>
-        
+
         <div className="project-section">
           <h2>Microcontroller</h2>
           <p>
@@ -117,29 +164,49 @@ function RubiksCubeProject() {
           </p>
         </div>
         
-        <div className="project-section">
-          <h2>Solving Algorithm & GUI</h2>
-          <p>
-            The solving system combines advanced algorithms with an intuitive user interface. Key features include:
-          </p>
-          <ul>
-            <li>Computer vision algorithms for cube state detection and color recognition</li>
-            <li>Optimized solving algorithms (CFOP method) for minimum move count</li>
-            <li>Real-time GUI displaying current cube state and solving progress</li>
-            <li>Statistical analysis of solve times and move optimization</li>
-          </ul>
-          <p>
-            The Python-based GUI provides real-time visualization of the solving process, allowing users to 
-            monitor algorithm performance and cube state recognition accuracy. The system achieves sub-second 
-            solve times with move counts consistently under 20 rotations.
-          </p>
-        </div>
-        
-        <div className="project-section">
-          <h2>Design & Assembly</h2>
-          <div className="project-gallery">
-            <img src={rubiksDrawing} alt="Rubik's Cube Robot Design" loading="lazy" />
-            <img src={rubiksAssembly} alt="Rubik's Cube Robot Assembly" loading="lazy" />
+        <div style={{ 
+          display: 'flex', 
+          gap: '3rem', 
+          alignItems: 'flex-start', 
+          flexWrap: 'wrap', 
+          maxWidth: '1600px', 
+          margin: '0 auto',
+          width: 'calc(100vw - 4rem)',
+          marginLeft: '50%',
+          transform: 'translateX(-50%)',
+          padding: '0 2rem'
+        }}>
+          <div style={{ flex: '0 0 auto' }}>
+            <img 
+              src={rubiksGUI} 
+              alt="Rubik's Cube GUI" 
+              style={{ 
+                maxWidth: '500px', 
+                width: '100%', 
+                height: 'auto', 
+                borderRadius: '8px' 
+              }} 
+            />
+          </div>
+          
+          <div style={{ flex: '1 1 500px', minWidth: '300px' }}>
+            <div className="project-section">
+              <h2>Solving Algorithm & GUI</h2>
+              <p>
+                The solving system combines advanced algorithms with an intuitive user interface. Key features include:
+              </p>
+              <ul>
+                <li>Computer vision algorithms for cube state detection and color recognition</li>
+                <li>Optimized solving algorithms (CFOP method) for minimum move count</li>
+                <li>Real-time GUI displaying current cube state and solving progress</li>
+                <li>Statistical analysis of solve times and move optimization</li>
+              </ul>
+              <p>
+                The Python-based GUI provides real-time visualization of the solving process, allowing users to 
+                monitor algorithm performance and cube state recognition accuracy. The system achieves sub-second 
+                solve times with move counts consistently under 20 rotations.
+              </p>
+            </div>
           </div>
         </div>
         

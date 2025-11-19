@@ -7,12 +7,27 @@ import RubiksCubeProject from './pages/RubiksCubeProject';
 import FinancialDerivativesProject from './pages/FinancialDerivativesProject';
 import FitBoxProject from './pages/FitBoxProject';
 
-function ScrollToTop() {
+function ScrollToTop({ loading }) {
   const { pathname, hash } = useLocation();
 
   useEffect(() => {
+    // Wait for loading animation to complete before scrolling
+    if (loading) return;
+    
     // Small delay to ensure DOM is ready
     const timer = setTimeout(() => {
+      // Check if this is a page refresh (not navigation)
+      const isPageRefresh = sessionStorage.getItem('pageRefresh') === 'true';
+      const savedScrollPosition = sessionStorage.getItem('scrollPosition');
+      
+      if (isPageRefresh && savedScrollPosition) {
+        // Restore scroll position after refresh
+        window.scrollTo({ top: parseInt(savedScrollPosition), left: 0, behavior: 'instant' });
+        sessionStorage.removeItem('pageRefresh');
+        sessionStorage.removeItem('scrollPosition');
+        return;
+      }
+      
       // Check if we're returning to home from a project page
       const returnToHome = sessionStorage.getItem('returnToHome') === 'true';
       
@@ -50,7 +65,7 @@ function ScrollToTop() {
     }, 0);
 
     return () => clearTimeout(timer);
-  }, [pathname, hash]);
+  }, [pathname, hash, loading]);
 
   return null;
 }
@@ -65,6 +80,10 @@ function Navbar() {
       if (sectionId === 'projects') {
         const elementPosition = section.getBoundingClientRect().top + window.pageYOffset;
         const offsetPosition = elementPosition + 300;
+        window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+      } else if (sectionId === 'experience') {
+        const elementPosition = section.getBoundingClientRect().top + window.pageYOffset;
+        const offsetPosition = elementPosition + 55;
         window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
       } else {
         section.scrollIntoView({ behavior: 'smooth' });
@@ -89,7 +108,10 @@ function Navbar() {
           </li>
           <li className="nav-item">
             {isHomePage ? (
-              <a href="#experience" className="nav-link">Experience</a>
+              <a href="#experience" className="nav-link" onClick={(e) => {
+                e.preventDefault();
+                scrollToSection('experience');
+              }}>Experience</a>
             ) : (
               <Link to="/#experience" className="nav-link">Experience</Link>
             )}
@@ -153,13 +175,32 @@ function App() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Hide loading screen after animation
+    // Save scroll position and set refresh flag before page unloads
+    const handleBeforeUnload = () => {
+      sessionStorage.setItem('scrollPosition', window.scrollY.toString());
+      sessionStorage.setItem('pageRefresh', 'true');
+    };
+    
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    
+    // Reset scroll position only on initial mount (not refresh)
+    const isPageRefresh = sessionStorage.getItem('pageRefresh') === 'true';
+    if (!isPageRefresh) {
+      window.scrollTo(0, 0);
+    }
+    
+    document.body.classList.add('loading');
+    
+    // Hide loading screen after animation (1.35s animation + 0.2s fadeout = 1.55s)
     const timer = setTimeout(() => {
       setLoading(false);
-    }, 1225);
+      document.body.classList.remove('loading');
+    }, 1550);
 
     return () => {
       clearTimeout(timer);
+      document.body.classList.remove('loading');
+      window.removeEventListener('beforeunload', handleBeforeUnload);
     };
   }, []);
 
@@ -212,8 +253,8 @@ function App() {
         </div>
       )}
       <Router>
-        <ScrollToTop />
-        <div className="App">
+        <ScrollToTop loading={loading} />
+        <div className={`App ${loading ? 'app-loading' : ''}`}>
           <div className="scroll-background"></div>
           <Navbar />
           <Routes>

@@ -34,7 +34,7 @@ html:has(body.loading) {
   align-items: center;
   justify-content: center;
   z-index: 99999;
-  animation: fadeOut 0.2s ease-out 1.7s forwards;
+  animation: fadeOut 0.2s ease-out 1.35s forwards;
   overflow: hidden;
 }
 
@@ -49,7 +49,7 @@ html:has(body.loading) {
   background: linear-gradient(90deg, #f0f0ed 0%, #f0f0ed 50%, black 50%, black 100%);
   background-size: 200% 100%;
   background-position: 0% 0%;
-  animation: backgroundSweep 1.7s cubic-bezier(0.95, 0, 0.05, 1) forwards;
+  animation: backgroundSweep 1.35s cubic-bezier(0.95, 0, 0.05, 1) forwards;
   z-index: 1;
 }
 
@@ -60,13 +60,13 @@ html:has(body.loading) {
   15% {
     background-position: 0% 0%;
   }
-  40% {
+  27.5% {
     background-position: 100% 0%;
   }
-  60% {
+  65% {
     background-position: 100% 0%;
   }
-  85% {
+  77.5% {
     background-position: 0% 0%;
   }
   100% {
@@ -94,7 +94,7 @@ html:has(body.loading) {
   width: 150px;
   height: auto;
   filter: invert(0);
-  animation: pulse 1.5s ease-in-out infinite, logoColorChange 1.7s cubic-bezier(0.95, 0, 0.05, 1) forwards;
+  animation: pulse 1.5s ease-in-out infinite, logoColorChange 1.35s cubic-bezier(0.95, 0, 0.05, 1) forwards;
 }
 
 @keyframes pulse {
@@ -110,16 +110,16 @@ html:has(body.loading) {
   0% {
     filter: invert(0);
   }
-  15% {
+  20% {
     filter: invert(0);
   }
-  40% {
+  22.5% {
     filter: invert(1);
   }
-  60% {
+  70% {
     filter: invert(1);
   }
-  85% {
+  72.5% {
     filter: invert(0);
   }
   100% {
@@ -135,23 +135,23 @@ html:has(body.loading) {
   overflow: hidden;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   will-change: transform;
-  animation: barContainerColorChange 1.7s cubic-bezier(0.95, 0, 0.05, 1) forwards;
+  animation: barContainerColorChange 1.35s cubic-bezier(0.95, 0, 0.05, 1) forwards;
 }
 
 @keyframes barContainerColorChange {
   0% {
     background: #e0e0e0;
   }
-  15% {
+  20% {
     background: #e0e0e0;
   }
-  40% {
+  22.5% {
     background: #333333;
   }
-  60% {
+  70% {
     background: #333333;
   }
-  85% {
+  72.5% {
     background: #e0e0e0;
   }
   100% {
@@ -166,7 +166,7 @@ html:has(body.loading) {
   border-radius: 10px;
   transform: translateX(-100%);
   will-change: transform;
-  animation: fillBar 1.7s linear forwards, barColorChange 1.7s cubic-bezier(0.95, 0, 0.05, 1) forwards;
+  animation: fillBar 1.35s linear forwards, barColorChange 1.35s cubic-bezier(0.95, 0, 0.05, 1) forwards;
 }
 
 @keyframes fillBar {
@@ -182,16 +182,16 @@ html:has(body.loading) {
   0% {
     background: #000000;
   }
-  15% {
+  20% {
     background: #000000;
   }
-  40% {
+  22.5% {
     background: #ffffff;
   }
-  60% {
+  70% {
     background: #ffffff;
   }
-  85% {
+  72.5% {
     background: #000000;
   }
   100% {
@@ -541,8 +541,8 @@ body.loading {
   
   /* Sets up the Rubik's cube drawing as the background image */
   background-image: url('./assets/rubiksdrawing.png');
-  background-size: 75%; /* Scaled down to 75% to zoom out and show more of the image */
-  background-position: center calc(20% + 45px); /* Centers horizontally, positions vertically at 20% + 45px offset */
+  background-size: 78%; /* Scaled up to 95% to fill more of the page */
+  background-position: center calc(40% + 45px); /* Centers horizontally, positions vertically at 20% + 45px offset */
   background-repeat: no-repeat; /* Prevents image from repeating/tiling */
   background-attachment: fixed; /* Keeps background fixed relative to viewport during scrolling */
   
@@ -578,7 +578,7 @@ body.loading {
   top: 0;
   bottom: 0;
   width: 3px;
-  background: linear-gradient(180deg, #e0e0e0 0%, #f0f0ed 50%, #e0e0e0 100%);
+  background: transparent;
   border-radius: 2px;
 }
 
@@ -590,39 +590,20 @@ body.loading {
 
 .timeline-marker {
   position: absolute;
-  left: 8px;
-  top: 0;
-  width: 32px;
-  height: 32px;
-  background: linear-gradient(135deg, #000000 0%, #333333 100%);
+  left: 16px;
+  top: 12px;
+  width: 14px;
+  height: 14px;
+  background: #fafaf8;
   border-radius: 50%;
-  border: 4px solid #fafaf8;
-  box-shadow: 0 0 0 3px #e0e0e0, 0 4px 12px rgba(0, 0, 0, 0.15);
+  border: 3px solid #000000;
   transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   z-index: 5;
 }
 
-.timeline-marker::before {
-  content: '';
-  position: absolute;
-  width: 12px;
-  height: 12px;
-  background: #fafaf8;
-  border-radius: 50%;
-  transition: all 0.3s ease;
-}
-
 .timeline-item:hover .timeline-marker {
-  transform: scale(1.15);
-  box-shadow: 0 0 0 3px #000000, 0 6px 20px rgba(0, 0, 0, 0.25);
-}
-
-.timeline-item:hover .timeline-marker::before {
-  background: linear-gradient(135deg, #fafaf8 0%, #f0f0ed 100%);
-  transform: scale(1.1);
+  transform: scale(1.3);
+  border-color: #333333;
 }
 
 .timeline-content h3 {
@@ -1098,6 +1079,14 @@ body.loading {
   min-height: 100vh;
   padding-top: 80px;
   background: #fafaf8;
+}
+
+.no-pip-video::-webkit-media-controls-picture-in-picture-button {
+  display: none !important;
+}
+
+.no-pip-video::--webkit-media-controls-panel .picture-in-picture-button {
+  display: none !important;
 }
 
 .project-detail-header {
