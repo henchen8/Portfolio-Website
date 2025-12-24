@@ -22,10 +22,20 @@ function FinancialDerivativesProject() {
         <div className="project-section">
           <h2>Overview</h2>
           <p className="project-description">
-            Conducted a brief exploration of the world of mathematical and quantitative finance 
+            A breif exploration of the world of quantitative finance
+
             through CAPM, PCA, and Black Scholes Merton options model.
           </p>
           <p>
+            This reserach project is split in to different foci: the first is educating the individual who is interested
+            in retail investment, where concepts such as ETFs, dividends, and basic trading strategies are introduced. 
+            The second half focuses more on the technical side—the applicaiton of data analytics, complex mathematical concepts, 
+            and numerical analysisto quantitative finance. Topics discussed include CAPM, PCA, and the Black Scholes Merton options model. 
+            Mathematical concepts discussed include linear transformations on matrix represenations of portfolios, eigendecomposition for PCA,
+            in addition to a high level overview of stochastic calculus and free boundary problems. 
+
+            
+            
             This research project delves into the fundamental models that underpin modern quantitative 
             finance. Through rigorous mathematical analysis and computational implementation, I explored 
             how these models are used to price derivatives, assess risk, and optimize portfolios in 
@@ -34,34 +44,87 @@ function FinancialDerivativesProject() {
         </div>
         
         <div className="project-section">
-          <h2>Research Areas</h2>
+          <h2>Capital Asset Pricing Model</h2>
           <p>
-            This project delved into several key areas of quantitative finance:
+            Understanding risk-return relationships in financial markets through systematic and unsystematic risk analysis.
+            Key concepts explored include:
           </p>
           <ul>
-            <li><strong>Capital Asset Pricing Model (CAPM):</strong> Understanding risk-return relationships in financial markets</li>
-            <li><strong>Principal Component Analysis:</strong> Dimensionality reduction techniques for portfolio analysis</li>
-            <li><strong>Black-Scholes-Merton Model:</strong> Options pricing using stochastic differential equations</li>
-            <li><strong>Numerical Methods:</strong> Computational approaches to solving complex financial models</li>
+            <li>• Expected return calculation using beta coefficients</li>
+            <li>• Systematic vs unsystematic risk decomposition</li>
+            <li>• Security market line and market equilibrium</li>
+            <li>• Portfolio optimization and efficient frontier</li>
           </ul>
-          <div className="project-tech">
-            <span className="tech-tag">Financial Derivatives</span>
-            <span className="tech-tag">PC Analysis</span>
-            <span className="tech-tag">Numerical Methods</span>
-            <span className="tech-tag">Linear Algebra</span>
-            <span className="tech-tag">Differential Equations</span>
+        </div>
+
+        <div className="project-section">
+          <h2>Principal Component Analysis</h2>
+          <p>
+            Dimensionality reduction techniques for portfolio analysis using eigendecomposition and linear transformations.
+            Key mathematical concepts include:
+          </p>
+          <ul>
+            <li>• Linear transformations on matrix representations of portfolios</li>
+            <li>• Eigendecomposition for identifying principal components</li>
+            <li>• Variance explained by each component</li>
+            <li>• Feature extraction and data compression in financial datasets</li>
+          </ul>
+        </div>
+
+        <div className="project-section">
+          <h2>Black-Scholes-Merton Model</h2>
+          <p>
+            Options pricing using stochastic differential equations, free boundary problems, and stochastic calculus.
+            Key theoretical foundations include:
+          </p>
+          <ul>
+            <li>• Geometric Brownian motion for stock price modeling</li>
+            <li>• Derivation of the Black-Scholes partial differential equation</li>
+            <li>• Risk-neutral pricing and no-arbitrage principles</li>
+            <li>• Put-call parity and arbitrage relationships</li>
+            <li>• Greeks: Delta, Gamma, Theta, Vega, and Rho</li>
+          </ul>
+          <div style={{ marginTop: '2rem', textAlign: 'center' }}>
+            <img
+              src={blackscholesImage}
+              alt="Black-Scholes Model Equation"
+              style={{
+                maxWidth: '700px',
+                width: '100%',
+                height: 'auto',
+                borderRadius: '8px',
+                boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+              }}
+            />
           </div>
         </div>
-        
+
         <div className="project-section">
-          <h2>Black-Scholes Model</h2>
-          <div className="project-gallery">
-            <img src={blackscholesImage} alt="Black-Scholes Model Visualization" />
-          </div>
+          <h2>Numerical Methods</h2>
+          <p>
+            Computational approaches to solving complex financial models and implementing pricing algorithms.
+            Key techniques explored include:
+          </p>
+          <ul>
+            <li>• Finite difference methods for PDE solving</li>
+            <li>• Monte Carlo simulation for option pricing</li>
+            <li>• Binomial tree models for American options</li>
+            <li>• Numerical integration and optimization algorithms</li>
+          </ul>
         </div>
         
         <div className="project-section">
           <h2>Resources</h2>
+          <div className="project-tech">
+            <span className="tech-tag">Risk Analysis</span>
+            <span className="tech-tag">Portfolio Theory</span>
+            <span className="tech-tag">Linear Algebra</span>
+            <span className="tech-tag">Data Analytics</span>
+            <span className="tech-tag">Derivatives</span>
+            <span className="tech-tag">Stochastic Calculus</span>
+            <span className="tech-tag">Numerical Analysis</span>
+            <span className="tech-tag">Algorithms</span>
+          </div>
           <div className="project-links">
             <a href="https://youtu.be/doYoJWpjqiU" target="_blank" rel="noopener noreferrer" className="project-link-btn">Live Presentation</a>
             <a href="https://docs.google.com/presentation/d/129P1cS45KJAWDq-8KD_RfFEJdXTyp73k/edit?slide=id.p1#slide=id.p1" target="_blank" rel="noopener noreferrer" className="project-link-btn">Slides</a>

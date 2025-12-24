@@ -1,71 +1,78 @@
 import './App.css';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useLayoutEffect, useCallback } from 'react';
 import { Analytics } from '@vercel/analytics/react';
 import Home from './pages/Home';
 import RubiksCubeProject from './pages/RubiksCubeProject';
 import FinancialDerivativesProject from './pages/FinancialDerivativesProject';
 import FitBoxProject from './pages/FitBoxProject';
 
-function ScrollToTop({ loading }) {
+function ScrollToTop({ loading, onScrollReady }) {
   const { pathname, hash } = useLocation();
 
-  useEffect(() => {
-    // Wait for loading animation to complete before scrolling
+  // Use useLayoutEffect for synchronous scroll positioning BEFORE paint
+  useLayoutEffect(() => {
+    // Don't scroll during loading animation
     if (loading) return;
     
-    // Small delay to ensure DOM is ready
-    const timer = setTimeout(() => {
-      // Check if this is a page refresh (not navigation)
-      const isPageRefresh = sessionStorage.getItem('pageRefresh') === 'true';
-      const savedScrollPosition = sessionStorage.getItem('scrollPosition');
+    // Remove position:fixed BEFORE setting scroll to allow scrollTo to work
+    document.body.classList.remove('loading');
+    document.documentElement.classList.remove('loading');
+    
+    // Check if this is a page refresh (not navigation)
+    const isPageRefresh = sessionStorage.getItem('pageRefresh') === 'true';
+    const savedScrollPosition = sessionStorage.getItem('scrollPosition');
+    
+    if (isPageRefresh && savedScrollPosition) {
+      // Restore scroll position after refresh - synchronously before paint
+      window.scrollTo(0, parseInt(savedScrollPosition));
+      sessionStorage.removeItem('pageRefresh');
+      sessionStorage.removeItem('scrollPosition');
+      // Signal that scroll is ready
+      onScrollReady?.();
+      return;
+    }
+    
+    // Check if we're returning to home from a project page
+    const returnToHome = sessionStorage.getItem('returnToHome') === 'true';
+    
+    if (returnToHome && pathname === '/') {
+      sessionStorage.removeItem('returnToHome');
       
-      if (isPageRefresh && savedScrollPosition) {
-        // Restore scroll position after refresh
-        window.scrollTo({ top: parseInt(savedScrollPosition), left: 0, behavior: 'instant' });
-        sessionStorage.removeItem('pageRefresh');
-        sessionStorage.removeItem('scrollPosition');
-        return;
+      // Scroll to projects section with same offset as "My Projects" button
+      const section = document.getElementById('projects');
+      if (section) {
+        const elementPosition = section.getBoundingClientRect().top + window.pageYOffset;
+        const offsetPosition = elementPosition + 300;
+        window.scrollTo(0, offsetPosition);
       }
-      
-      // Check if we're returning to home from a project page
-      const returnToHome = sessionStorage.getItem('returnToHome') === 'true';
-      
-      if (returnToHome && pathname === '/') {
-        sessionStorage.removeItem('returnToHome');
-        
-        // Scroll to the bottom of the page (distance 0px from bottom of viewing pane to bottom of page)
-        const maxScrollPosition = document.documentElement.scrollHeight - window.innerHeight;
-        window.scrollTo({ 
-          top: maxScrollPosition, 
-          left: 0, 
-          behavior: 'instant' 
-        });
-      } else if (hash === '#projects' && pathname === '/') {
-        // Handle hash navigation to projects section
-        const section = document.getElementById('projects');
-        if (section) {
-          const elementPosition = section.getBoundingClientRect().top + window.pageYOffset;
-          const offsetPosition = elementPosition + 300;
-          window.scrollTo({ top: offsetPosition, behavior: 'instant' });
-        }
-      } else if (hash === '#experience' && pathname === '/') {
-        // Handle hash navigation to experience section
-        const section = document.getElementById('experience');
-        if (section) {
-          section.scrollIntoView({ behavior: 'instant' });
-        }
-      } else if (!hash && pathname !== '/') {
-        // Navigating to a project page - scroll to 90px
-        window.scrollTo({ top: 90, left: 0, behavior: 'instant' });
-      } else if (!hash && pathname === '/') {
-        // Navigating to home page without hash - scroll to top
-        window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    } else if (hash === '#projects' && pathname === '/') {
+      // Handle hash navigation to projects section
+      const section = document.getElementById('projects');
+      if (section) {
+        const elementPosition = section.getBoundingClientRect().top + window.pageYOffset;
+        const offsetPosition = elementPosition + 300;
+        window.scrollTo(0, offsetPosition);
       }
-    }, 0);
-
-    return () => clearTimeout(timer);
-  }, [pathname, hash, loading]);
+    } else if (hash === '#experience' && pathname === '/') {
+      // Handle hash navigation to experience section
+      const section = document.getElementById('experience');
+      if (section) {
+        const elementPosition = section.getBoundingClientRect().top + window.pageYOffset;
+        const offsetPosition = elementPosition + 55;
+        window.scrollTo(0, offsetPosition);
+      }
+    } else if (!hash && pathname !== '/') {
+      // Navigating to a project page - scroll to 90px
+      window.scrollTo(0, 90);
+    } else if (!hash && pathname === '/') {
+      // Navigating to home page without hash - scroll to top
+      window.scrollTo(0, 0);
+    }
+    
+    // Signal that scroll is ready
+    onScrollReady?.();
+  }, [pathname, hash, loading, onScrollReady]);
 
   return null;
 }
@@ -173,6 +180,21 @@ function Footer() {
 
 function App() {
   const [loading, setLoading] = useState(true);
+  const [scrollReady, setScrollReady] = useState(false);
+
+  // Immediately restore scroll position on mount (before paint) for page refresh
+  useLayoutEffect(() => {
+    const isPageRefresh = sessionStorage.getItem('pageRefresh') === 'true';
+    const savedScrollPosition = sessionStorage.getItem('scrollPosition');
+    
+    if (isPageRefresh && savedScrollPosition) {
+      // Immediately set scroll position before anything renders
+      window.scrollTo(0, parseInt(savedScrollPosition));
+    } else {
+      // Fresh navigation - scroll to top
+      window.scrollTo(0, 0);
+    }
+  }, []);
 
   useEffect(() => {
     // Save scroll position and set refresh flag before page unloads
@@ -183,25 +205,27 @@ function App() {
     
     window.addEventListener('beforeunload', handleBeforeUnload);
     
-    // Reset scroll position only on initial mount (not refresh)
-    const isPageRefresh = sessionStorage.getItem('pageRefresh') === 'true';
-    if (!isPageRefresh) {
-      window.scrollTo(0, 0);
-    }
-    
     document.body.classList.add('loading');
+    document.documentElement.classList.add('loading');
     
     // Hide loading screen after animation (1.35s animation + 0.2s fadeout = 1.55s)
+    // Note: body.loading class is removed in ScrollToTop's useLayoutEffect to ensure
+    // scroll position is set BEFORE position:fixed is removed (prevents flash)
     const timer = setTimeout(() => {
       setLoading(false);
-      document.body.classList.remove('loading');
     }, 1550);
 
     return () => {
       clearTimeout(timer);
       document.body.classList.remove('loading');
+      document.documentElement.classList.remove('loading');
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
+  }, []);
+
+  // Mark scroll as ready once loading completes and scroll position is set
+  const handleScrollReady = useCallback(() => {
+    setScrollReady(true);
   }, []);
 
   useEffect(() => {
@@ -253,8 +277,8 @@ function App() {
         </div>
       )}
       <Router>
-        <ScrollToTop loading={loading} />
-        <div className={`App ${loading ? 'app-loading' : ''}`}>
+        <ScrollToTop loading={loading} onScrollReady={handleScrollReady} />
+        <div className={`App ${loading ? 'app-loading' : ''} ${!loading && !scrollReady ? 'app-scroll-pending' : ''}`}>
           <div className="scroll-background"></div>
           <Navbar />
           <Routes>

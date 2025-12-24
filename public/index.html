@@ -46,6 +46,71 @@
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
     <title>Henry Chen</title>
+    <style id="initial-background-opacity">
+      /* Inline CSS to set initial background opacity before React loads - prevents flash */
+      .experience-section::before,
+      .gap-section::before,
+      .projects-section::before {
+        opacity: 0 !important;
+      }
+    </style>
+    <script>
+      // Disable browser's automatic scroll restoration to prevent flash
+      if ('scrollRestoration' in history) {
+        history.scrollRestoration = 'manual';
+      }
+    </script>
+    <script>
+      // Calculate and set background opacity immediately to prevent flash
+      (function() {
+        function calculateOpacity(scrollY) {
+          const maxOpacity = 0.5; // Match the CSS variable --background-image-opacity
+          
+          const FADE_IN_START = 800;
+          const FADE_IN_END = 1600;
+          const FADE_OUT_START = 1800;
+          const FADE_OUT_END = 2700;
+          
+          if (scrollY < FADE_IN_START) {
+            return 0;
+          } else if (scrollY <= FADE_IN_END) {
+            const fadeInProgress = (scrollY - FADE_IN_START) / (FADE_IN_END - FADE_IN_START);
+            const curveProgress = Math.pow(fadeInProgress, 2);
+            return curveProgress * maxOpacity;
+          } else if (scrollY <= FADE_OUT_START) {
+            return maxOpacity;
+          } else if (scrollY <= FADE_OUT_END) {
+            const fadeOutProgress = (scrollY - FADE_OUT_START) / (FADE_OUT_END - FADE_OUT_START);
+            const curveProgress = Math.pow(1 - fadeOutProgress, 1.2);
+            return Math.max(0, curveProgress * maxOpacity);
+          } else {
+            return 0;
+          }
+        }
+        
+        function updateOpacity() {
+          const scrollY = window.scrollY || window.pageYOffset || document.documentElement.scrollTop;
+          const currentOpacity = calculateOpacity(scrollY);
+          
+          const style = document.getElementById('initial-background-opacity');
+          if (style) {
+            style.textContent = `
+              .experience-section::before,
+              .gap-section::before,
+              .projects-section::before {
+                opacity: ${currentOpacity} !important;
+              }
+            `;
+          }
+        }
+        
+        // Update immediately and on DOMContentLoaded
+        updateOpacity();
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', updateOpacity);
+        }
+      })();
+    </script>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
