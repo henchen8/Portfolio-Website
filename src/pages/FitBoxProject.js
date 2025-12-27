@@ -1,59 +1,200 @@
 import { Link } from 'react-router-dom';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, memo, useLayoutEffect } from 'react';
 import fitboxImage from '../assets/FitBoxlogo.png';
 import explosionDrawing from '../assets/website_m&tsi explosion drawing.png';
 
 // Figma-style iPhone mockup component with FitBox logo
-const IPhoneMockup = ({ logoSrc }) => {
+// Memoized to prevent unnecessary re-renders that could interfere with loading screen
+const IPhoneMockup = memo(({ logoSrc }) => {
   const phoneRef = useRef(null);
   const [showLoading, setShowLoading] = useState(true);
   const [isFadingOut, setIsFadingOut] = useState(false);
   const [showWorkout, setShowWorkout] = useState(false);
+  const [isActiveWorkout, setIsActiveWorkout] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
+  const [isWorkoutHovering, setIsWorkoutHovering] = useState(false);
+  const [activePage, setActivePage] = useState('home');
+  const [currentWeight, setCurrentWeight] = useState(25);
+  const [currentReps, setCurrentReps] = useState(0);
+  const [totalCalories, setTotalCalories] = useState(0);
+  const [cableDisplacement, setCableDisplacement] = useState([]); // Array of {time, position} points
+  const [currentExercise, setCurrentExercise] = useState(0);
+  const [isConnected, setIsConnected] = useState(true);
+  const workoutStartTime = useRef(null);
   const hasLoadedRef = useRef(false);
 
-  // Show loading screen when phone scrolls into view (similar to Rubik's cube video)
+  const exercises = [
+    { name: 'Bench Press', sets: 3, reps: 10 },
+    { name: 'Shoulder Press', sets: 3, reps: 12 },
+    { name: 'Tricep Extension', sets: 3, reps: 15 },
+    { name: 'Chest Fly', sets: 3, reps: 12 },
+    { name: 'Cable Lateral Raise', sets: 3, reps: 12 }
+  ];
+
+  const MIN_THRESHOLD_DISPLACEMENT = 80; // Minimum displacement goal in percentage
+
+  // Defer IntersectionObserver setup until after page load to prevent blocking
+  // Wait for page loading screen to complete before initializing observers
   useEffect(() => {
-    const phone = phoneRef.current;
-    if (!phone || hasLoadedRef.current) return;
+    // Check if page is still loading (body has 'loading' class)
+    const checkPageLoaded = () => {
+      const isPageLoading = document.body.classList.contains('loading') || 
+                           document.documentElement.classList.contains('loading');
+      return !isPageLoading;
+    };
 
-    let loadingTimeout = null;
-    let fadeTimeout = null;
+    // Wait for page to finish loading before setting up observers
+    const initObserver = () => {
+      const phone = phoneRef.current;
+      if (!phone || hasLoadedRef.current) return;
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting && entry.intersectionRatio >= 0.5 && !hasLoadedRef.current) {
-            // Phone is visible - start fade out after delay
-            hasLoadedRef.current = true;
-            loadingTimeout = setTimeout(() => {
-              setIsFadingOut(true);
-              fadeTimeout = setTimeout(() => {
-                setShowLoading(false);
-              }, 600); // Fade out duration
-              observer.disconnect();
-            }, 800); // 0.8 second delay before fade starts
-          }
-        });
-      },
-      {
-        threshold: 0.5, // Trigger when 50% visible
-        rootMargin: '0px'
+      let loadingTimeout = null;
+      let fadeTimeout = null;
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting && entry.intersectionRatio >= 0.5 && !hasLoadedRef.current) {
+              // Phone is visible - start fade out after delay
+              hasLoadedRef.current = true;
+              loadingTimeout = setTimeout(() => {
+                setIsFadingOut(true);
+                fadeTimeout = setTimeout(() => {
+                  setShowLoading(false);
+                }, 600); // Fade out duration
+                observer.disconnect();
+              }, 1200); // 1.2 second delay before fade starts
+            }
+          });
+        },
+        {
+          threshold: 0.5, // Trigger when 50% visible
+          rootMargin: '0px'
+        }
+      );
+
+      observer.observe(phone);
+
+      return () => {
+        if (loadingTimeout) clearTimeout(loadingTimeout);
+        if (fadeTimeout) clearTimeout(fadeTimeout);
+        observer.disconnect();
+      };
+    };
+
+    // Wait for page load to complete (check every 50ms, max 2 seconds)
+    let attempts = 0;
+    const maxAttempts = 40; // 40 * 50ms = 2 seconds max wait
+    const checkInterval = setInterval(() => {
+      attempts++;
+      if (checkPageLoaded() || attempts >= maxAttempts) {
+        clearInterval(checkInterval);
+        // Use requestIdleCallback if available, otherwise setTimeout
+        if (window.requestIdleCallback) {
+          requestIdleCallback(initObserver, { timeout: 1000 });
+        } else {
+          setTimeout(initObserver, 100);
+        }
       }
-    );
-
-    observer.observe(phone);
+    }, 50);
 
     return () => {
-      if (loadingTimeout) clearTimeout(loadingTimeout);
-      if (fadeTimeout) clearTimeout(fadeTimeout);
-      observer.disconnect();
+      clearInterval(checkInterval);
+    };
+  }, []);
+
+  // Handle wheel events on phone - prevent page scroll and enable internal scrolling
+  // Defer setup until after page load to prevent interference with loading screen
+  useEffect(() => {
+    // Wait for page to finish loading before setting up wheel handler
+    const checkPageLoaded = () => {
+      const isPageLoading = document.body.classList.contains('loading') || 
+                           document.documentElement.classList.contains('loading');
+      return !isPageLoading;
+    };
+
+    const setupWheelHandler = () => {
+      const phone = phoneRef.current;
+      if (!phone) return;
+
+      const handleWheel = (e) => {
+        // Prevent page from scrolling
+        e.preventDefault();
+        
+        // Find scrollable content within the phone and scroll it
+        const scrollable = e.target.closest('[data-phone-scroll]');
+        if (scrollable) {
+          scrollable.scrollTop += e.deltaY;
+        }
+      };
+
+      // Use native event listener with passive: false to allow preventDefault
+      phone.addEventListener('wheel', handleWheel, { passive: false });
+      
+      return () => {
+        phone.removeEventListener('wheel', handleWheel);
+      };
+    };
+
+    // Wait for page load to complete
+    let attempts = 0;
+    const maxAttempts = 40;
+    const checkInterval = setInterval(() => {
+      attempts++;
+      if (checkPageLoaded() || attempts >= maxAttempts) {
+        clearInterval(checkInterval);
+        // Defer wheel handler setup
+        if (window.requestIdleCallback) {
+          requestIdleCallback(setupWheelHandler, { timeout: 1000 });
+        } else {
+          setTimeout(setupWheelHandler, 100);
+        }
+      }
+    }, 50);
+
+    return () => {
+      clearInterval(checkInterval);
     };
   }, []);
 
   return (
-  <div ref={phoneRef} style={{
-    position: 'relative',
+  <>
+    <style>{`
+      .phone-scroll::-webkit-scrollbar {
+        width: 2px;
+      }
+      .phone-scroll::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      .phone-scroll::-webkit-scrollbar-thumb {
+        background: rgba(0, 0, 0, 0.15);
+        border-radius: 2px;
+      }
+      .phone-scroll::-webkit-scrollbar-thumb:hover {
+        background: rgba(0, 0, 0, 0.25);
+      }
+      .phone-scroll {
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+      .insta-scroll::-webkit-scrollbar {
+        width: 0px;
+        display: none;
+      }
+      .insta-scroll {
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+      @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+      }
+      .connection-pulse {
+        animation: pulse 2s infinite;
+      }
+    `}</style>
+    <div ref={phoneRef} style={{
+      position: 'relative',
     width: '280px',
     height: '570px'
   }}>
@@ -76,13 +217,13 @@ const IPhoneMockup = ({ logoSrc }) => {
       
       {/* Screen area */}
       <div style={{
-        width: '100%',
-        height: '100%',
-        background: '#f5f5e6',
-        borderRadius: '47px',
-        overflow: 'hidden',
-        position: 'relative'
-      }}>
+          width: '100%',
+          height: '100%',
+          background: '#f5f5e6',
+          borderRadius: '47px',
+          overflow: 'hidden',
+          position: 'relative'
+        }}>
         {/* Loading Screen Overlay */}
         {showLoading && (
           <div style={{
@@ -122,11 +263,390 @@ const IPhoneMockup = ({ logoSrc }) => {
           </div>
         )}
 
-        {/* Workout GUI Overlay */}
-        {showWorkout && (
+        {/* Active Workout GUI Overlay */}
+        {isActiveWorkout && (
           <div style={{
             position: 'absolute',
-            top: 0,
+            top: '50px',
+            left: 0,
+            right: 0,
+            bottom: '80px',
+            background: '#f5f5e6',
+            borderRadius: '47px',
+            display: 'flex',
+            flexDirection: 'column',
+            zIndex: 250,
+            padding: '4px 16px 12px 16px',
+            overflow: 'hidden'
+          }}>
+            {/* Header with back button and connection indicator */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              marginBottom: '8px',
+              marginTop: '2px'
+            }}>
+              <button
+                onClick={() => setIsActiveWorkout(false)}
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  fontSize: '16px',
+                  color: '#000',
+                  cursor: 'pointer',
+                  padding: '4px 8px'
+                }}
+              >
+                ←
+              </button>
+              <div style={{
+                fontSize: '12px',
+                fontWeight: '600',
+                color: '#000',
+                fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
+                textTransform: 'uppercase',
+                letterSpacing: '1px'
+              }}>Workout Active</div>
+              {/* Subtle connection indicator in top right */}
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px'
+              }}>
+                <div className={isConnected ? 'connection-pulse' : ''} style={{
+                  width: '6px',
+                  height: '6px',
+                  borderRadius: '50%',
+                  background: isConnected ? '#4caf50' : '#f44336'
+                }}></div>
+              </div>
+            </div>
+
+            {/* Current Exercise */}
+            <div style={{
+              textAlign: 'center',
+              marginBottom: '8px'
+            }}>
+              <div style={{
+                fontSize: '9px',
+                color: '#666',
+                fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
+                textTransform: 'uppercase',
+                letterSpacing: '1.5px',
+                marginBottom: '2px'
+              }}>
+                Exercise {currentExercise + 1} of {exercises.length}
+              </div>
+              <div style={{
+                fontSize: '18px',
+                fontWeight: '600',
+                color: '#000',
+                fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
+                marginBottom: '2px'
+              }}>
+                {exercises[currentExercise]?.name || 'Bench Press'}
+              </div>
+              <div style={{
+                fontSize: '10px',
+                color: '#666',
+                fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif'
+              }}>
+                Set {Math.floor(currentReps / exercises[currentExercise]?.reps) + 1} of {exercises[currentExercise]?.sets || 3}
+              </div>
+            </div>
+
+            {/* Weight Control */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '12px',
+              marginBottom: '8px',
+              padding: '8px',
+              background: '#fff',
+              borderRadius: '10px',
+              border: '1px solid #ddd'
+            }}>
+              <button
+                onClick={() => setCurrentWeight(Math.max(5, currentWeight - 5))}
+                style={{
+                  width: '28px',
+                  height: '28px',
+                  borderRadius: '50%',
+                  border: '1.5px solid #000',
+                  background: 'transparent',
+                  color: '#000',
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif'
+                }}
+              >
+                −
+              </button>
+              <div style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                minWidth: '70px'
+              }}>
+                <div style={{
+                  fontSize: '20px',
+                  fontWeight: '600',
+                  color: '#000',
+                  fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
+                  lineHeight: '1'
+                }}>
+                  {currentWeight}
+                </div>
+                <div style={{
+                  fontSize: '8px',
+                  color: '#666',
+                  fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
+                  textTransform: 'uppercase',
+                  letterSpacing: '1px'
+                }}>
+                  lbs
+                </div>
+              </div>
+              <button
+                onClick={() => setCurrentWeight(Math.min(200, currentWeight + 5))}
+                style={{
+                  width: '28px',
+                  height: '28px',
+                  borderRadius: '50%',
+                  border: '1.5px solid #000',
+                  background: '#000',
+                  color: '#f5f5e6',
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif'
+                }}
+              >
+                +
+              </button>
+            </div>
+
+            {/* Cable Displacement Graph */}
+            <div style={{
+              marginBottom: '8px',
+              padding: '8px',
+              background: '#fff',
+              borderRadius: '10px',
+              border: '1px solid #ddd'
+            }}>
+              <div style={{
+                fontSize: '8px',
+                color: '#666',
+                fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
+                textTransform: 'uppercase',
+                letterSpacing: '1.5px',
+                marginBottom: '6px',
+                textAlign: 'center'
+              }}>
+                Cable Displacement
+              </div>
+              {/* Graph Area */}
+              <div style={{
+                position: 'relative',
+                width: '100%',
+                height: '70px',
+                marginBottom: '4px'
+              }}>
+                <svg width="100%" height="70" viewBox="0 0 200 100" preserveAspectRatio="none" style={{ overflow: 'visible' }}>
+                  {/* Grid lines */}
+                  <line x1="0" y1="25" x2="200" y2="25" stroke="#e0e0e0" strokeWidth="0.5" strokeDasharray="2,2" />
+                  <line x1="0" y1="50" x2="200" y2="50" stroke="#e0e0e0" strokeWidth="0.5" strokeDasharray="2,2" />
+                  <line x1="0" y1="75" x2="200" y2="75" stroke="#e0e0e0" strokeWidth="0.5" strokeDasharray="2,2" />
+                  
+                  {/* Threshold line (goal) */}
+                  <line 
+                    x1="0" 
+                    y1={100 - MIN_THRESHOLD_DISPLACEMENT} 
+                    x2="200" 
+                    y2={100 - MIN_THRESHOLD_DISPLACEMENT} 
+                    stroke="#4caf50" 
+                    strokeWidth="1" 
+                    strokeDasharray="3,2"
+                  />
+                  
+                  {/* Sample displacement data - position vs time (sinusoidal pattern with multiple rep cycles) */}
+                  <polyline
+                    points="0,80 5,72 10,60 15,45 20,32 25,25 30,28 35,38 40,52 45,65 50,75 55,72 60,60 65,45 70,32 75,25 80,28 85,38 90,52 95,65 100,75 105,70 110,58 115,43 120,30 125,25 130,30 135,42 140,55 145,68 150,75 155,72 160,60 165,45 170,32 175,25 180,28 185,38 190,52 195,65 200,72"
+                    fill="none"
+                    stroke="#000"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  
+                  {/* Threshold label */}
+                  <text 
+                    x="195" 
+                    y={100 - MIN_THRESHOLD_DISPLACEMENT - 2} 
+                    fill="#4caf50" 
+                    fontSize="6" 
+                    fontFamily="-apple-system, BlinkMacSystemFont, sans-serif"
+                    textAnchor="end"
+                  >
+                    Goal
+                  </text>
+                </svg>
+                
+                {/* Y-axis labels */}
+                <div style={{
+                  position: 'absolute',
+                  left: '-18px',
+                  top: '0',
+                  height: '100%',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                  fontSize: '6px',
+                  color: '#999',
+                  fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif'
+                }}>
+                  <span>100%</span>
+                  <span>75%</span>
+                  <span>50%</span>
+                  <span>25%</span>
+                  <span>0%</span>
+                </div>
+                
+                {/* X-axis label */}
+                <div style={{
+                  position: 'absolute',
+                  bottom: '-12px',
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  fontSize: '7px',
+                  color: '#666',
+                  fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif'
+                }}>
+                  Time
+                </div>
+              </div>
+              
+              {/* Current displacement value */}
+              <div style={{
+                fontSize: '9px',
+                color: '#666',
+                fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
+                textAlign: 'center',
+                marginTop: '2px'
+              }}>
+                Current: 70% · Goal: {MIN_THRESHOLD_DISPLACEMENT}%
+              </div>
+            </div>
+
+            {/* Stats Row */}
+            <div style={{
+              display: 'flex',
+              justifyContent: 'space-around',
+              marginBottom: '8px',
+              padding: '8px',
+              background: '#fff',
+              borderRadius: '10px',
+              border: '1px solid #ddd'
+            }}>
+              {/* Reps */}
+              <div style={{
+                textAlign: 'center',
+                flex: 1
+              }}>
+                <div style={{
+                  fontSize: '20px',
+                  fontWeight: '600',
+                  color: '#000',
+                  fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
+                  lineHeight: '1',
+                  marginBottom: '2px'
+                }}>
+                  {currentReps}
+                </div>
+                <div style={{
+                  fontSize: '8px',
+                  color: '#666',
+                  fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
+                  textTransform: 'uppercase',
+                  letterSpacing: '1px'
+                }}>
+                  Reps
+                </div>
+              </div>
+              
+              {/* Divider */}
+              <div style={{
+                width: '1px',
+                background: '#ddd',
+                margin: '0 6px'
+              }}></div>
+
+              {/* Calories */}
+              <div style={{
+                textAlign: 'center',
+                flex: 1
+              }}>
+                <div style={{
+                  fontSize: '20px',
+                  fontWeight: '600',
+                  color: '#000',
+                  fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
+                  lineHeight: '1',
+                  marginBottom: '2px'
+                }}>
+                  {Math.round(totalCalories)}
+                </div>
+                <div style={{
+                  fontSize: '8px',
+                  color: '#666',
+                  fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
+                  textTransform: 'uppercase',
+                  letterSpacing: '1px'
+                }}>
+                  Calories
+                </div>
+              </div>
+            </div>
+
+            {/* Pause/End Workout Button */}
+            <button
+              onClick={() => setIsActiveWorkout(false)}
+              style={{
+                width: '100%',
+                padding: '10px',
+                background: 'transparent',
+                border: '1.5px solid #000',
+                borderRadius: '0',
+                color: '#000',
+                fontSize: '10px',
+                fontWeight: '500',
+                fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
+                textTransform: 'uppercase',
+                letterSpacing: '2px',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+                marginTop: 'auto'
+              }}
+            >
+              Pause Workout
+            </button>
+          </div>
+        )}
+
+        {/* Workout GUI Overlay */}
+        {showWorkout && !isActiveWorkout && (
+          <div style={{
+            position: 'absolute',
+            top: '50px',
             left: 0,
             right: 0,
             bottom: 0,
@@ -135,7 +655,7 @@ const IPhoneMockup = ({ logoSrc }) => {
             display: 'flex',
             flexDirection: 'column',
             zIndex: 200,
-            padding: '24px 20px',
+            padding: '6px 20px 72px 20px',
             overflow: 'hidden'
           }}>
             {/* Header with back button */}
@@ -143,7 +663,8 @@ const IPhoneMockup = ({ logoSrc }) => {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
-              marginBottom: '20px'
+              marginBottom: '12px',
+              marginTop: '4px'
             }}>
               <button
                 onClick={() => setShowWorkout(false)}
@@ -165,15 +686,15 @@ const IPhoneMockup = ({ logoSrc }) => {
                 fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
                 textTransform: 'uppercase',
                 letterSpacing: '1px'
-              }}>Push Day</div>
+              }}>Upper Body Push</div>
               <div style={{ width: '32px' }}></div>
             </div>
 
             {/* Exercise list */}
             <div style={{
               flex: 1,
-              overflowY: 'auto',
-              marginBottom: '16px'
+              overflowY: 'hidden',
+              marginBottom: '10px'
             }}>
               <div style={{
                 fontSize: '10px',
@@ -181,26 +702,26 @@ const IPhoneMockup = ({ logoSrc }) => {
                 fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
                 textTransform: 'uppercase',
                 letterSpacing: '1.5px',
-                marginBottom: '12px'
+                marginBottom: '10px'
               }}>Exercises</div>
               
               {/* Exercise 1 */}
               <div style={{
-                background: '#fff',
+                background: '#f5f5e6',
                 borderRadius: '12px',
-                padding: '14px',
-                marginBottom: '10px',
+                padding: '6px 12px',
+                marginBottom: '6px',
                 border: '1px solid #ddd'
               }}>
                 <div style={{
-                  fontSize: '14px',
+                  fontSize: '13px',
                   fontWeight: '600',
                   color: '#000',
                   fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
-                  marginBottom: '4px'
+                  marginBottom: '2px'
                 }}>Bench Press</div>
                 <div style={{
-                  fontSize: '11px',
+                  fontSize: '10px',
                   color: '#666',
                   fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif'
                 }}>3 sets × 10 reps</div>
@@ -208,21 +729,21 @@ const IPhoneMockup = ({ logoSrc }) => {
 
               {/* Exercise 2 */}
               <div style={{
-                background: '#fff',
+                background: '#f5f5e6',
                 borderRadius: '12px',
-                padding: '14px',
-                marginBottom: '10px',
+                padding: '6px 12px',
+                marginBottom: '6px',
                 border: '1px solid #ddd'
               }}>
                 <div style={{
-                  fontSize: '14px',
+                  fontSize: '13px',
                   fontWeight: '600',
                   color: '#000',
                   fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
-                  marginBottom: '4px'
+                  marginBottom: '2px'
                 }}>Shoulder Press</div>
                 <div style={{
-                  fontSize: '11px',
+                  fontSize: '10px',
                   color: '#666',
                   fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif'
                 }}>3 sets × 12 reps</div>
@@ -230,51 +751,117 @@ const IPhoneMockup = ({ logoSrc }) => {
 
               {/* Exercise 3 */}
               <div style={{
-                background: '#fff',
+                background: '#f5f5e6',
                 borderRadius: '12px',
-                padding: '14px',
-                marginBottom: '10px',
+                padding: '6px 12px',
+                marginBottom: '6px',
                 border: '1px solid #ddd'
               }}>
                 <div style={{
-                  fontSize: '14px',
+                  fontSize: '13px',
                   fontWeight: '600',
                   color: '#000',
                   fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
-                  marginBottom: '4px'
-                }}>Tricep Dips</div>
+                  marginBottom: '2px'
+                }}>Tricep Extension</div>
                 <div style={{
-                  fontSize: '11px',
+                  fontSize: '10px',
                   color: '#666',
                   fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif'
                 }}>3 sets × 15 reps</div>
+              </div>
+
+              {/* Exercise 4 */}
+              <div style={{
+                background: '#f5f5e6',
+                borderRadius: '12px',
+                padding: '6px 12px',
+                marginBottom: '6px',
+                border: '1px solid #ddd'
+              }}>
+                <div style={{
+                  fontSize: '13px',
+                  fontWeight: '600',
+                  color: '#000',
+                  fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
+                  marginBottom: '2px'
+                }}>Chest Fly</div>
+                <div style={{
+                  fontSize: '10px',
+                  color: '#666',
+                  fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif'
+                }}>3 sets × 12 reps</div>
+              </div>
+
+              {/* Exercise 5 */}
+              <div style={{
+                background: '#f5f5e6',
+                borderRadius: '12px',
+                padding: '6px 12px',
+                marginBottom: '6px',
+                border: '1px solid #ddd'
+              }}>
+                <div style={{
+                  fontSize: '13px',
+                  fontWeight: '600',
+                  color: '#000',
+                  fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
+                  marginBottom: '2px'
+                }}>Cable Lateral Raise</div>
+                <div style={{
+                  fontSize: '10px',
+                  color: '#666',
+                  fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif'
+                }}>3 sets × 12 reps</div>
               </div>
             </div>
 
             {/* Start workout button */}
             <button
-              onClick={() => setShowWorkout(false)}
+              onClick={() => {
+                setIsActiveWorkout(true);
+                setCurrentExercise(0);
+                setCurrentReps(0);
+                setTotalCalories(0);
+                setCableDisplacement([]);
+              }}
+              onMouseEnter={() => setIsWorkoutHovering(true)}
+              onMouseLeave={() => setIsWorkoutHovering(false)}
               style={{
                 width: '100%',
                 padding: '14px',
-                background: '#000',
-                border: 'none',
+                background: isWorkoutHovering ? '#000' : 'transparent',
+                border: '1.5px solid #000',
                 borderRadius: '0',
-                color: '#f5f5e6',
+                color: isWorkoutHovering ? '#f5f5e6' : '#000',
                 fontSize: '11px',
-                fontWeight: '600',
+                fontWeight: '500',
                 fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
                 textTransform: 'uppercase',
                 letterSpacing: '2px',
-                cursor: 'pointer'
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+                marginTop: 'auto'
               }}
             >
               Start Workout
             </button>
           </div>
         )}
+
+        {/* Background area behind status bar */}
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          height: '50px',
+          background: '#f5f5e6',
+          borderRadius: '47px 47px 0 0',
+          zIndex: 1
+        }} />
         
-        {/* Dynamic Island */}
+        {/* Dynamic Island - Always on top */}
         <div style={{
           position: 'absolute',
           top: '14px',
@@ -284,10 +871,10 @@ const IPhoneMockup = ({ logoSrc }) => {
           height: '24px',
           background: '#000',
           borderRadius: '12px',
-          zIndex: 10
+          zIndex: 300
         }} />
         
-        {/* Status Bar */}
+        {/* Status Bar - Always on top */}
         <div style={{
           position: 'absolute',
           top: '16px',
@@ -296,7 +883,7 @@ const IPhoneMockup = ({ logoSrc }) => {
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          zIndex: 5
+          zIndex: 300
         }}>
           <span style={{ 
             fontSize: '14px', 
@@ -333,185 +920,1183 @@ const IPhoneMockup = ({ logoSrc }) => {
           padding: '20px 28px',
           background: '#f5f5e6'
         }}>
-          {/* FitBox Logo */}
-          <div style={{
-            width: '130px',
-            height: '42px',
-            marginTop: '-8px',
-            marginLeft: '-4px',
-            marginBottom: '12px',
-            display: 'flex',
-            alignItems: 'center'
-          }}>
-            <img 
-              src={logoSrc} 
-              alt="FitBox Logo" 
-              style={{ 
-                width: '100%', 
-                height: '100%', 
-                objectFit: 'contain',
-                mixBlendMode: 'multiply'
-              }} 
-            />
-          </div>
           
-          {/* Greeting */}
-          <div style={{
-            fontSize: '14px',
-            color: '#666',
-            fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
-            fontWeight: '500',
-            marginBottom: '12px'
-          }}>Welcome back, Henry!</div>
-          
-          {/* Streak and Strength Row */}
-          <div style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            marginBottom: '18px'
-          }}>
-            {/* Streak */}
-            <div>
+          {/* HOME PAGE */}
+          {activePage === 'home' && (
+            <>
+              {/* Greeting */}
               <div style={{
-                fontSize: '42px',
-                fontWeight: '200',
-                color: '#000',
-                fontFamily: "'SF Pro Display', 'Helvetica Neue', sans-serif",
-                letterSpacing: '-2px',
-                lineHeight: '1'
-              }}>12</div>
-              <div style={{
-                fontSize: '10px',
+                fontSize: '14px',
                 color: '#666',
                 fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
-                textTransform: 'uppercase',
-                letterSpacing: '1.5px',
-                marginTop: '4px'
-              }}>Day Streak</div>
-            </div>
-            
-            {/* Divider */}
-            <div style={{ width: '1px', background: '#ddd', margin: '0 20px' }} />
-            
-            {/* Strength Progress */}
-            <div style={{ textAlign: 'right' }}>
+                fontWeight: '500',
+                marginBottom: '12px',
+                marginTop: '-4px'
+              }}>Welcome back, Henry!</div>
+              
+              {/* Streak and Strength Row */}
               <div style={{
-                fontSize: '42px',
-                fontWeight: '200',
-                color: '#000',
-                fontFamily: "'SF Pro Display', 'Helvetica Neue', sans-serif",
-                letterSpacing: '-2px',
-                lineHeight: '1',
                 display: 'flex',
-                alignItems: 'baseline',
-                justifyContent: 'flex-end',
-                gap: '2px'
+                justifyContent: 'space-between',
+                marginBottom: '18px'
               }}>
-                <span>+18</span>
-                <span style={{ fontSize: '22px', fontWeight: '300', marginLeft: '1px' }}>%</span>
+                {/* Streak */}
+                <div>
+                  <div style={{
+                    fontSize: '42px',
+                    fontWeight: '200',
+                    color: '#000',
+                    fontFamily: "'SF Pro Display', 'Helvetica Neue', sans-serif",
+                    letterSpacing: '-2px',
+                    lineHeight: '1'
+                  }}>12</div>
+                  <div style={{
+                    fontSize: '10px',
+                    color: '#666',
+                    fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
+                    textTransform: 'uppercase',
+                    letterSpacing: '1.5px',
+                    marginTop: '4px'
+                  }}>Day Streak</div>
+                </div>
+                
+                {/* Divider */}
+                <div style={{ width: '1px', background: '#ddd', margin: '0 20px' }} />
+                
+                {/* Strength Progress */}
+                <div style={{ textAlign: 'right' }}>
+                  <div style={{
+                    fontSize: '42px',
+                    fontWeight: '200',
+                    color: '#000',
+                    fontFamily: "'SF Pro Display', 'Helvetica Neue', sans-serif",
+                    letterSpacing: '-2px',
+                    lineHeight: '1',
+                    display: 'flex',
+                    alignItems: 'baseline',
+                    justifyContent: 'flex-end',
+                    gap: '2px'
+                  }}>
+                    <span>+18</span>
+                    <span style={{ fontSize: '22px', fontWeight: '300', marginLeft: '1px' }}>%</span>
+                  </div>
+                  <div style={{
+                    fontSize: '10px',
+                    color: '#666',
+                    fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
+                    textTransform: 'uppercase',
+                    letterSpacing: '1.5px',
+                    marginTop: '4px',
+                    lineHeight: '1.4'
+                  }}>
+                    <div>Strength</div>
+                    <div style={{ fontSize: '7px', letterSpacing: '1px', marginTop: '2px' }}>This Month</div>
+                  </div>
+                </div>
               </div>
+              
+              {/* Divider */}
+              <div style={{ height: '1px', background: '#ddd', marginBottom: '12px' }} />
+              
+              {/* Today's workout section */}
+              <div style={{
+                fontSize: '11px',
+                color: '#666',
+                fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
+                textTransform: 'uppercase',
+                letterSpacing: '2px',
+                marginBottom: '8px'
+              }}>Today</div>
+              
+              <div style={{
+                fontSize: '24px',
+                fontWeight: '500',
+                color: '#000',
+                fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
+                marginBottom: '4px'
+              }}>Upper Body Push</div>
+              
+              <div style={{
+                fontSize: '15px',
+                color: '#666',
+                fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
+                marginBottom: '18px'
+              }}>45 min · Chest, shoulders, triceps</div>
+              
+              {/* Tomorrow's workout section */}
+              <div style={{
+                fontSize: '8px',
+                color: '#666',
+                fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
+                textTransform: 'uppercase',
+                letterSpacing: '1.5px',
+                marginBottom: '4px'
+              }}>Tomorrow</div>
+              
+              <div style={{
+                fontSize: '14px',
+                fontWeight: '500',
+                color: '#000',
+                fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
+                marginBottom: '2px'
+              }}>Lower Body</div>
+              
+              <div style={{
+                fontSize: '11px',
+                color: '#666',
+                fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
+                marginBottom: '24px'
+              }}>50 min · Quads, hamstrings, glutes</div>
+              
+              {/* Start Button - minimal outline style */}
+              <button 
+                onClick={() => setShowWorkout(true)}
+                onMouseEnter={() => setIsHovering(true)}
+                onMouseLeave={() => setIsHovering(false)}
+                style={{
+                  width: '100%',
+                  padding: '14px',
+                  background: isHovering ? '#000' : 'transparent',
+                  border: '1.5px solid #000',
+                  borderRadius: '0',
+                  color: isHovering ? '#f5f5e6' : '#000',
+                  fontSize: '11px',
+                  fontWeight: '500',
+                  fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
+                  textTransform: 'uppercase',
+                  letterSpacing: '2px',
+                  cursor: 'pointer',
+                  marginBottom: '16px',
+                  transition: 'all 0.2s ease'
+                }}>
+                Begin
+              </button>
+            </>
+          )}
+          
+          {/* ANALYTICS PAGE */}
+          {activePage === 'analytics' && (
+            <>
               <div style={{
                 fontSize: '10px',
                 color: '#666',
                 fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
                 textTransform: 'uppercase',
-                letterSpacing: '1.5px',
-                marginTop: '4px',
-                lineHeight: '1.4'
+                letterSpacing: '2px',
+                marginBottom: '4px',
+                marginTop: '-8px'
+              }}>Analytics</div>
+              
+              <div style={{
+                fontSize: '16px',
+                fontWeight: '500',
+                color: '#000',
+                fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
+                marginBottom: '10px'
+              }}>This Week</div>
+              
+              {/* Calories Chart */}
+              <div style={{
+                background: '#f5f5e6',
+                border: '1px solid #ddd',
+                borderRadius: '8px',
+                padding: '10px',
+                marginBottom: '10px'
               }}>
-                <div>Strength</div>
-                <div style={{ fontSize: '7px', letterSpacing: '1px', marginTop: '2px' }}>This Month</div>
+                <div style={{
+                  fontSize: '8px',
+                  color: '#666',
+                  fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
+                  textTransform: 'uppercase',
+                  letterSpacing: '1.5px',
+                  marginBottom: '8px'
+                }}>Calories per Workout</div>
+                
+                {/* Line Chart */}
+                <div style={{ position: 'relative', height: '70px', marginBottom: '4px' }}>
+                  {/* Y-axis labels */}
+                  <div style={{ position: 'absolute', left: '0', top: '0', bottom: '14px', width: '24px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                    <span style={{ fontSize: '6px', color: '#999', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>600</span>
+                    <span style={{ fontSize: '6px', color: '#999', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>300</span>
+                    <span style={{ fontSize: '6px', color: '#999', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>0</span>
+                  </div>
+                  
+                  {/* Chart area */}
+                  <div style={{ marginLeft: '28px', height: '55px', position: 'relative' }}>
+                    {/* Grid lines */}
+                    <div style={{ position: 'absolute', top: '0', left: '0', right: '0', borderTop: '1px solid #eee' }} />
+                    <div style={{ position: 'absolute', top: '50%', left: '0', right: '0', borderTop: '1px dashed #eee' }} />
+                    <div style={{ position: 'absolute', bottom: '0', left: '0', right: '0', borderTop: '1px solid #ddd' }} />
+                    
+                    {/* SVG Line Chart */}
+                    <svg width="100%" height="55" viewBox="0 0 160 55" preserveAspectRatio="none" style={{ overflow: 'visible' }}>
+                      {/* Gradient fill under line */}
+                      <defs>
+                        <linearGradient id="lineGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                          <stop offset="0%" stopColor="#000" stopOpacity="0.15" />
+                          <stop offset="100%" stopColor="#000" stopOpacity="0" />
+                        </linearGradient>
+                      </defs>
+                      
+                      {/* Area fill */}
+                      <path
+                        d="M 0 25 L 27 12 L 53 32 L 80 7 L 107 18 L 133 23 L 160 14 L 160 55 L 0 55 Z"
+                        fill="url(#lineGradient)"
+                      />
+                      
+                      {/* Line - values: 320, 480, 290, 520, 410, 380, 450 */}
+                      <polyline
+                        points="0,25 27,12 53,32 80,7 107,18 133,23 160,14"
+                        fill="none"
+                        stroke="#000"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                      
+                      {/* Data points */}
+                      {[
+                        { x: 0, y: 25 },
+                        { x: 27, y: 12 },
+                        { x: 53, y: 32 },
+                        { x: 80, y: 7 },
+                        { x: 107, y: 18 },
+                        { x: 133, y: 23 },
+                        { x: 160, y: 14 }
+                      ].map((point, i) => (
+                        <circle key={i} cx={point.x} cy={point.y} r="2.5" fill="#fff" stroke="#000" strokeWidth="1.5" />
+                      ))}
+                    </svg>
+                    
+                    {/* X-axis labels */}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '2px' }}>
+                      {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((day, i) => (
+                        <span key={i} style={{ fontSize: '6px', color: '#666', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>{day}</span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+                  <div style={{
+                    fontSize: '18px',
+                    fontWeight: '300',
+                    color: '#000',
+                    fontFamily: "'SF Pro Display', 'Helvetica Neue', sans-serif"
+                  }}>2,850 <span style={{ fontSize: '10px', color: '#666' }}>cal</span></div>
+                  <div style={{ fontSize: '9px', color: '#666', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>7 workouts</div>
+                </div>
               </div>
+              
+              {/* Workout Duration Chart */}
+              <div style={{
+                background: '#f5f5e6',
+                border: '1px solid #ddd',
+                borderRadius: '8px',
+                padding: '10px'
+              }}>
+                <div style={{
+                  fontSize: '8px',
+                  color: '#666',
+                  fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
+                  textTransform: 'uppercase',
+                  letterSpacing: '1.5px',
+                  marginBottom: '8px'
+                }}>Workout Duration</div>
+                
+                {/* Line Chart for Duration */}
+                <div style={{ position: 'relative', height: '70px', marginBottom: '4px' }}>
+                  {/* Y-axis labels */}
+                  <div style={{ position: 'absolute', left: '0', top: '0', bottom: '14px', width: '20px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                    <span style={{ fontSize: '6px', color: '#999', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>60m</span>
+                    <span style={{ fontSize: '6px', color: '#999', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>30m</span>
+                    <span style={{ fontSize: '6px', color: '#999', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>0</span>
+                  </div>
+                  
+                  {/* Chart area */}
+                  <div style={{ marginLeft: '24px', height: '55px', position: 'relative' }}>
+                    {/* Grid lines */}
+                    <div style={{ position: 'absolute', top: '0', left: '0', right: '0', borderTop: '1px solid #e0e0e0' }} />
+                    <div style={{ position: 'absolute', top: '50%', left: '0', right: '0', borderTop: '1px dashed #e0e0e0' }} />
+                    <div style={{ position: 'absolute', bottom: '0', left: '0', right: '0', borderTop: '1px solid #ccc' }} />
+                    
+                    {/* SVG Line Chart */}
+                    <svg width="100%" height="55" viewBox="0 0 160 55" preserveAspectRatio="none" style={{ overflow: 'visible' }}>
+                      {/* Gradient fill under line */}
+                      <defs>
+                        <linearGradient id="durationGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                          <stop offset="0%" stopColor="#666" stopOpacity="0.2" />
+                          <stop offset="100%" stopColor="#666" stopOpacity="0" />
+                        </linearGradient>
+                      </defs>
+                      
+                      {/* Area fill - values: 45, 30, 50, 45, 35, 55, 40 min */}
+                      <path
+                        d="M 0 14 L 27 27.5 L 53 9 L 80 14 L 107 23 L 133 4.5 L 160 18 L 160 55 L 0 55 Z"
+                        fill="url(#durationGradient)"
+                      />
+                      
+                      {/* Line */}
+                      <polyline
+                        points="0,14 27,27.5 53,9 80,14 107,23 133,4.5 160,18"
+                        fill="none"
+                        stroke="#666"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                      
+                      {/* Data points */}
+                      {[
+                        { x: 0, y: 14 },
+                        { x: 27, y: 27.5 },
+                        { x: 53, y: 9 },
+                        { x: 80, y: 14 },
+                        { x: 107, y: 23 },
+                        { x: 133, y: 4.5 },
+                        { x: 160, y: 18 }
+                      ].map((point, i) => (
+                        <circle key={i} cx={point.x} cy={point.y} r="2.5" fill="#f5f5e6" stroke="#666" strokeWidth="1.5" />
+                      ))}
+                    </svg>
+                    
+                    {/* X-axis labels */}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '2px' }}>
+                      {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((day, i) => (
+                        <span key={i} style={{ fontSize: '6px', color: '#666', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>{day}</span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+                  <div style={{
+                    fontSize: '18px',
+                    fontWeight: '300',
+                    color: '#000',
+                    fontFamily: "'SF Pro Display', 'Helvetica Neue', sans-serif"
+                  }}>300 <span style={{ fontSize: '10px', color: '#666' }}>min</span></div>
+                  <div style={{ fontSize: '9px', color: '#666', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>avg 43 min/workout</div>
+                </div>
+              </div>
+            </>
+          )}
+          
+          {/* FRIENDS PAGE - Social Feed */}
+          {activePage === 'friends' && (
+            <>
+              <div style={{
+                fontSize: '18px',
+                fontWeight: '600',
+                color: '#000',
+                fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
+                marginBottom: '14px',
+                marginTop: '-6px'
+              }}>Feed</div>
+              
+              {/* Social Feed */}
+              <div data-phone-scroll className="phone-scroll" style={{ 
+                display: 'flex', 
+                flexDirection: 'column', 
+                gap: '0',
+                overflowY: 'auto',
+                flex: 1,
+                paddingBottom: '60px',
+                margin: '0 -28px'
+              }}>
+                {/* Post 1 - Workout */}
+                <div style={{ borderBottom: '1px solid #e0e0e0', padding: '14px 16px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
+                    <div style={{
+                      width: '36px',
+                      height: '36px',
+                      borderRadius: '50%',
+                      background: '#000',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: '#fff',
+                      fontSize: '12px',
+                      fontWeight: '600',
+                      fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif'
+                    }}>JK</div>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: '13px', fontWeight: '600', color: '#000', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>Jake Kim</div>
+                      <div style={{ fontSize: '11px', color: '#888', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>2 hours ago</div>
+                    </div>
+                  </div>
+                  
+                  <div style={{ 
+                    background: '#000', 
+                    borderRadius: '12px',
+                    padding: '16px',
+                    color: '#fff',
+                    marginBottom: '12px'
+                  }}>
+                    <div style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '6px', opacity: 0.6 }}>Workout Complete</div>
+                    <div style={{ fontSize: '17px', fontWeight: '600', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif', marginBottom: '4px' }}>Full Body HIIT</div>
+                    <div style={{ fontSize: '12px', opacity: 0.75 }}>45 min · 520 cal burned</div>
+                  </div>
+                  
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#000" strokeWidth="2">
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                      </svg>
+                      <span style={{ fontSize: '12px', color: '#000', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>47</span>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#000" strokeWidth="2">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                      </svg>
+                      <span style={{ fontSize: '12px', color: '#000', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>8</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Post 2 - PR */}
+                <div style={{ borderBottom: '1px solid #e0e0e0', padding: '14px 16px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
+                    <div style={{
+                      width: '36px',
+                      height: '36px',
+                      borderRadius: '50%',
+                      background: '#000',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: '#fff',
+                      fontSize: '12px',
+                      fontWeight: '600',
+                      fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif'
+                    }}>SL</div>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: '13px', fontWeight: '600', color: '#000', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>Sarah Lee</div>
+                      <div style={{ fontSize: '11px', color: '#888', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>5 hours ago</div>
+                    </div>
+                  </div>
+                  
+                  <div style={{ 
+                    background: 'linear-gradient(135deg, #1a1a1a 0%, #333 100%)', 
+                    borderRadius: '12px',
+                    padding: '20px 16px',
+                    color: '#fff',
+                    textAlign: 'center',
+                    marginBottom: '12px'
+                  }}>
+                    <div style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: '4px', opacity: 0.7 }}>New Personal Record</div>
+                    <div style={{ fontSize: '20px', fontWeight: '700', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>Deadlift 185 lbs</div>
+                  </div>
+                  
+                  <div style={{ fontSize: '13px', color: '#000', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif', marginBottom: '10px', lineHeight: '1.4' }}>
+                    Finally hit my goal!
+                  </div>
+                  
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="#ed4956" stroke="#ed4956" strokeWidth="2">
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                      </svg>
+                      <span style={{ fontSize: '12px', color: '#000', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>124</span>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#000" strokeWidth="2">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                      </svg>
+                      <span style={{ fontSize: '12px', color: '#000', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>12</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Post 3 - Streak */}
+                <div style={{ borderBottom: '1px solid #e0e0e0', padding: '14px 16px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
+                    <div style={{
+                      width: '36px',
+                      height: '36px',
+                      borderRadius: '50%',
+                      background: '#000',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: '#fff',
+                      fontSize: '12px',
+                      fontWeight: '600',
+                      fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif'
+                    }}>AL</div>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: '13px', fontWeight: '600', color: '#000', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>Amy Liu</div>
+                      <div style={{ fontSize: '11px', color: '#888', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>1 day ago</div>
+                    </div>
+                  </div>
+                  
+                  <div style={{ 
+                    background: '#000', 
+                    borderRadius: '12px',
+                    padding: '20px 16px',
+                    color: '#fff',
+                    textAlign: 'center',
+                    marginBottom: '12px'
+                  }}>
+                    <div style={{ fontSize: '36px', fontWeight: '200', fontFamily: "'SF Pro Display', sans-serif", lineHeight: '1' }}>30</div>
+                    <div style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '2px', marginTop: '4px', opacity: 0.7 }}>Day Streak</div>
+                  </div>
+                  
+                  <div style={{ fontSize: '13px', color: '#000', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif', marginBottom: '10px', lineHeight: '1.4' }}>
+                    Who's with me?
+                  </div>
+                  
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="#ed4956" stroke="#ed4956" strokeWidth="2">
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                      </svg>
+                      <span style={{ fontSize: '12px', color: '#000', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>89</span>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#000" strokeWidth="2">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                      </svg>
+                      <span style={{ fontSize: '12px', color: '#000', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>24</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Post 4 - Cardio */}
+                <div style={{ borderBottom: '1px solid #e0e0e0', padding: '14px 16px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
+                    <div style={{
+                      width: '36px',
+                      height: '36px',
+                      borderRadius: '50%',
+                      background: '#000',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: '#fff',
+                      fontSize: '12px',
+                      fontWeight: '600',
+                      fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif'
+                    }}>MT</div>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: '13px', fontWeight: '600', color: '#000', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>Mike Thompson</div>
+                      <div style={{ fontSize: '11px', color: '#888', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>3 hours ago</div>
+                    </div>
+                  </div>
+                  
+                  <div style={{ 
+                    background: '#000', 
+                    borderRadius: '12px',
+                    padding: '16px',
+                    color: '#fff',
+                    marginBottom: '12px'
+                  }}>
+                    <div style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '6px', opacity: 0.6 }}>Workout Complete</div>
+                    <div style={{ fontSize: '17px', fontWeight: '600', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif', marginBottom: '4px' }}>Cardio Blast</div>
+                    <div style={{ fontSize: '12px', opacity: 0.75 }}>30 min · 380 cal burned</div>
+                  </div>
+                  
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#000" strokeWidth="2">
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                      </svg>
+                      <span style={{ fontSize: '12px', color: '#000', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>32</span>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#000" strokeWidth="2">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                      </svg>
+                      <span style={{ fontSize: '12px', color: '#000', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>5</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Post 5 - Strength Milestone */}
+                <div style={{ borderBottom: '1px solid #e0e0e0', padding: '14px 16px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
+                    <div style={{
+                      width: '36px',
+                      height: '36px',
+                      borderRadius: '50%',
+                      background: '#000',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: '#fff',
+                      fontSize: '12px',
+                      fontWeight: '600',
+                      fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif'
+                    }}>DR</div>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: '13px', fontWeight: '600', color: '#000', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>David Rodriguez</div>
+                      <div style={{ fontSize: '11px', color: '#888', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>6 hours ago</div>
+                    </div>
+                  </div>
+                  
+                  <div style={{ 
+                    background: 'linear-gradient(135deg, #1a1a1a 0%, #333 100%)', 
+                    borderRadius: '12px',
+                    padding: '20px 16px',
+                    color: '#fff',
+                    textAlign: 'center',
+                    marginBottom: '12px'
+                  }}>
+                    <div style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: '4px', opacity: 0.7 }}>Strength Milestone</div>
+                    <div style={{ fontSize: '20px', fontWeight: '700', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>Bench Press 225 lbs</div>
+                  </div>
+                  
+                  <div style={{ fontSize: '13px', color: '#000', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif', marginBottom: '10px', lineHeight: '1.4' }}>
+                    Two plates! 💪
+                  </div>
+                  
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="#ed4956" stroke="#ed4956" strokeWidth="2">
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                      </svg>
+                      <span style={{ fontSize: '12px', color: '#000', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>156</span>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#000" strokeWidth="2">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                      </svg>
+                      <span style={{ fontSize: '12px', color: '#000', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>18</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Post 6 - Yoga Session */}
+                <div style={{ borderBottom: '1px solid #e0e0e0', padding: '14px 16px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
+                    <div style={{
+                      width: '36px',
+                      height: '36px',
+                      borderRadius: '50%',
+                      background: '#000',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: '#fff',
+                      fontSize: '12px',
+                      fontWeight: '600',
+                      fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif'
+                    }}>EW</div>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: '13px', fontWeight: '600', color: '#000', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>Emma Wilson</div>
+                      <div style={{ fontSize: '11px', color: '#888', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>1 day ago</div>
+                    </div>
+                  </div>
+                  
+                  <div style={{ 
+                    background: '#000', 
+                    borderRadius: '12px',
+                    padding: '16px',
+                    color: '#fff',
+                    marginBottom: '12px'
+                  }}>
+                    <div style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '6px', opacity: 0.6 }}>Workout Complete</div>
+                    <div style={{ fontSize: '17px', fontWeight: '600', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif', marginBottom: '4px' }}>Yoga Flow</div>
+                    <div style={{ fontSize: '12px', opacity: 0.75 }}>60 min · 180 cal burned</div>
+                  </div>
+                  
+                  <div style={{ fontSize: '13px', color: '#000', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif', marginBottom: '10px', lineHeight: '1.4' }}>
+                    Perfect way to end the day 🧘
+                  </div>
+                  
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#000" strokeWidth="2">
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                      </svg>
+                      <span style={{ fontSize: '12px', color: '#000', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>28</span>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#000" strokeWidth="2">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                      </svg>
+                      <span style={{ fontSize: '12px', color: '#000', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>7</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Post 7 - Weekly Goal */}
+                <div style={{ borderBottom: '1px solid #e0e0e0', padding: '14px 16px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
+                    <div style={{
+                      width: '36px',
+                      height: '36px',
+                      borderRadius: '50%',
+                      background: '#000',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: '#fff',
+                      fontSize: '12px',
+                      fontWeight: '600',
+                      fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif'
+                    }}>CM</div>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: '13px', fontWeight: '600', color: '#000', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>Chris Martinez</div>
+                      <div style={{ fontSize: '11px', color: '#888', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>2 days ago</div>
+                    </div>
+                  </div>
+                  
+                  <div style={{ 
+                    background: '#000', 
+                    borderRadius: '12px',
+                    padding: '20px 16px',
+                    color: '#fff',
+                    textAlign: 'center',
+                    marginBottom: '12px'
+                  }}>
+                    <div style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: '4px', opacity: 0.7 }}>Weekly Goal Achieved</div>
+                    <div style={{ fontSize: '20px', fontWeight: '700', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>5/5 Workouts</div>
+                  </div>
+                  
+                  <div style={{ fontSize: '13px', color: '#000', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif', marginBottom: '10px', lineHeight: '1.4' }}>
+                    Crushed it this week! 🔥
+                  </div>
+                  
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="#ed4956" stroke="#ed4956" strokeWidth="2">
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                      </svg>
+                      <span style={{ fontSize: '12px', color: '#000', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>67</span>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#000" strokeWidth="2">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                      </svg>
+                      <span style={{ fontSize: '12px', color: '#000', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>11</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
+          
+          {/* COMPETE PAGE */}
+          {activePage === 'compete' && (
+            <>
+              <div style={{
+                fontSize: '18px',
+                fontWeight: '600',
+                color: '#000',
+                fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
+                marginBottom: '14px',
+                marginTop: '-6px'
+              }}>Challenges</div>
+              
+              {/* Challenges List */}
+              <div data-phone-scroll className="phone-scroll" style={{ 
+                display: 'flex', 
+                flexDirection: 'column', 
+                gap: '0',
+                overflowY: 'auto',
+                flex: 1,
+                paddingBottom: '60px',
+                margin: '0 -28px'
+              }}>
+                {/* Active Section Label */}
+                <div style={{ 
+                  padding: '8px 16px',
+                  fontSize: '11px',
+                  color: '#666',
+                  fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
+                  textTransform: 'uppercase',
+                  letterSpacing: '1px',
+                  borderBottom: '1px solid #e0e0e0'
+                }}>Active</div>
+                
+                {/* Challenge 1 - Winning */}
+                <div style={{ borderBottom: '1px solid #e0e0e0', padding: '14px 16px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <div style={{
+                      width: '36px',
+                      height: '36px',
+                      borderRadius: '50%',
+                      background: '#000',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: '#fff',
+                      fontSize: '12px',
+                      fontWeight: '600',
+                      fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif'
+                    }}>JK</div>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: '13px', fontWeight: '600', color: '#000', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>Push-Up Challenge</div>
+                      <div style={{ fontSize: '11px', color: '#666', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>vs Jake Kim · 2 days left</div>
+                    </div>
+                    <div style={{ textAlign: 'right' }}>
+                      <div style={{ fontSize: '16px', fontWeight: '600', color: '#22c55e', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>42-38</div>
+                      <div style={{ fontSize: '9px', color: '#22c55e', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>Winning</div>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Challenge 2 - Losing */}
+                <div style={{ borderBottom: '1px solid #e0e0e0', padding: '14px 16px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <div style={{
+                      width: '36px',
+                      height: '36px',
+                      borderRadius: '50%',
+                      background: '#000',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: '#fff',
+                      fontSize: '12px',
+                      fontWeight: '600',
+                      fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif'
+                    }}>SL</div>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: '13px', fontWeight: '600', color: '#000', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>Squat Challenge</div>
+                      <div style={{ fontSize: '11px', color: '#666', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>vs Sarah Lee · 5 days left</div>
+                    </div>
+                    <div style={{ textAlign: 'right' }}>
+                      <div style={{ fontSize: '16px', fontWeight: '600', color: '#ef4444', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>35-41</div>
+                      <div style={{ fontSize: '9px', color: '#ef4444', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>Behind</div>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Pending Section Label */}
+                <div style={{ 
+                  padding: '8px 16px',
+                  fontSize: '11px',
+                  color: '#666',
+                  fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
+                  textTransform: 'uppercase',
+                  letterSpacing: '1px',
+                  borderBottom: '1px solid #e0e0e0',
+                  marginTop: '8px'
+                }}>Pending Invites</div>
+                
+                {/* Pending 1 */}
+                <div style={{ borderBottom: '1px solid #e0e0e0', padding: '14px 16px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <div style={{
+                      width: '36px',
+                      height: '36px',
+                      borderRadius: '50%',
+                      background: '#000',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: '#fff',
+                      fontSize: '12px',
+                      fontWeight: '600',
+                      fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif'
+                    }}>MT</div>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: '13px', fontWeight: '600', color: '#000', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>Plank Hold</div>
+                      <div style={{ fontSize: '11px', color: '#666', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>from Mike Thompson</div>
+                    </div>
+                    <button style={{
+                      padding: '6px 12px',
+                      background: '#000',
+                      border: 'none',
+                      borderRadius: '6px',
+                      color: '#fff',
+                      fontSize: '10px',
+                      fontWeight: '500',
+                      fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
+                      cursor: 'pointer'
+                    }}>Accept</button>
+                  </div>
+                </div>
+                
+                {/* Pending 2 */}
+                <div style={{ borderBottom: '1px solid #e0e0e0', padding: '14px 16px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <div style={{
+                      width: '36px',
+                      height: '36px',
+                      borderRadius: '50%',
+                      background: '#000',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: '#fff',
+                      fontSize: '12px',
+                      fontWeight: '600',
+                      fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif'
+                    }}>AL</div>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: '13px', fontWeight: '600', color: '#000', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>Burpee Blast</div>
+                      <div style={{ fontSize: '11px', color: '#666', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>from Amy Liu</div>
+                    </div>
+                    <button style={{
+                      padding: '6px 12px',
+                      background: '#000',
+                      border: 'none',
+                      borderRadius: '6px',
+                      color: '#fff',
+                      fontSize: '10px',
+                      fontWeight: '500',
+                      fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
+                      cursor: 'pointer'
+                    }}>Accept</button>
+                  </div>
+                </div>
+                
+                {/* Pending 3 */}
+                <div style={{ borderBottom: '1px solid #e0e0e0', padding: '14px 16px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <div style={{
+                      width: '36px',
+                      height: '36px',
+                      borderRadius: '50%',
+                      background: '#000',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: '#fff',
+                      fontSize: '12px',
+                      fontWeight: '600',
+                      fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif'
+                    }}>DR</div>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: '13px', fontWeight: '600', color: '#000', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>Pull-Up Challenge</div>
+                      <div style={{ fontSize: '11px', color: '#666', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>from David Rodriguez</div>
+                    </div>
+                    <button style={{
+                      padding: '6px 12px',
+                      background: '#000',
+                      border: 'none',
+                      borderRadius: '6px',
+                      color: '#fff',
+                      fontSize: '10px',
+                      fontWeight: '500',
+                      fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
+                      cursor: 'pointer'
+                    }}>Accept</button>
+                  </div>
+                </div>
+                
+                {/* Pending 4 */}
+                <div style={{ borderBottom: '1px solid #e0e0e0', padding: '14px 16px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <div style={{
+                      width: '36px',
+                      height: '36px',
+                      borderRadius: '50%',
+                      background: '#000',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: '#fff',
+                      fontSize: '12px',
+                      fontWeight: '600',
+                      fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif'
+                    }}>EW</div>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: '13px', fontWeight: '600', color: '#000', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>Mile Run</div>
+                      <div style={{ fontSize: '11px', color: '#666', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>from Emma Wilson</div>
+                    </div>
+                    <button style={{
+                      padding: '6px 12px',
+                      background: '#000',
+                      border: 'none',
+                      borderRadius: '6px',
+                      color: '#fff',
+                      fontSize: '10px',
+                      fontWeight: '500',
+                      fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
+                      cursor: 'pointer'
+                    }}>Accept</button>
+                  </div>
+                </div>
+                
+                {/* Pending 5 */}
+                <div style={{ borderBottom: '1px solid #e0e0e0', padding: '14px 16px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <div style={{
+                      width: '36px',
+                      height: '36px',
+                      borderRadius: '50%',
+                      background: '#000',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: '#fff',
+                      fontSize: '12px',
+                      fontWeight: '600',
+                      fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif'
+                    }}>CM</div>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: '13px', fontWeight: '600', color: '#000', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>Core Challenge</div>
+                      <div style={{ fontSize: '11px', color: '#666', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>from Chris Martinez</div>
+                    </div>
+                    <button style={{
+                      padding: '6px 12px',
+                      background: '#000',
+                      border: 'none',
+                      borderRadius: '6px',
+                      color: '#fff',
+                      fontSize: '10px',
+                      fontWeight: '500',
+                      fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
+                      cursor: 'pointer'
+                    }}>Accept</button>
+                  </div>
+                </div>
+                
+                {/* Pending 6 */}
+                <div style={{ borderBottom: '1px solid #e0e0e0', padding: '14px 16px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <div style={{
+                      width: '36px',
+                      height: '36px',
+                      borderRadius: '50%',
+                      background: '#000',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: '#fff',
+                      fontSize: '12px',
+                      fontWeight: '600',
+                      fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif'
+                    }}>JK</div>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: '13px', fontWeight: '600', color: '#000', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>Bench Press Max</div>
+                      <div style={{ fontSize: '11px', color: '#666', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>from Jake Kim</div>
+                    </div>
+                    <button style={{
+                      padding: '6px 12px',
+                      background: '#000',
+                      border: 'none',
+                      borderRadius: '6px',
+                      color: '#fff',
+                      fontSize: '10px',
+                      fontWeight: '500',
+                      fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
+                      cursor: 'pointer'
+                    }}>Accept</button>
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
+          
+          {/* Bottom Navigation Bar */}
+          <div style={{
+            position: 'absolute',
+            bottom: showLoading ? '-60px' : '16px',
+            left: '0',
+            right: '0',
+            display: 'flex',
+            justifyContent: 'space-around',
+            alignItems: 'center',
+            padding: '6px 16px',
+            background: '#f5f5e6',
+            zIndex: 1000,
+            transition: 'bottom 0.2s ease-out, opacity 0.2s ease-out',
+            opacity: showLoading ? 0 : 1
+          }}>
+            {/* Home */}
+            <div 
+              onClick={() => {
+                setIsActiveWorkout(false);
+                setActivePage('home');
+              }}
+              style={{ 
+                display: 'flex', 
+                flexDirection: 'column', 
+                alignItems: 'center',
+                cursor: 'pointer',
+                opacity: activePage === 'home' ? 1 : 0.5
+              }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                <polyline points="9 22 9 12 15 12 15 22" />
+              </svg>
+              <span style={{ fontSize: '7px', marginTop: '2px', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif', color: '#000', fontWeight: activePage === 'home' ? '600' : '400' }}>Home</span>
+            </div>
+            
+            {/* Analytics */}
+            <div 
+              onClick={() => {
+                setIsActiveWorkout(false);
+                setActivePage('analytics');
+              }}
+              style={{ 
+                display: 'flex', 
+                flexDirection: 'column', 
+                alignItems: 'center',
+                cursor: 'pointer',
+                opacity: activePage === 'analytics' ? 1 : 0.5
+              }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="18" y1="20" x2="18" y2="10" />
+                <line x1="12" y1="20" x2="12" y2="4" />
+                <line x1="6" y1="20" x2="6" y2="14" />
+              </svg>
+              <span style={{ fontSize: '7px', marginTop: '2px', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif', color: '#000', fontWeight: activePage === 'analytics' ? '600' : '400' }}>Analytics</span>
+            </div>
+            
+            {/* Social/Chat */}
+            <div 
+              onClick={() => {
+                setIsActiveWorkout(false);
+                setActivePage('friends');
+              }}
+              style={{ 
+                display: 'flex', 
+                flexDirection: 'column', 
+                alignItems: 'center',
+                cursor: 'pointer',
+                opacity: activePage === 'friends' ? 1 : 0.5
+              }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                <circle cx="9" cy="7" r="4" />
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+              </svg>
+              <span style={{ fontSize: '7px', marginTop: '2px', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif', color: '#000', fontWeight: activePage === 'friends' ? '600' : '400' }}>Friends</span>
+            </div>
+            
+            {/* Competition/Leaderboard */}
+            <div 
+              onClick={() => {
+                setIsActiveWorkout(false);
+                setActivePage('compete');
+              }}
+              style={{ 
+                display: 'flex', 
+                flexDirection: 'column', 
+                alignItems: 'center',
+                cursor: 'pointer',
+                opacity: activePage === 'compete' ? 1 : 0.5
+              }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
+                <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />
+                <path d="M4 22h16" />
+                <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22" />
+                <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22" />
+                <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z" />
+              </svg>
+              <span style={{ fontSize: '7px', marginTop: '2px', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif', color: '#000', fontWeight: activePage === 'compete' ? '600' : '400' }}>Compete</span>
             </div>
           </div>
-          
-          {/* Divider */}
-          <div style={{ height: '1px', background: '#ddd', marginBottom: '12px' }} />
-          
-          {/* Today's workout section */}
-          <div style={{
-            fontSize: '11px',
-            color: '#666',
-            fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
-            textTransform: 'uppercase',
-            letterSpacing: '2px',
-            marginBottom: '8px'
-          }}>Today</div>
-          
-          <div style={{
-            fontSize: '24px',
-            fontWeight: '500',
-            color: '#000',
-            fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
-            marginBottom: '4px'
-          }}>Push Day</div>
-          
-          <div style={{
-            fontSize: '15px',
-            color: '#666',
-            fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
-            marginBottom: '18px'
-          }}>45 min · Chest, shoulders, triceps</div>
-          
-          {/* Tomorrow's workout section */}
-          <div style={{
-            fontSize: '8px',
-            color: '#666',
-            fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
-            textTransform: 'uppercase',
-            letterSpacing: '1.5px',
-            marginBottom: '4px'
-          }}>Tomorrow</div>
-          
-          <div style={{
-            fontSize: '14px',
-            fontWeight: '500',
-            color: '#000',
-            fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
-            marginBottom: '2px'
-          }}>Lower Body</div>
-          
-          <div style={{
-            fontSize: '11px',
-            color: '#666',
-            fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
-            marginBottom: '24px'
-          }}>50 min · Quads, hamstrings, glutes</div>
-          
-          {/* Start Button - minimal outline style */}
-          <button 
-            onClick={() => setShowWorkout(true)}
-            onMouseEnter={() => setIsHovering(true)}
-            onMouseLeave={() => setIsHovering(false)}
-            style={{
-              width: '100%',
-              padding: '14px',
-              background: isHovering ? '#000' : 'transparent',
-              border: '1.5px solid #000',
-              borderRadius: '0',
-              color: isHovering ? '#f5f5e6' : '#000',
-              fontSize: '11px',
-              fontWeight: '500',
-              fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
-              textTransform: 'uppercase',
-              letterSpacing: '2px',
-              cursor: 'pointer',
-              marginBottom: '28px',
-              transition: 'all 0.2s ease'
-            }}>
-            Begin
-          </button>
           
           {/* Home Indicator */}
           <div style={{
             position: 'absolute',
-            bottom: '8px',
+            bottom: '4px',
             left: '50%',
             transform: 'translateX(-50%)',
             width: '100px',
             height: '4px',
             background: '#000',
-            borderRadius: '2px'
+            borderRadius: '2px',
+            zIndex: 1001
           }} />
         </div>
       </div>
@@ -559,13 +2144,103 @@ const IPhoneMockup = ({ logoSrc }) => {
       borderRadius: '0 2px 2px 0'
     }} />
   </div>
+  </>
   );
-};
+});
 
 function FitBoxProject() {
+  const [shouldRenderPhone, setShouldRenderPhone] = useState(false);
+
   const handleBackClick = () => {
     sessionStorage.setItem('returnToHome', 'true');
   };
+
+  // Ensure scroll to 90px happens after component is fully loaded and layout is stable
+  // This is needed because FitBoxProject is lazy-loaded and the scroll in App.js
+  // happens before the component is fully rendered
+  useLayoutEffect(() => {
+    const checkPageLoaded = () => {
+      const isPageLoading = document.body.classList.contains('loading') || 
+                           document.documentElement.classList.contains('loading');
+      return !isPageLoading;
+    };
+
+    let checkInterval = null;
+    let scrollTimeout = null;
+
+    const scrollToPosition = () => {
+      // Add a small delay to ensure layout is stable after component renders
+      scrollTimeout = setTimeout(() => {
+        requestAnimationFrame(() => {
+          window.scrollTo(0, 90);
+        });
+      }, 100);
+    };
+
+    // Wait for page load to complete, then scroll to 90px (matching App.js behavior)
+    if (checkPageLoaded()) {
+      // Loading already complete, scroll after a brief delay for layout stability
+      scrollToPosition();
+    } else {
+      // Wait for loading screen to complete
+      let attempts = 0;
+      const maxAttempts = 50; // 50 * 50ms = 2.5 seconds max wait
+      checkInterval = setInterval(() => {
+        attempts++;
+        if (checkPageLoaded() || attempts >= maxAttempts) {
+          if (checkInterval) {
+            clearInterval(checkInterval);
+          }
+          scrollToPosition();
+        }
+      }, 50);
+    }
+
+    return () => {
+      if (checkInterval) {
+        clearInterval(checkInterval);
+      }
+      if (scrollTimeout) {
+        clearTimeout(scrollTimeout);
+      }
+    };
+  }, []);
+
+  // Defer IPhoneMockup rendering until after page loading screen completes
+  // This prevents the large component from blocking the loading screen
+  useEffect(() => {
+    // Check if page is still loading
+    const checkPageLoaded = () => {
+      const isPageLoading = document.body.classList.contains('loading') || 
+                           document.documentElement.classList.contains('loading');
+      return !isPageLoading;
+    };
+
+    // Wait for page load to complete before rendering IPhoneMockup
+    let attempts = 0;
+    const maxAttempts = 50; // 50 * 50ms = 2.5 seconds max wait
+    const checkInterval = setInterval(() => {
+      attempts++;
+      if (checkPageLoaded() || attempts >= maxAttempts) {
+        clearInterval(checkInterval);
+        // Use requestIdleCallback if available to defer rendering
+        if (window.requestIdleCallback) {
+          requestIdleCallback(() => {
+            setShouldRenderPhone(true);
+          }, { timeout: 2000 });
+        } else {
+          // Fallback: wait a bit after page load completes
+          setTimeout(() => {
+            setShouldRenderPhone(true);
+          }, 200);
+        }
+      }
+    }, 50);
+
+    return () => {
+      clearInterval(checkInterval);
+    };
+  }, []);
 
   return (
     <div className="project-detail-page">
@@ -683,9 +2358,24 @@ function FitBoxProject() {
             display: 'flex',
             justifyContent: 'center',
             padding: '2rem 0',
-            marginTop: '-20px'
+            marginTop: '-20px',
+            minHeight: '570px' // Prevent layout shift when phone loads
           }}>
-            <IPhoneMockup logoSrc={fitboxImage} />
+            {shouldRenderPhone ? (
+              <IPhoneMockup logoSrc={fitboxImage} />
+            ) : (
+              <div style={{
+                width: '280px',
+                height: '570px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                background: '#f5f5e6',
+                borderRadius: '12px'
+              }}>
+                {/* Placeholder while phone loads */}
+              </div>
+            )}
           </div>
         </div>
 

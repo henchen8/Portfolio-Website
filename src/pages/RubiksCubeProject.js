@@ -181,7 +181,7 @@ function RubiksCubeProject() {
           transform: 'translateX(-50%)',
           padding: '0 2rem'
         }}>
-          <div style={{ flex: '1 1 700px', minWidth: '300px' }}>
+          <div style={{ flex: '1 1 550px', minWidth: '300px' }}>
             <div className="project-section">
               <h2>Overview</h2>
               <p className="project-description">
@@ -244,7 +244,7 @@ function RubiksCubeProject() {
             </div>
           </div>
 
-          <div style={{ flex: '0 0 auto' }}>
+          <div style={{ flex: '0 0 auto', maxWidth: '360px' }}>
             <div className="project-section">
               <h2>Live Demo</h2>
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '1.5rem' }}>
@@ -360,11 +360,13 @@ function RubiksCubeProject() {
                 <div style={{
                   marginTop: '1.5rem',
                   background: 'linear-gradient(135deg, #fafaf8 0%, #f0f0ed 100%)',
-                  padding: '1.5rem 2rem',
+                  padding: '1.5rem 1.5rem',
                   borderRadius: '12px',
                   boxShadow: '0 4px 6px rgba(0, 0, 0, 0.08)',
                   textAlign: 'center',
-                  transition: 'transform 0.3s ease, box-shadow 0.3s ease'
+                  transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                  width: '100%',
+                  maxWidth: '360px'
                 }}>
                   <div style={{
                     fontSize: '0.875rem',
@@ -389,13 +391,13 @@ function RubiksCubeProject() {
               </div>
             </div>
 
-            <div style={{ marginTop: '2rem' }}>
+            <div style={{ paddingTop: '1 rem', marginLeft: '-35px' }}>
               <img
                 src={rubiksDrawing}
                 alt="Rubik's Cube Robot Design"
                 style={{
-                  maxWidth: '575px',
-                  width: '100%',
+                  width: '435px',
+                  maxWidth: 'none',
                   height: 'auto',
                   borderRadius: '8px'
                 }}

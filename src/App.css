@@ -23,20 +23,25 @@ html:has(body.loading) {
   height: 100% !important;
 }
 
-/* Loading Screen */
+/* Loading Screen - Always show consistently across all pages */
+/* Isolated with highest z-index to ensure it appears above all content, including FitBox iPhone component */
 .loading-screen {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: #f0f0ed;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 99999;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  background: #f0f0ed !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  z-index: 999999 !important; /* Increased to ensure it's above everything */
   animation: fadeOut 0.2s ease-out 1.35s forwards;
-  overflow: hidden;
+  overflow: hidden !important;
+  pointer-events: auto !important;
+  isolation: isolate !important;
+  contain: layout style paint !important; /* Isolate rendering */
+  will-change: opacity !important;
 }
 
 
@@ -111,11 +116,27 @@ html:has(body.loading) {
   z-index: 2;
 }
 
-.loading-logo {
+.loading-logo-container {
   width: 150px;
-  height: auto;
-  filter: invert(0);
-  animation: pulse 1.5s ease-in-out infinite, logoColorChange 1.35s cubic-bezier(0.95, 0, 0.05, 1) forwards;
+  height: 150px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.loading-logo-overlay {
+  width: 150px;
+  height: 150px;
+  background-color: #000000;
+  mask-size: contain;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  animation: logoColorChange 1.35s cubic-bezier(0.95, 0, 0.05, 1) forwards;
 }
 
 @keyframes pulse {
@@ -129,22 +150,22 @@ html:has(body.loading) {
 
 @keyframes logoColorChange {
   0% {
-    filter: invert(0);
+    background-color: #000000;
   }
   20% {
-    filter: invert(0);
+    background-color: #000000;
   }
   22.5% {
-    filter: invert(1);
+    background-color: #ffffff;
   }
   70% {
-    filter: invert(1);
+    background-color: #ffffff;
   }
   72.5% {
-    filter: invert(0);
+    background-color: #000000;
   }
   100% {
-    filter: invert(0);
+    background-color: #000000;
   }
 }
 
@@ -309,6 +330,8 @@ body.loading {
   gap: 0.75rem;
   text-decoration: none;
   transition: opacity 0.3s ease;
+  position: relative;
+  z-index: 1001;
 }
 
 .nav-logo:hover {
@@ -319,6 +342,12 @@ body.loading {
   height: 40px;
   width: auto;
   object-fit: contain;
+  filter: brightness(0);
+  position: relative;
+  z-index: 1001;
+  mix-blend-mode: normal;
+  isolation: isolate;
+  background: transparent;
 }
 
 .nav-menu {

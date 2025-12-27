@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import srprojImage from '../assets/srproj.png';
 import blackscholesImage from '../assets/blackscholes.png';
+import simplifiedBlackscholesImage from '../assets/port_simplifiedblackscholes.png';
 
 function FinancialDerivativesProject() {
   const handleBackClick = () => {
@@ -84,18 +85,83 @@ function FinancialDerivativesProject() {
             <li>• Put-call parity and arbitrage relationships</li>
             <li>• Greeks: Delta, Gamma, Theta, Vega, and Rho</li>
           </ul>
-          <div style={{ marginTop: '2rem', textAlign: 'center' }}>
-            <img
-              src={blackscholesImage}
-              alt="Black-Scholes Model Equation"
-              style={{
-                maxWidth: '700px',
-                width: '100%',
-                height: 'auto',
-                borderRadius: '8px',
-                boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
-              }}
-            />
+          
+          {/* Simplified Formula Section */}
+          <div style={{
+            background: 'linear-gradient(135deg, #fafaf8 0%, #f0f0ed 100%)',
+            borderRadius: '12px',
+            padding: '2rem',
+            marginTop: '2.5rem',
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)'
+          }}>
+            <h3 style={{ 
+              fontSize: '1.5rem', 
+              fontWeight: '600',
+              marginBottom: '1.5rem', 
+              color: '#000000'
+            }}>Simplified Formula</h3>
+            <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
+              <img
+                src={simplifiedBlackscholesImage}
+                alt="Simplified Black-Scholes Formula"
+                style={{
+                  maxWidth: '800px',
+                  width: '100%',
+                  height: 'auto',
+                  borderRadius: '8px',
+                  boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+                }}
+              />
+            </div>
+            <ul style={{ 
+              listStyle: 'none', 
+              padding: 0, 
+              margin: 0 
+            }}>
+              <li style={{ fontSize: '1.05rem', color: '#555', lineHeight: '1.8', marginBottom: '0.5rem' }}>• Closed-form solution for pricing European call and put options</li>
+              <li style={{ fontSize: '1.05rem', color: '#555', lineHeight: '1.8', marginBottom: '0.5rem' }}>• Assumes constant volatility, no dividends, and continuous trading</li>
+              <li style={{ fontSize: '1.05rem', color: '#555', lineHeight: '1.8', marginBottom: '0.5rem' }}>• Uses cumulative normal distribution function for probability calculations</li>
+              <li style={{ fontSize: '1.05rem', color: '#555', lineHeight: '1.8' }}>• Inputs: stock price, strike price, time to expiration, risk-free rate, volatility</li>
+            </ul>
+          </div>
+
+          {/* Free Boundary Formula Section */}
+          <div style={{
+            background: 'linear-gradient(135deg, #fafaf8 0%, #f0f0ed 100%)',
+            borderRadius: '12px',
+            padding: '2rem',
+            marginTop: '1.5rem',
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)'
+          }}>
+            <h3 style={{ 
+              fontSize: '1.5rem', 
+              fontWeight: '600',
+              marginBottom: '1.5rem', 
+              color: '#000000'
+            }}>Free Boundary Formula</h3>
+            <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
+              <img
+                src={blackscholesImage}
+                alt="Black-Scholes Free Boundary Formula"
+                style={{
+                  maxWidth: '800px',
+                  width: '100%',
+                  height: 'auto',
+                  borderRadius: '8px',
+                  boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+                }}
+              />
+            </div>
+            <ul style={{ 
+              listStyle: 'none', 
+              padding: 0, 
+              margin: 0 
+            }}>
+              <li style={{ fontSize: '1.05rem', color: '#555', lineHeight: '1.8', marginBottom: '0.5rem' }}>• Extends Black-Scholes to handle American options with early exercise</li>
+              <li style={{ fontSize: '1.05rem', color: '#555', lineHeight: '1.8', marginBottom: '0.5rem' }}>• Creates moving boundary between optimal hold vs exercise regions</li>
+              <li style={{ fontSize: '1.05rem', color: '#555', lineHeight: '1.8', marginBottom: '0.5rem' }}>• Results in PDE with complementarity conditions</li>
+              <li style={{ fontSize: '1.05rem', color: '#555', lineHeight: '1.8' }}>• Requires numerical methods to solve (no closed-form solution)</li>
+            </ul>
           </div>
         </div>
 

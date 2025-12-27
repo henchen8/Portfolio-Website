@@ -1,11 +1,12 @@
 import './App.css';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
-import { useEffect, useState, useLayoutEffect, useCallback } from 'react';
+import { useEffect, useState, useLayoutEffect, useCallback, lazy, Suspense } from 'react';
 import { Analytics } from '@vercel/analytics/react';
 import Home from './pages/Home';
 import RubiksCubeProject from './pages/RubiksCubeProject';
 import FinancialDerivativesProject from './pages/FinancialDerivativesProject';
-import FitBoxProject from './pages/FitBoxProject';
+// Lazy load FitBoxProject to prevent it from blocking the loading screen
+const FitBoxProject = lazy(() => import('./pages/FitBoxProject'));
 
 function ScrollToTop({ loading, onScrollReady }) {
   const { pathname, hash } = useLocation();
@@ -197,6 +198,11 @@ function App() {
   }, []);
 
   useEffect(() => {
+    // Always show loading screen on mount (page load/refresh)
+    // This ensures consistent loading experience regardless of which page user refreshes from
+    document.body.classList.add('loading');
+    document.documentElement.classList.add('loading');
+    
     // Save scroll position and set refresh flag before page unloads
     const handleBeforeUnload = () => {
       sessionStorage.setItem('scrollPosition', window.scrollY.toString());
@@ -204,9 +210,6 @@ function App() {
     };
     
     window.addEventListener('beforeunload', handleBeforeUnload);
-    
-    document.body.classList.add('loading');
-    document.documentElement.classList.add('loading');
     
     // Hide loading screen after animation (1.35s animation + 0.2s fadeout = 1.55s)
     // Note: body.loading class is removed in ScrollToTop's useLayoutEffect to ensure
@@ -266,10 +269,19 @@ function App() {
 
   return (
     <>
+      {/* Loading screen - rendered outside Router to ensure it always shows consistently on all pages */}
       {loading && (
-        <div className="loading-screen">
+        <div className="loading-screen" key="app-loading-screen">
           <div className="loading-content">
-            <img src="/roboiconimg.png" alt="Loading" className="loading-logo" />
+            <div className="loading-logo-container">
+              <div 
+                className="loading-logo-overlay"
+                style={{
+                  WebkitMaskImage: 'url(/roboiconimg.png)',
+                  maskImage: 'url(/roboiconimg.png)'
+                }}
+              ></div>
+            </div>
             <div className="loading-bar-container">
               <div className="loading-bar"></div>
             </div>
@@ -285,7 +297,14 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/projects/rubiks-cube" element={<RubiksCubeProject />} />
             <Route path="/projects/financial-derivatives" element={<FinancialDerivativesProject />} />
-            <Route path="/projects/fitbox" element={<FitBoxProject />} />
+            <Route 
+              path="/projects/fitbox" 
+              element={
+                <Suspense fallback={null}>
+                  <FitBoxProject />
+                </Suspense>
+              } 
+            />
           </Routes>
           <Footer />
           <Analytics />
