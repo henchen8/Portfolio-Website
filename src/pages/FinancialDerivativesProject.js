@@ -28,30 +28,23 @@ function FinancialDerivativesProject() {
             through CAPM, PCA, and Black Scholes Merton options model.
           </p>
           <p>
-            This reserach project is split in to different foci: the first is educating the individual who is interested
+            The scope of this reserach project is split into two main areas: the first is educating the individual who is interested
             in retail investment, where concepts such as ETFs, dividends, and basic trading strategies are introduced. 
-            The second half focuses more on the technical side—the applicaiton of data analytics, complex mathematical concepts, 
-            and numerical analysisto quantitative finance. Topics discussed include CAPM, PCA, and the Black Scholes Merton options model. 
-            Mathematical concepts discussed include linear transformations on matrix represenations of portfolios, eigendecomposition for PCA,
+            The second half focuses more on the technical side—the applicaiton of data analytics, mathematics, 
+            and numerical analysis to quantitative finance. Mathematical concepts discussed include linear 
+            transformations on matrix represenations of portfolios, eigendecomposition for PCA,
             in addition to a high level overview of stochastic calculus and free boundary problems. 
-
-            
-            
-            This research project delves into the fundamental models that underpin modern quantitative 
-            finance. Through rigorous mathematical analysis and computational implementation, I explored 
-            how these models are used to price derivatives, assess risk, and optimize portfolios in 
-            financial markets.
           </p>
         </div>
         
         <div className="project-section">
           <h2>Capital Asset Pricing Model</h2>
           <p>
-            Understanding risk-return relationships in financial markets through systematic and unsystematic risk analysis.
+            Understanding risk-return relationships in financial markets through risk analysis.
             Key concepts explored include:
           </p>
           <ul>
-            <li>• Expected return calculation using beta coefficients</li>
+            <li>• Expected return calculation using alpha and beta coefficients</li>
             <li>• Systematic vs unsystematic risk decomposition</li>
             <li>• Security market line and market equilibrium</li>
             <li>• Portfolio optimization and efficient frontier</li>
@@ -66,7 +59,7 @@ function FinancialDerivativesProject() {
           </p>
           <ul>
             <li>• Linear transformations on matrix representations of portfolios</li>
-            <li>• Eigendecomposition for identifying principal components</li>
+            <li>• Eigendecomposition ordering for principal component identification </li>
             <li>• Variance explained by each component</li>
             <li>• Feature extraction and data compression in financial datasets</li>
           </ul>
@@ -80,10 +73,11 @@ function FinancialDerivativesProject() {
           </p>
           <ul>
             <li>• Geometric Brownian motion for stock price modeling</li>
-            <li>• Derivation of the Black-Scholes partial differential equation</li>
+            <li>• Derivation of the Black-Scholes partial differential equation via CAPM, 
+              differential heat transfer, etc.
+            </li>
             <li>• Risk-neutral pricing and no-arbitrage principles</li>
-            <li>• Put-call parity and arbitrage relationships</li>
-            <li>• Greeks: Delta, Gamma, Theta, Vega, and Rho</li>
+            <li>• Put-call parity and arbitrage relationships for European and American options</li>
           </ul>
           
           {/* Simplified Formula Section */}
@@ -99,7 +93,7 @@ function FinancialDerivativesProject() {
               fontWeight: '600',
               marginBottom: '1.5rem', 
               color: '#000000'
-            }}>Simplified Formula</h3>
+            }}>Closed-Form Equation</h3>
             <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
               <img
                 src={simplifiedBlackscholesImage}
@@ -118,8 +112,8 @@ function FinancialDerivativesProject() {
               padding: 0, 
               margin: 0 
             }}>
-              <li style={{ fontSize: '1.05rem', color: '#555', lineHeight: '1.8', marginBottom: '0.5rem' }}>• Closed-form solution for pricing European call and put options</li>
-              <li style={{ fontSize: '1.05rem', color: '#555', lineHeight: '1.8', marginBottom: '0.5rem' }}>• Assumes constant volatility, no dividends, and continuous trading</li>
+              <li style={{ fontSize: '1.05rem', color: '#555', lineHeight: '1.8', marginBottom: '0.5rem' }}>• Closed-form solution for pricing European put and call options</li>
+              <li style={{ fontSize: '1.05rem', color: '#555', lineHeight: '1.8', marginBottom: '0.5rem' }}>• Assumes constant volatility, constant risk-free rate, no dividends, and continuous trading</li>
               <li style={{ fontSize: '1.05rem', color: '#555', lineHeight: '1.8', marginBottom: '0.5rem' }}>• Uses cumulative normal distribution function for probability calculations</li>
               <li style={{ fontSize: '1.05rem', color: '#555', lineHeight: '1.8' }}>• Inputs: stock price, strike price, time to expiration, risk-free rate, volatility</li>
             </ul>
@@ -157,7 +151,7 @@ function FinancialDerivativesProject() {
               padding: 0, 
               margin: 0 
             }}>
-              <li style={{ fontSize: '1.05rem', color: '#555', lineHeight: '1.8', marginBottom: '0.5rem' }}>• Extends Black-Scholes to handle American options with early exercise</li>
+              <li style={{ fontSize: '1.05rem', color: '#555', lineHeight: '1.8', marginBottom: '0.5rem' }}>• Extends Black-Scholes to American options with early exercise rights</li>
               <li style={{ fontSize: '1.05rem', color: '#555', lineHeight: '1.8', marginBottom: '0.5rem' }}>• Creates moving boundary between optimal hold vs exercise regions</li>
               <li style={{ fontSize: '1.05rem', color: '#555', lineHeight: '1.8', marginBottom: '0.5rem' }}>• Results in PDE with complementarity conditions</li>
               <li style={{ fontSize: '1.05rem', color: '#555', lineHeight: '1.8' }}>• Requires numerical methods to solve (no closed-form solution)</li>

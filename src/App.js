@@ -1,12 +1,11 @@
 import './App.css';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
-import { useEffect, useState, useLayoutEffect, useCallback, lazy, Suspense } from 'react';
+import { useEffect, useState, useLayoutEffect, useCallback } from 'react';
 import { Analytics } from '@vercel/analytics/react';
 import Home from './pages/Home';
 import RubiksCubeProject from './pages/RubiksCubeProject';
 import FinancialDerivativesProject from './pages/FinancialDerivativesProject';
-// Lazy load FitBoxProject to prevent it from blocking the loading screen
-const FitBoxProject = lazy(() => import('./pages/FitBoxProject'));
+import FitBoxProject from './pages/FitBoxProject';
 
 function ScrollToTop({ loading, onScrollReady }) {
   const { pathname, hash } = useLocation();
@@ -79,26 +78,6 @@ function ScrollToTop({ loading, onScrollReady }) {
 }
 
 function Navbar() {
-  const location = useLocation();
-  const isHomePage = location.pathname === '/';
-
-  const scrollToSection = (sectionId) => {
-    const section = document.getElementById(sectionId);
-    if (section) {
-      if (sectionId === 'projects') {
-        const elementPosition = section.getBoundingClientRect().top + window.pageYOffset;
-        const offsetPosition = elementPosition + 300;
-        window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
-      } else if (sectionId === 'experience') {
-        const elementPosition = section.getBoundingClientRect().top + window.pageYOffset;
-        const offsetPosition = elementPosition + 55;
-        window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
-      } else {
-        section.scrollIntoView({ behavior: 'smooth' });
-      }
-    }
-  };
-
   return (
     <nav className="navbar">
       <div className="nav-container">
@@ -108,31 +87,13 @@ function Navbar() {
         </Link>
         <ul className="nav-menu">
           <li className="nav-item">
-            {isHomePage ? (
-              <a href="#home" className="nav-link">Home</a>
-            ) : (
-              <Link to="/" className="nav-link">Home</Link>
-            )}
+            <Link to="/" className="nav-link">Home</Link>
           </li>
           <li className="nav-item">
-            {isHomePage ? (
-              <a href="#experience" className="nav-link" onClick={(e) => {
-                e.preventDefault();
-                scrollToSection('experience');
-              }}>Experience</a>
-            ) : (
-              <Link to="/#experience" className="nav-link">Experience</Link>
-            )}
+            <Link to="/#experience" className="nav-link">Experience</Link>
           </li>
           <li className="nav-item">
-            {isHomePage ? (
-              <a href="#projects" className="nav-link" onClick={(e) => {
-                e.preventDefault();
-                scrollToSection('projects');
-              }}>Projects</a>
-            ) : (
-              <Link to="/#projects" className="nav-link">Projects</Link>
-            )}
+            <Link to="/#projects" className="nav-link">Projects</Link>
           </li>
         </ul>
       </div>
@@ -202,6 +163,28 @@ function App() {
     // This ensures consistent loading experience regardless of which page user refreshes from
     document.body.classList.add('loading');
     document.documentElement.classList.add('loading');
+    
+    // Preload all critical assets during loading screen
+    // This ensures content is ready when user quickly scrolls or clicks on projects
+    // Since all components are now eagerly loaded (no lazy loading), their bundled assets
+    // will be included in the initial bundle and load with the page.
+    // Here we preload the video file which is in the public folder.
+    const preloadAssets = () => {
+      // Preload video for RubiksCubeProject (public folder asset)
+      const videoLink = document.createElement('link');
+      videoLink.rel = 'preload';
+      videoLink.as = 'video';
+      videoLink.href = '/rubik_solve_vid0.mov';
+      document.head.appendChild(videoLink);
+      
+      // Also preload video using video element for better browser support
+      const video = document.createElement('video');
+      video.preload = 'auto';
+      video.src = '/rubik_solve_vid0.mov';
+    };
+
+    // Start preloading immediately
+    preloadAssets();
     
     // Save scroll position and set refresh flag before page unloads
     const handleBeforeUnload = () => {
@@ -297,14 +280,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/projects/rubiks-cube" element={<RubiksCubeProject />} />
             <Route path="/projects/financial-derivatives" element={<FinancialDerivativesProject />} />
-            <Route 
-              path="/projects/fitbox" 
-              element={
-                <Suspense fallback={null}>
-                  <FitBoxProject />
-                </Suspense>
-              } 
-            />
+            <Route path="/projects/fitbox" element={<FitBoxProject />} />
           </Routes>
           <Footer />
           <Analytics />

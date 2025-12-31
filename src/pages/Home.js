@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import profileImage from '../assets/profile.png';
 import rubiksImage from '../assets/rubiks1.jpeg';
@@ -8,18 +8,74 @@ import rubiksAssembly from '../assets/rubiks_assembly7.png';
 
 function Home() {
   const navigate = useNavigate();
+  const scrollHandlerReady = useRef(false);
+  const [imagesLoaded, setImagesLoaded] = useState(false);
+
+  // Preload project images to prevent glitchy first scroll
+  useEffect(() => {
+    const preloadImages = () => {
+      const imagePromises = [
+        rubiksImage,
+        srprojImage,
+        fitboxImage,
+        rubiksAssembly
+      ].map((src) => {
+        return new Promise((resolve, reject) => {
+          const img = new Image();
+          img.onload = resolve;
+          img.onerror = resolve; // Resolve even on error to not block
+          img.src = src;
+        });
+      });
+
+      Promise.all(imagePromises).then(() => {
+        setImagesLoaded(true);
+      });
+    };
+
+    preloadImages();
+  }, []);
 
   const scrollToProjects = () => {
     const projectsSection = document.getElementById('projects');
-    if (projectsSection) {
-      const elementPosition = projectsSection.getBoundingClientRect().top + window.pageYOffset;
-      const offsetPosition = elementPosition + 300;
+    if (!projectsSection) return;
+
+    // Ensure layout is ready and scroll handler has initialized
+    const performScroll = () => {
+      // Force a layout recalculation to ensure accurate measurements
+      projectsSection.getBoundingClientRect();
       
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: 'smooth'
+      // Use requestAnimationFrame to ensure DOM is ready
+      requestAnimationFrame(() => {
+        // Double RAF to ensure layout is complete and scroll handler has processed
+        requestAnimationFrame(() => {
+          const elementPosition = projectsSection.getBoundingClientRect().top + window.pageYOffset;
+          const offsetPosition = elementPosition + 300;
+          
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth'
+          });
+        });
       });
-    } 
+    };
+
+    // If scroll handler hasn't run yet, ensure it initializes first
+    if (!scrollHandlerReady.current) {
+      // Manually trigger scroll handler initialization by dispatching scroll event
+      // This ensures opacity states are set before we scroll
+      window.dispatchEvent(new Event('scroll'));
+      
+      // Wait for handler to process - use multiple RAFs to ensure it completes
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          performScroll();
+        });
+      });
+    } else {
+      // Handler is ready, but still use RAF to ensure layout is stable
+      performScroll();
+    }
   };
 
   // Handle scroll-based opacity transition and navbar visibility
@@ -28,6 +84,8 @@ function Home() {
     let ticking = false;
     
     const handleScroll = () => {
+      // Mark handler as ready after first execution
+      scrollHandlerReady.current = true;
       if (!ticking) {
         requestAnimationFrame(() => {
           const currentScrollY = window.scrollY;
@@ -175,9 +233,14 @@ function Home() {
     window.addEventListener('scroll', handleScroll);
     
     // Call immediately without delay to ensure proper initial state
-    handleScroll();
+    // Use requestAnimationFrame to ensure DOM is fully rendered
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        handleScroll();
+      });
+    });
     window.addEventListener('load', handleScroll);
-
+    
     return () => {
       window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('load', handleScroll);
@@ -186,6 +249,17 @@ function Home() {
         existingStyle.remove();
       }
     };
+  }, []);
+
+  // Re-run scroll handler when images are loaded to ensure proper initialization
+  useEffect(() => {
+    if (imagesLoaded) {
+      // Trigger scroll handler to recalculate opacities with loaded images
+      requestAnimationFrame(() => {
+        window.dispatchEvent(new Event('scroll'));
+      });
+    }
+
   }, []);
 
   return (

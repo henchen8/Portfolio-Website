@@ -13,6 +13,7 @@ const IPhoneMockup = memo(({ logoSrc }) => {
   const [isActiveWorkout, setIsActiveWorkout] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
   const [isWorkoutHovering, setIsWorkoutHovering] = useState(false);
+  const [isPauseWorkoutHovering, setIsPauseWorkoutHovering] = useState(false);
   const [activePage, setActivePage] = useState('home');
   const [currentWeight, setCurrentWeight] = useState(25);
   const [currentReps, setCurrentReps] = useState(0);
@@ -22,6 +23,8 @@ const IPhoneMockup = memo(({ logoSrc }) => {
   const [isConnected, setIsConnected] = useState(true);
   const workoutStartTime = useRef(null);
   const hasLoadedRef = useRef(false);
+  // Store previous home state when navigating away
+  const previousHomeState = useRef({ showWorkout: false, isActiveWorkout: false });
 
   const exercises = [
     { name: 'Bench Press', sets: 3, reps: 10 },
@@ -102,6 +105,16 @@ const IPhoneMockup = memo(({ logoSrc }) => {
       clearInterval(checkInterval);
     };
   }, []);
+
+  // Update previousHomeState whenever home page state changes
+  useEffect(() => {
+    if (activePage === 'home') {
+      previousHomeState.current = {
+        showWorkout: showWorkout,
+        isActiveWorkout: isActiveWorkout
+      };
+    }
+  }, [activePage, showWorkout, isActiveWorkout]);
 
   // Handle wheel events on phone - prevent page scroll and enable internal scrolling
   // Defer setup until after page load to prevent interference with loading screen
@@ -272,27 +285,29 @@ const IPhoneMockup = memo(({ logoSrc }) => {
             right: 0,
             bottom: '80px',
             background: '#f5f5e6',
-            borderRadius: '47px',
+            borderRadius: '47px 47px 0 0',
             display: 'flex',
             flexDirection: 'column',
             zIndex: 250,
-            padding: '4px 16px 12px 16px',
-            overflow: 'hidden'
+            padding: '4px 16px 0 16px',
+            overflow: 'hidden',
+            justifyContent: 'flex-start'
           }}>
             {/* Header with back button and connection indicator */}
             <div style={{
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
-              marginBottom: '8px',
-              marginTop: '2px'
+              marginBottom: '6px',
+              marginTop: '0',
+              position: 'relative'
             }}>
               <button
                 onClick={() => setIsActiveWorkout(false)}
                 style={{
                   background: 'transparent',
                   border: 'none',
-                  fontSize: '16px',
+                  fontSize: '18px',
                   color: '#000',
                   cursor: 'pointer',
                   padding: '4px 8px'
@@ -301,12 +316,16 @@ const IPhoneMockup = memo(({ logoSrc }) => {
                 ←
               </button>
               <div style={{
-                fontSize: '12px',
+                position: 'absolute',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                fontSize: '13px',
                 fontWeight: '600',
                 color: '#000',
                 fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
                 textTransform: 'uppercase',
-                letterSpacing: '1px'
+                letterSpacing: '1px',
+                whiteSpace: 'nowrap'
               }}>Workout Active</div>
               {/* Subtle connection indicator in top right */}
               <div style={{
@@ -326,29 +345,29 @@ const IPhoneMockup = memo(({ logoSrc }) => {
             {/* Current Exercise */}
             <div style={{
               textAlign: 'center',
-              marginBottom: '8px'
+              marginBottom: '6px'
             }}>
               <div style={{
-                fontSize: '9px',
+                fontSize: '10px',
                 color: '#666',
                 fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
                 textTransform: 'uppercase',
                 letterSpacing: '1.5px',
-                marginBottom: '2px'
+                marginBottom: '4px'
               }}>
                 Exercise {currentExercise + 1} of {exercises.length}
               </div>
               <div style={{
-                fontSize: '18px',
+                fontSize: '22px',
                 fontWeight: '600',
                 color: '#000',
                 fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
-                marginBottom: '2px'
+                marginBottom: '3px'
               }}>
                 {exercises[currentExercise]?.name || 'Bench Press'}
               </div>
               <div style={{
-                fontSize: '10px',
+                fontSize: '11px',
                 color: '#666',
                 fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif'
               }}>
@@ -361,74 +380,97 @@ const IPhoneMockup = memo(({ logoSrc }) => {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: '12px',
-              marginBottom: '8px',
-              padding: '8px',
-              background: '#fff',
-              borderRadius: '10px',
-              border: '1px solid #ddd'
+              gap: '32px',
+              marginBottom: '4px',
+              padding: '6px 0'
             }}>
               <button
                 onClick={() => setCurrentWeight(Math.max(5, currentWeight - 5))}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.opacity = '1';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.opacity = '0.3';
+                }}
                 style={{
-                  width: '28px',
-                  height: '28px',
-                  borderRadius: '50%',
-                  border: '1.5px solid #000',
+                  width: '36px',
+                  height: '36px',
+                  border: 'none',
                   background: 'transparent',
                   color: '#000',
-                  fontSize: '16px',
-                  fontWeight: '600',
+                  fontSize: '32px',
+                  fontWeight: '200',
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif'
+                  fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
+                  transition: 'opacity 0.2s ease',
+                  userSelect: 'none',
+                  WebkitTapHighlightColor: 'transparent',
+                  opacity: 0.3,
+                  lineHeight: '1',
+                  padding: 0
                 }}
               >
                 −
               </button>
+              
               <div style={{
                 display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                minWidth: '70px'
+                alignItems: 'baseline',
+                justifyContent: 'center',
+                gap: '3px',
+                minWidth: '90px'
               }}>
                 <div style={{
-                  fontSize: '20px',
-                  fontWeight: '600',
+                  fontSize: '48px',
+                  fontWeight: '100',
                   color: '#000',
-                  fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
-                  lineHeight: '1'
+                  fontFamily: "'SF Pro Display', 'Helvetica Neue', sans-serif",
+                  lineHeight: '1',
+                  letterSpacing: '-2px'
                 }}>
                   {currentWeight}
                 </div>
                 <div style={{
-                  fontSize: '8px',
-                  color: '#666',
+                  fontSize: '12px',
+                  color: '#999',
                   fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
-                  textTransform: 'uppercase',
-                  letterSpacing: '1px'
+                  fontWeight: '300',
+                  marginLeft: '1px'
                 }}>
                   lbs
                 </div>
               </div>
+              
               <button
                 onClick={() => setCurrentWeight(Math.min(200, currentWeight + 5))}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.opacity = '1';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.opacity = '0.3';
+                }}
                 style={{
-                  width: '28px',
-                  height: '28px',
-                  borderRadius: '50%',
-                  border: '1.5px solid #000',
-                  background: '#000',
-                  color: '#f5f5e6',
-                  fontSize: '16px',
-                  fontWeight: '600',
+                  width: '36px',
+                  height: '36px',
+                  border: 'none',
+                  background: 'transparent',
+                  color: '#000',
+                  fontSize: '32px',
+                  fontWeight: '200',
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif'
+                  fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
+                  transition: 'opacity 0.2s ease',
+                  userSelect: 'none',
+                  WebkitTapHighlightColor: 'transparent',
+                  opacity: 0.3,
+                  lineHeight: '1',
+                  padding: 0
                 }}
               >
                 +
@@ -437,11 +479,8 @@ const IPhoneMockup = memo(({ logoSrc }) => {
 
             {/* Cable Displacement Graph */}
             <div style={{
-              marginBottom: '8px',
-              padding: '8px',
-              background: '#fff',
-              borderRadius: '10px',
-              border: '1px solid #ddd'
+              marginBottom: '4px',
+              padding: '4px 0'
             }}>
               <div style={{
                 fontSize: '8px',
@@ -449,89 +488,85 @@ const IPhoneMockup = memo(({ logoSrc }) => {
                 fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
                 textTransform: 'uppercase',
                 letterSpacing: '1.5px',
-                marginBottom: '6px',
+                marginBottom: '4px',
                 textAlign: 'center'
               }}>
                 Cable Displacement
               </div>
               {/* Graph Area */}
-              <div style={{
-                position: 'relative',
-                width: '100%',
-                height: '70px',
-                marginBottom: '4px'
-              }}>
-                <svg width="100%" height="70" viewBox="0 0 200 100" preserveAspectRatio="none" style={{ overflow: 'visible' }}>
-                  {/* Grid lines */}
-                  <line x1="0" y1="25" x2="200" y2="25" stroke="#e0e0e0" strokeWidth="0.5" strokeDasharray="2,2" />
-                  <line x1="0" y1="50" x2="200" y2="50" stroke="#e0e0e0" strokeWidth="0.5" strokeDasharray="2,2" />
-                  <line x1="0" y1="75" x2="200" y2="75" stroke="#e0e0e0" strokeWidth="0.5" strokeDasharray="2,2" />
-                  
-                  {/* Threshold line (goal) */}
-                  <line 
-                    x1="0" 
-                    y1={100 - MIN_THRESHOLD_DISPLACEMENT} 
-                    x2="200" 
-                    y2={100 - MIN_THRESHOLD_DISPLACEMENT} 
-                    stroke="#4caf50" 
-                    strokeWidth="1" 
-                    strokeDasharray="3,2"
-                  />
-                  
-                  {/* Sample displacement data - position vs time (sinusoidal pattern with multiple rep cycles) */}
-                  <polyline
-                    points="0,80 5,72 10,60 15,45 20,32 25,25 30,28 35,38 40,52 45,65 50,75 55,72 60,60 65,45 70,32 75,25 80,28 85,38 90,52 95,65 100,75 105,70 110,58 115,43 120,30 125,25 130,30 135,42 140,55 145,68 150,75 155,72 160,60 165,45 170,32 175,25 180,28 185,38 190,52 195,65 200,72"
-                    fill="none"
-                    stroke="#000"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                  
-                  {/* Threshold label */}
-                  <text 
-                    x="195" 
-                    y={100 - MIN_THRESHOLD_DISPLACEMENT - 2} 
-                    fill="#4caf50" 
-                    fontSize="6" 
-                    fontFamily="-apple-system, BlinkMacSystemFont, sans-serif"
-                    textAnchor="end"
-                  >
-                    Goal
-                  </text>
-                </svg>
-                
+              <div style={{ position: 'relative', height: '95px', marginBottom: '2px' }}>
                 {/* Y-axis labels */}
-                <div style={{
-                  position: 'absolute',
-                  left: '-18px',
-                  top: '0',
-                  height: '100%',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'space-between',
-                  fontSize: '6px',
-                  color: '#999',
-                  fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif'
+                <div style={{ 
+                  position: 'absolute', 
+                  left: '0', 
+                  top: '0', 
+                  bottom: '16px', 
+                  width: '24px', 
+                  display: 'flex', 
+                  flexDirection: 'column', 
+                  justifyContent: 'space-between' 
                 }}>
-                  <span>100%</span>
-                  <span>75%</span>
-                  <span>50%</span>
-                  <span>25%</span>
-                  <span>0%</span>
+                  <span style={{ fontSize: '6px', color: '#999', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>100%</span>
+                  <span style={{ fontSize: '6px', color: '#999', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>75%</span>
+                  <span style={{ fontSize: '6px', color: '#999', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>50%</span>
+                  <span style={{ fontSize: '6px', color: '#999', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>25%</span>
+                  <span style={{ fontSize: '6px', color: '#999', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>0%</span>
                 </div>
                 
-                {/* X-axis label */}
-                <div style={{
-                  position: 'absolute',
-                  bottom: '-12px',
-                  left: '50%',
-                  transform: 'translateX(-50%)',
-                  fontSize: '7px',
-                  color: '#666',
-                  fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif'
-                }}>
-                  Time
+                {/* Chart area */}
+                <div style={{ marginLeft: '28px', height: '85px', position: 'relative' }}>
+                  <svg width="100%" height="85" viewBox="0 0 200 100" preserveAspectRatio="none" style={{ overflow: 'visible' }}>
+                    {/* Grid lines */}
+                    <line x1="0" y1="25" x2="200" y2="25" stroke="#e0e0e0" strokeWidth="0.5" strokeDasharray="2,2" />
+                    <line x1="0" y1="50" x2="200" y2="50" stroke="#e0e0e0" strokeWidth="0.5" strokeDasharray="2,2" />
+                    <line x1="0" y1="75" x2="200" y2="75" stroke="#e0e0e0" strokeWidth="0.5" strokeDasharray="2,2" />
+                    
+                    {/* Threshold line (goal) */}
+                    <line 
+                      x1="0" 
+                      y1={100 - MIN_THRESHOLD_DISPLACEMENT} 
+                      x2="200" 
+                      y2={100 - MIN_THRESHOLD_DISPLACEMENT} 
+                      stroke="#4caf50" 
+                      strokeWidth="1" 
+                      strokeDasharray="3,2"
+                    />
+                    
+                    {/* Sample displacement data - position vs time (sinusoidal pattern with multiple rep cycles) */}
+                    <polyline
+                      points="0,82 2,75 4,65 6,52 8,38 10,28 12,22 14,18 16,25 18,35 20,48 22,62 24,72 26,78 28,75 30,68 32,58 34,45 36,32 38,23 40,15 42,24 44,34 46,48 48,62 50,74 52,85 54,78 56,70 58,58 60,45 62,32 64,24 66,22 68,22 70,30 72,42 74,56 76,68 78,76 80,82 82,75 84,65 86,52 88,38 90,28 92,22 94,18 96,25 98,35 100,48 102,62 104,72 106,78 108,75 110,68 112,58 114,45 116,32 118,24 120,15 122,24 124,34 126,48 128,62 130,74 132,85 134,78 136,70 138,58 140,45 142,32 144,24 146,22 148,22 150,30 152,42 154,56 156,68 158,76 160,82 162,75 164,65 166,52 168,38 170,28 172,22 174,18 176,25 178,35 180,48 182,62 184,72 186,78 188,75 190,68 192,58 194,45 196,32 198,24 200,18"
+                      fill="none"
+                      stroke="#000"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    
+                    {/* Threshold label */}
+                    <text 
+                      x="195" 
+                      y={100 - MIN_THRESHOLD_DISPLACEMENT - 2} 
+                      fill="#4caf50" 
+                      fontSize="6" 
+                      fontFamily="-apple-system, BlinkMacSystemFont, sans-serif"
+                      textAnchor="end"
+                    >
+                      Goal
+                    </text>
+                  </svg>
+                  
+                  {/* X-axis label */}
+                  <div style={{
+                    position: 'absolute',
+                    bottom: '-12px',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    fontSize: '7px',
+                    color: '#666',
+                    fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif'
+                  }}>
+                    Time
+                  </div>
                 </div>
               </div>
               
@@ -551,11 +586,8 @@ const IPhoneMockup = memo(({ logoSrc }) => {
             <div style={{
               display: 'flex',
               justifyContent: 'space-around',
-              marginBottom: '8px',
-              padding: '8px',
-              background: '#fff',
-              borderRadius: '10px',
-              border: '1px solid #ddd'
+              marginBottom: '4px',
+              padding: '4px 0'
             }}>
               {/* Reps */}
               <div style={{
@@ -563,17 +595,17 @@ const IPhoneMockup = memo(({ logoSrc }) => {
                 flex: 1
               }}>
                 <div style={{
-                  fontSize: '20px',
+                  fontSize: '24px',
                   fontWeight: '600',
                   color: '#000',
                   fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
                   lineHeight: '1',
-                  marginBottom: '2px'
+                  marginBottom: '3px'
                 }}>
-                  {currentReps}
+                  {currentReps || 8}
                 </div>
                 <div style={{
-                  fontSize: '8px',
+                  fontSize: '9px',
                   color: '#666',
                   fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
                   textTransform: 'uppercase',
@@ -596,17 +628,17 @@ const IPhoneMockup = memo(({ logoSrc }) => {
                 flex: 1
               }}>
                 <div style={{
-                  fontSize: '20px',
+                  fontSize: '24px',
                   fontWeight: '600',
                   color: '#000',
                   fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
                   lineHeight: '1',
-                  marginBottom: '2px'
+                  marginBottom: '3px'
                 }}>
-                  {Math.round(totalCalories)}
+                  {Math.round(totalCalories) || 56}
                 </div>
                 <div style={{
-                  fontSize: '8px',
+                  fontSize: '9px',
                   color: '#666',
                   fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
                   textTransform: 'uppercase',
@@ -620,21 +652,28 @@ const IPhoneMockup = memo(({ logoSrc }) => {
             {/* Pause/End Workout Button */}
             <button
               onClick={() => setIsActiveWorkout(false)}
+              onMouseEnter={() => setIsPauseWorkoutHovering(true)}
+              onMouseLeave={() => setIsPauseWorkoutHovering(false)}
               style={{
-                width: '100%',
-                padding: '10px',
-                background: 'transparent',
+                width: 'calc(100% - 32px)',
+                marginLeft: 'auto',
+                marginRight: 'auto',
+                marginTop: 'auto',
+                marginBottom: '0',
+                padding: '14px',
+                background: isPauseWorkoutHovering ? '#000' : 'transparent',
                 border: '1.5px solid #000',
                 borderRadius: '0',
-                color: '#000',
-                fontSize: '10px',
+                color: isPauseWorkoutHovering ? '#f5f5e6' : '#000',
+                fontSize: '11px',
                 fontWeight: '500',
                 fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
                 textTransform: 'uppercase',
                 letterSpacing: '2px',
                 cursor: 'pointer',
                 transition: 'all 0.2s ease',
-                marginTop: 'auto'
+                boxSizing: 'border-box',
+                display: 'block'
               }}
             >
               Pause Workout
@@ -922,7 +961,7 @@ const IPhoneMockup = memo(({ logoSrc }) => {
         }}>
           
           {/* HOME PAGE */}
-          {activePage === 'home' && (
+          {activePage === 'home' && !isActiveWorkout && (
             <>
               {/* Greeting */}
               <div style={{
@@ -930,7 +969,7 @@ const IPhoneMockup = memo(({ logoSrc }) => {
                 color: '#666',
                 fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
                 fontWeight: '500',
-                marginBottom: '12px',
+                marginBottom: '8px',
                 marginTop: '-4px'
               }}>Welcome back, Henry!</div>
               
@@ -938,7 +977,7 @@ const IPhoneMockup = memo(({ logoSrc }) => {
               <div style={{
                 display: 'flex',
                 justifyContent: 'space-between',
-                marginBottom: '18px'
+                marginBottom: '12px'
               }}>
                 {/* Streak */}
                 <div>
@@ -996,32 +1035,44 @@ const IPhoneMockup = memo(({ logoSrc }) => {
               </div>
               
               {/* Divider */}
-              <div style={{ height: '1px', background: '#ddd', marginBottom: '12px' }} />
+              <div style={{ height: '1px', background: '#ddd', marginBottom: '10px' }} />
               
-              {/* Today's workout section */}
+              {/* Today's Workout - Enhanced card design */}
               <div style={{
-                fontSize: '11px',
-                color: '#666',
-                fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
-                textTransform: 'uppercase',
-                letterSpacing: '2px',
-                marginBottom: '8px'
-              }}>Today</div>
-              
-              <div style={{
-                fontSize: '24px',
-                fontWeight: '500',
-                color: '#000',
-                fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
-                marginBottom: '4px'
-              }}>Upper Body Push</div>
-              
-              <div style={{
-                fontSize: '15px',
-                color: '#666',
-                fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
-                marginBottom: '18px'
-              }}>45 min · Chest, shoulders, triceps</div>
+                marginBottom: '12px'
+              }}>
+                <div style={{
+                  fontSize: '11px',
+                  color: '#666',
+                  fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
+                  textTransform: 'uppercase',
+                  letterSpacing: '2px',
+                  marginBottom: '6px'
+                }}>Today</div>
+                
+                <div style={{
+                  background: '#f5f5e6',
+                  border: '1px solid rgba(0, 0, 0, 0.08)',
+                  padding: '12px 16px',
+                  borderRadius: '0',
+                  borderLeft: '2px solid #000'
+                }}>
+                  <div style={{
+                    fontSize: '24px',
+                    fontWeight: '500',
+                    color: '#000',
+                    fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
+                    marginBottom: '3px'
+                  }}>Upper Body Push</div>
+                  
+                  <div style={{
+                    fontSize: '15px',
+                    color: '#666',
+                    fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
+                    marginBottom: '0'
+                  }}>45 min · Chest, shoulders, triceps</div>
+                </div>
+              </div>
               
               {/* Tomorrow's workout section */}
               <div style={{
@@ -1045,7 +1096,7 @@ const IPhoneMockup = memo(({ logoSrc }) => {
                 fontSize: '11px',
                 color: '#666',
                 fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
-                marginBottom: '24px'
+                marginBottom: '12px'
               }}>50 min · Quads, hamstrings, glutes</div>
               
               {/* Start Button - minimal outline style */}
@@ -1066,7 +1117,7 @@ const IPhoneMockup = memo(({ logoSrc }) => {
                   textTransform: 'uppercase',
                   letterSpacing: '2px',
                   cursor: 'pointer',
-                  marginBottom: '16px',
+                  marginBottom: '0',
                   transition: 'all 0.2s ease'
                 }}>
                 Begin
@@ -1075,7 +1126,7 @@ const IPhoneMockup = memo(({ logoSrc }) => {
           )}
           
           {/* ANALYTICS PAGE */}
-          {activePage === 'analytics' && (
+          {activePage === 'analytics' && !isActiveWorkout && (
             <>
               <div style={{
                 fontSize: '10px',
@@ -1283,7 +1334,7 @@ const IPhoneMockup = memo(({ logoSrc }) => {
           )}
           
           {/* FRIENDS PAGE - Social Feed */}
-          {activePage === 'friends' && (
+          {activePage === 'friends' && !isActiveWorkout && (
             <>
               <div style={{
                 fontSize: '18px',
@@ -1678,7 +1729,7 @@ const IPhoneMockup = memo(({ logoSrc }) => {
           )}
           
           {/* COMPETE PAGE */}
-          {activePage === 'compete' && (
+          {activePage === 'compete' && !isActiveWorkout && (
             <>
               <div style={{
                 fontSize: '18px',
@@ -2001,7 +2052,9 @@ const IPhoneMockup = memo(({ logoSrc }) => {
             {/* Home */}
             <div 
               onClick={() => {
+                // Always go to main home page
                 setIsActiveWorkout(false);
+                setShowWorkout(false);
                 setActivePage('home');
               }}
               style={{ 
@@ -2021,7 +2074,15 @@ const IPhoneMockup = memo(({ logoSrc }) => {
             {/* Analytics */}
             <div 
               onClick={() => {
+                // Save current home state before navigating away
+                if (activePage === 'home') {
+                  previousHomeState.current = {
+                    showWorkout: showWorkout,
+                    isActiveWorkout: isActiveWorkout
+                  };
+                }
                 setIsActiveWorkout(false);
+                setShowWorkout(false);
                 setActivePage('analytics');
               }}
               style={{ 
@@ -2042,7 +2103,15 @@ const IPhoneMockup = memo(({ logoSrc }) => {
             {/* Social/Chat */}
             <div 
               onClick={() => {
+                // Save current home state before navigating away
+                if (activePage === 'home') {
+                  previousHomeState.current = {
+                    showWorkout: showWorkout,
+                    isActiveWorkout: isActiveWorkout
+                  };
+                }
                 setIsActiveWorkout(false);
+                setShowWorkout(false);
                 setActivePage('friends');
               }}
               style={{ 
@@ -2064,7 +2133,15 @@ const IPhoneMockup = memo(({ logoSrc }) => {
             {/* Competition/Leaderboard */}
             <div 
               onClick={() => {
+                // Save current home state before navigating away
+                if (activePage === 'home') {
+                  previousHomeState.current = {
+                    showWorkout: showWorkout,
+                    isActiveWorkout: isActiveWorkout
+                  };
+                }
                 setIsActiveWorkout(false);
+                setShowWorkout(false);
                 setActivePage('compete');
               }}
               style={{ 
@@ -2261,8 +2338,8 @@ function FitBoxProject() {
           </p>
           <p>
             FitBox was developed during the Management and Technology Summer Institute at the University 
-            of Pennsylvania. As Co-Founder and Mechanical Lead, I designed the go-to-market strategy and 
-            (MVP), combining engineering innovation with business strategy to create a practical fitness 
+            of Pennsylvania. As technical Co-Founder, I  designed the GTM strategy and MVP,
+            combining mechanical innovations with business strategy to create a practical fitness 
             solution for people on the go.
           </p>
         </div>
@@ -2297,15 +2374,14 @@ function FitBoxProject() {
             <div className="project-section">
               <h2>Product Design</h2>
               <p>
-                Created a compact, portable workout system using Onshape CAD. The mechanical design focuses on
-                maximizing functionality while minimizing footprint for true portability.
+                Developed a compact, portable workout system using Onshape CAD. The mechanical design focuses on
+                maximizing simulated weight resistance functionality while also optimizing portability footprint.
                 Key design features include:
               </p>
               <ul>
                 <li>• Modular resistance system for adjustable workout intensity</li>
-                <li>• Compact folding mechanism for easy storage and transport</li>
-                <li>• Ergonomic grips and attachment points</li>
-                <li>• Durable materials selected for longevity and weight optimization</li>
+                <li>• Compact folding mechanism for ease of storage and transport</li>
+                <li>• Ergonomic grips and suction-powered attachment points</li>
               </ul>
             </div>
           </div>
@@ -2342,13 +2418,13 @@ function FitBoxProject() {
               <h2>User Experience</h2>
               <p>
                 Designed user interface and interaction flow using Figma to create an intuitive companion app experience.
-                Key UX considerations include:
+                Key UX elements include:
               </p>
               <ul>
                 <li>• Workout tracking and progress visualization</li>
                 <li>• Guided exercise routines with visual instructions</li>
                 <li>• Personalized fitness goals and recommendations</li>
-                <li>• Social features for accountability and motivation</li>
+                <li>• Social comptetitions with friends for accountability and motivation. </li>
               </ul>
             </div>
           </div>
@@ -2382,14 +2458,14 @@ function FitBoxProject() {
         <div className="project-section">
           <h2>Electronics</h2>
           <p>
-            Integrated Arduino-based control system for smart functionality, enabling real-time workout feedback.
+            Integrated Arduino-based control system for  functionality, enabling real-time workout feedback.
             Key electronic features include:
           </p>
           <ul>
             <li>• Sensor integration for rep counting and form detection</li>
-            <li>• Bluetooth connectivity for app synchronization</li>
-            <li>• Low-power design for extended battery life</li>
-            <li>• Modular PCB design for easy assembly and maintenance</li>
+            <li>• Bluetooth connectivity for mobile app synchronization</li>
+            <li>• Dynamically adjustable resistance system</li>
+            <li>• Integrated display that displays movement type, rep counts, and weight</li>
           </ul>
         </div>
 
@@ -2400,8 +2476,8 @@ function FitBoxProject() {
             Key strategic elements include:
           </p>
           <ul>
-            <li>• Go-to-Market: Direct-to-consumer launch via e-commerce, leveraging social media marketing and fitness influencer partnerships for initial traction</li>
-            <li>• Product-Market Fit: Targeting busy professionals and frequent travelers who want effective workouts without gym access or bulky equipment</li>
+            <li>• GTM: Direct-to-consumer launch via e-commerce, leveraging social media marketing and fitness influencer partnerships for initial traction</li>
+            <li>• PMF: Targeting busy professionals and frequent travelers who want effective workouts without gym access or bulky equipment</li>
             <li>• TAM: Global home fitness equipment market valued at $14B+</li>
             <li>• SAM: Portable/compact fitness segment ~$2B in North America</li>
             <li>• SOM: Initial target of $5M capturing early adopters in urban professional demographic</li>

@@ -485,7 +485,7 @@ function RubiksCubeProject() {
               <h2>Microcontroller Software</h2>
               <p>
                 The Arduino microcontroller serves as the brain of the system, integrating solving algorithm
-                with all the mechanical and electrical components. Key programming include:
+                with all the mechanical and electrical components. Key programming features included:
               </p>
               <ul>
                 <li>• Real-time stepper motor control with precise timing</li>
