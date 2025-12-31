@@ -2455,18 +2455,51 @@ function FitBoxProject() {
           </div>
         </div>
 
-        <div className="project-section">
-          <h2>Electronics</h2>
-          <p>
-            Integrated Arduino-based control system for  functionality, enabling real-time workout feedback.
-            Key electronic features include:
-          </p>
-          <ul>
-            <li>• Sensor integration for rep counting and form detection</li>
-            <li>• Bluetooth connectivity for mobile app synchronization</li>
-            <li>• Dynamically adjustable resistance system</li>
-            <li>• Integrated display that displays movement type, rep counts, and weight</li>
-          </ul>
+        <div style={{
+          display: 'flex',
+          gap: '3rem',
+          alignItems: 'flex-start',
+          flexWrap: 'wrap',
+          maxWidth: '1600px',
+          margin: '0 auto',
+          width: 'calc(100vw - 4rem)',
+          marginLeft: '50%',
+          transform: 'translateX(-50%)',
+          padding: '0 2rem'
+        }}>
+          <div style={{ flex: '0 0 auto' }}>
+            {/* PCB Image placeholder - replace with actual image when available */}
+            <div style={{ 
+              maxWidth: '600px', 
+              width: '100%', 
+              height: '400px',
+              background: '#f5f5e6',
+              borderRadius: '12px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#999',
+              fontSize: '14px'
+            }}>
+              PCB Image
+            </div>
+          </div>
+
+          <div style={{ flex: '1 1 500px', minWidth: '300px' }}>
+            <div className="project-section">
+              <h2>Electronics</h2>
+              <p>
+                Integrated Arduino-based control system for  functionality, enabling real-time workout feedback.
+                Key electronic features include:
+              </p>
+              <ul>
+                <li>• Sensor integration for rep counting and form detection</li>
+                <li>• Bluetooth connectivity for mobile app synchronization</li>
+                <li>• Dynamically adjustable resistance system</li>
+                <li>• Integrated display that displays movement type, rep counts, and weight</li>
+              </ul>
+            </div>
+          </div>
         </div>
 
         <div className="project-section">

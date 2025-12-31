@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import srprojImage from '../assets/srproj.png';
 import blackscholesImage from '../assets/blackscholes.png';
 import simplifiedBlackscholesImage from '../assets/port_simplifiedblackscholes.png';
+import famafrenchImage from '../assets/portfamafrench.png';
 
 function FinancialDerivativesProject() {
   const handleBackClick = () => {
@@ -63,6 +64,27 @@ function FinancialDerivativesProject() {
             <li>• Variance explained by each component</li>
             <li>• Feature extraction and data compression in financial datasets</li>
           </ul>
+          <div style={{
+            background: 'linear-gradient(135deg, #fafaf8 0%, #f0f0ed 100%)',
+            borderRadius: '12px',
+            padding: '2rem',
+            marginTop: '2rem',
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)'
+          }}>
+            <div style={{ textAlign: 'center' }}>
+              <img
+                src={famafrenchImage}
+                alt="Fama-French Principal Component Analysis"
+                style={{
+                  maxWidth: '800px',
+                  width: '100%',
+                  height: 'auto',
+                  borderRadius: '8px',
+                  boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+                }}
+              />
+            </div>
+          </div>
         </div>
 
         <div className="project-section">

@@ -3,11 +3,11 @@ import { Canvas } from '@react-three/fiber';
 import { OrbitControls, useGLTF } from '@react-three/drei';
 
 // Preload the GLTF model
-useGLTF.preload('/Assembly%206%20Motor%20Interfacing.gltf');
+useGLTF.preload('/extra/Assembly%206%20Motor%20Interfacing.gltf');
 
 // Load the actual 3D model
 function Model() {
-  const { scene } = useGLTF('/Assembly%206%20Motor%20Interfacing.gltf');
+  const { scene } = useGLTF('/extra/Assembly%206%20Motor%20Interfacing.gltf');
   return <primitive object={scene} scale={30} />;
 }
 
