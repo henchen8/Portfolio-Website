@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import profileImage from '../assets/profile.png';
 import rubiksImage from '../assets/rubiks1.jpeg';
-import srprojImage from '../assets/srproj.png';
+import srprojImage from '../assets/portsrproj2.png';
 import fitboxImage from '../assets/FitBoxlogo.png';
 import rubiksAssembly from '../assets/rubiks_assembly7.png';
 
@@ -382,17 +382,6 @@ function Home() {
               </div>
 
               <div className="project-card" onClick={() => {
-                navigate('/projects/financial-derivatives');
-              }}>
-                <div className="project-image" style={{ backgroundImage: `url(${srprojImage})`, backgroundSize: 'cover', backgroundPosition: 'center 35%' }}>
-                </div>
-                <div className="project-content">
-                  <h3>Pricing Financial Derivatives</h3>
-                  <p className="project-tagline">Exploring CAPM, PCA, and Black-Scholes options pricing</p>
-                </div>
-              </div>
-
-              <div className="project-card" onClick={() => {
                 navigate('/projects/fitbox');
               }}>
                 <div className="project-image" style={{ backgroundImage: `url(${fitboxImage})`, backgroundSize: 'contain', backgroundPosition: 'center', backgroundColor: 'white', backgroundRepeat: 'no-repeat', borderBottom: 'none' }}>
@@ -400,6 +389,17 @@ function Home() {
                 <div className="project-content">
                   <h3>FitBox</h3>
                   <p className="project-tagline">A revolutionary portable workout solution</p>
+                </div>
+              </div>
+
+              <div className="project-card" onClick={() => {
+                navigate('/projects/financial-derivatives');
+              }}>
+                <div className="project-image" style={{ backgroundImage: `url(${srprojImage})`, backgroundSize: 'cover', backgroundPosition: 'center 35%' }}>
+                </div>
+                <div className="project-content">
+                  <h3>Pricing Financial Derivatives</h3>
+                  <p className="project-tagline">Exploring CAPM, PCA, and Black-Scholes options pricing</p>
                 </div>
               </div>
             </div>
