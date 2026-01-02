@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import srprojImage from '../assets/portfderivativesfirst.png';
+import srprojImage from '../assets/Capture-2026-01-01-134649.png';
 import blackscholesImage from '../assets/blackscholes.png';
 import simplifiedBlackscholesImage from '../assets/port_simplifiedblackscholes.png';
 import famafrenchImage from '../assets/portfamafrench.png';

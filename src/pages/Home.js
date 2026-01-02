@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import profileImage from '../assets/profile.png';
 import rubiksImage from '../assets/rubiks1.jpeg';
-import srprojImage from '../assets/portsrproj2.png';
+import srprojImage from '../assets/portsrproj3.png';
 import fitboxImage from '../assets/FitBoxlogo.png';
 import rubiksAssembly from '../assets/rubiks_assembly7.png';
 
