@@ -39,13 +39,53 @@ function ScrollToTop({ loading, onScrollReady }) {
     if (returnToHome && pathname === '/') {
       sessionStorage.removeItem('returnToHome');
       
-      // Scroll to projects section with same offset as "My Projects" button
-      const section = document.getElementById('projects');
-      if (section) {
-        const elementPosition = section.getBoundingClientRect().top + window.pageYOffset;
-        const offsetPosition = elementPosition + 300;
-        window.scrollTo(0, offsetPosition);
-      }
+      // Wait for page to be fully rendered before scrolling
+      // Use multiple requestAnimationFrame calls to ensure layout is stable
+      // Also wait for images to load in Home component
+      const performScroll = () => {
+        const section = document.getElementById('projects');
+        if (section) {
+          // Force layout recalculation
+          section.getBoundingClientRect();
+          
+          // Wait one more frame to ensure all layout calculations are complete
+          requestAnimationFrame(() => {
+            const sectionRect = section.getBoundingClientRect();
+            const sectionTop = sectionRect.top + window.pageYOffset;
+            const viewportHeight = window.innerHeight;
+            const sectionHeight = sectionRect.height;
+            
+            // Scroll to show projects section at the bottom of the viewport
+            // This ensures the section is fully visible and positioned at the bottom
+            const targetScroll = sectionTop + sectionHeight - viewportHeight + 100;
+            
+            // If section is near the bottom of the page, scroll to page bottom instead
+            const pageHeight = document.documentElement.scrollHeight;
+            const distanceFromBottom = pageHeight - (sectionTop + sectionHeight);
+            
+            const scrollPosition = distanceFromBottom < 200 
+              ? pageHeight - viewportHeight // Scroll to very bottom of page
+              : Math.max(0, targetScroll); // Scroll to show projects at bottom of viewport
+            
+            window.scrollTo({
+              top: scrollPosition,
+              behavior: 'auto'
+            });
+          });
+        }
+      };
+      
+      // Use multiple RAFs to ensure DOM is ready and images are loaded
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            performScroll();
+            // Signal that scroll is ready after initiating scroll
+            onScrollReady?.();
+          });
+        });
+      });
+      return; // Don't continue to other scroll logic
     } else if (hash === '#projects' && pathname === '/') {
       // Handle hash navigation to projects section
       const section = document.getElementById('projects');

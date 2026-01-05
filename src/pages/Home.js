@@ -260,7 +260,7 @@ function Home() {
       });
     }
 
-  }, []);
+  }, [imagesLoaded]);
 
   return (
     <>
@@ -339,11 +339,11 @@ function Home() {
               <div className="timeline-item">
                 <div className="timeline-marker"></div>
                 <div className="timeline-content">
-                  <h3>Senior Mechancial Engineer</h3>
+                  <h3>Senior Mechanical Engineer</h3>
                   <p className="timeline-company">Crystal Springs Uplands School Robotics Team • August 2021 - May 2025</p>
                   <p>
-                    Oversaw all mechanical tasks on the team as Senior Mechanical Engineer. Lead design of mechanical systems on robot.
-                    Operate robot during competition. 
+                    Oversaw all mechanical tasks on the team as Senior Mechanical Engineer. Led design of mechanical systems on robot.
+                    Operated robot during competition. 
                   </p>
                 </div>
               </div>

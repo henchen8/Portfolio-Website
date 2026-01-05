@@ -185,22 +185,14 @@ function RubiksCubeProject() {
             <div className="project-section">
               <h2>Overview</h2>
               <p className="project-description">
-                Fully modular, autonmous cube-solving robot.
+                Fully modular, autonomous cube-solving robot.
               </p>
               <p>
-                This project integrates mechanical and electrical design, microscontroller programming, computer vision,
+                This project integrates mechanical and electrical design, microcontroller programming, computer vision,
                 and sophisticated cube solving algorithms to create a Rubik's Cube solving system.
 
 
               </p>
-              <div className="project-tech">
-                <span className="tech-tag">Onshape</span>
-                <span className="tech-tag">Fusion</span>
-                <span className="tech-tag">Arduino</span>
-                <span className="tech-tag">Python</span>
-                <span className="tech-tag">C++</span>
-                <span className="tech-tag">Altium</span>
-              </div>
             </div>
 
             <div className="project-section">
@@ -217,7 +209,7 @@ function RubiksCubeProject() {
                 </div>
                 <div className="stat-card">
                   <div className="stat-value">&lt;$125</div>
-                  <div className="stat-label">Total cost
+                  <div className="stat-label">Total Cost
                   </div>
                 </div>
               </div>
@@ -226,8 +218,8 @@ function RubiksCubeProject() {
             <div className="project-section" style={{ marginTop: 0 }}>
               <h2>Mechanical Design</h2>
               <p>
-                The mechanical system features custom-designed 3d printed parts and mechanisms that house
-                and allow each face of the cube to be rotated effectively and independatly. Additionally,
+                The mechanical system features custom-designed 3D printed parts and mechanisms that house
+                and allow each face of the cube to be rotated effectively and independently. Additionally,
                 by nature, the fully-modular design lends itself to easy maintenance and future improvements.
                 Key mechanical components include:
               </p>
@@ -391,7 +383,7 @@ function RubiksCubeProject() {
               </div>
             </div>
 
-            <div style={{ paddingTop: '1 rem', marginLeft: '-35px' }}>
+            <div style={{ paddingTop: '1rem', marginLeft: '-35px' }}>
               <img
                 src={rubiksDrawing}
                 alt="Rubik's Cube Robot Design"
@@ -419,16 +411,23 @@ function RubiksCubeProject() {
           padding: '0 2rem'
         }}>
           <div style={{ flex: '1', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem', marginTop: '-25px' }}>
-            <img
-              src={tmcDriver}
-              alt="TMC2209 V2.0 Stepper Motor Driver"
-              style={{
-                maxWidth: '380px',
-                width: '100%',
-                height: 'auto',
-                borderRadius: '8px'
-              }}
-            />
+            <div style={{
+              maxWidth: '380px',
+              width: '100%',
+              borderRadius: '8px',
+              overflow: 'hidden',
+              display: 'flex'
+            }}>
+              <img
+                src={tmcDriver}
+                alt="TMC2209 V2.0 Stepper Motor Driver"
+                style={{
+                  width: '100%',
+                  height: 'auto',
+                  display: 'block'
+                }}
+              />
+            </div>
             <img
               src={nema17}
               alt="NEMA 17 Stepper Motor"
@@ -448,7 +447,7 @@ function RubiksCubeProject() {
               <h2>Electrical Design</h2>
               <p>
                 The electrical system integrates the computer vision system with the 
-                mehcnaical mechansisms by managing sensor interfacing and motor control.
+                mechanical mechanisms by managing sensor interfacing and motor control.
                 Key electrical features include:
               </p>
               <ul>
@@ -491,7 +490,7 @@ function RubiksCubeProject() {
                 <li>• Real-time stepper motor control with precise timing</li>
                 <li>• Interrupt-driven architecture for responsive sensor feedback</li>
                 <li>• Communication protocols for interfacing with computer vision system</li>
-                <li>• Streamlined functions that take face and displacement parameters-</li>
+                <li>• Streamlined functions that take face and displacement parameters</li>
                 <li>• Ability to configure motor rpm</li>
               </ul>
               <p>

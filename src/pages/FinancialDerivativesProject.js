@@ -24,17 +24,15 @@ function FinancialDerivativesProject() {
         <div className="project-section">
           <h2>Overview</h2>
           <p className="project-description">
-            A breif exploration of the world of quantitative finance
-
-            through CAPM, PCA, and Black Scholes Merton options model.
+            A brief exploration of the world of quantitative finance through CAPM, PCA, and Black-Scholes-Merton options model.
           </p>
           <p>
-            The scope of this reserach project is split into two main areas: the first is educating the individual who is interested
+            The scope of this research project is split into two main areas: the first is educating the individual who is interested
             in retail investment, where concepts such as ETFs, dividends, and basic trading strategies are introduced. 
-            The second half focuses more on the technical side—the applicaiton of data analytics, mathematics, 
+            The second half focuses more on the technical side—the application of data analytics, mathematics, 
             and numerical analysis to quantitative finance. Mathematical concepts discussed include linear 
-            transformations on matrix represenations of portfolios, eigendecomposition for PCA,
-            in addition to a high level overview of stochastic calculus and free boundary problems. 
+            transformations on matrix representations of portfolios, eigendecomposition for PCA,
+            in addition to a high-level overview of stochastic calculus and free boundary problems. 
           </p>
         </div>
         
@@ -197,16 +195,6 @@ function FinancialDerivativesProject() {
         
         <div className="project-section">
           <h2>Resources</h2>
-          <div className="project-tech">
-            <span className="tech-tag">Risk Analysis</span>
-            <span className="tech-tag">Portfolio Theory</span>
-            <span className="tech-tag">Linear Algebra</span>
-            <span className="tech-tag">Data Analytics</span>
-            <span className="tech-tag">Derivatives</span>
-            <span className="tech-tag">Stochastic Calculus</span>
-            <span className="tech-tag">Numerical Analysis</span>
-            <span className="tech-tag">Algorithms</span>
-          </div>
           <div className="project-links">
             <a href="https://youtu.be/doYoJWpjqiU" target="_blank" rel="noopener noreferrer" className="project-link-btn">Live Presentation</a>
             <a href="https://docs.google.com/presentation/d/129P1cS45KJAWDq-8KD_RfFEJdXTyp73k/edit?slide=id.p1#slide=id.p1" target="_blank" rel="noopener noreferrer" className="project-link-btn">Slides</a>

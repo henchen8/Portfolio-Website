@@ -66,7 +66,7 @@ const IPhoneMockup = memo(({ logoSrc }) => {
                   setShowLoading(false);
                 }, 600); // Fade out duration
                 observer.disconnect();
-              }, 1200); // 1.2 second delay before fade starts
+              }, 650); // 1.2 second delay before fade starts
             }
           });
         },
@@ -289,8 +289,8 @@ const IPhoneMockup = memo(({ logoSrc }) => {
             display: 'flex',
             flexDirection: 'column',
             zIndex: 250,
-            padding: '4px 16px 0 16px',
-            overflow: 'hidden',
+            padding: '4px 28px 46px 28px',
+            overflow: 'visible',
             justifyContent: 'flex-start'
           }}>
             {/* Header with back button and connection indicator */}
@@ -569,24 +569,13 @@ const IPhoneMockup = memo(({ logoSrc }) => {
                   </div>
                 </div>
               </div>
-              
-              {/* Current displacement value */}
-              <div style={{
-                fontSize: '9px',
-                color: '#666',
-                fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
-                textAlign: 'center',
-                marginTop: '2px'
-              }}>
-                Current: 70% · Goal: {MIN_THRESHOLD_DISPLACEMENT}%
-              </div>
             </div>
 
             {/* Stats Row */}
             <div style={{
               display: 'flex',
               justifyContent: 'space-around',
-              marginBottom: '4px',
+              marginBottom: '0',
               padding: '4px 0'
             }}>
               {/* Reps */}
@@ -655,10 +644,13 @@ const IPhoneMockup = memo(({ logoSrc }) => {
               onMouseEnter={() => setIsPauseWorkoutHovering(true)}
               onMouseLeave={() => setIsPauseWorkoutHovering(false)}
               style={{
-                width: 'calc(100% - 32px)',
-                marginLeft: 'auto',
-                marginRight: 'auto',
-                marginTop: 'auto',
+                position: 'absolute',
+                bottom: '-20px',
+                left: '28px',
+                right: '28px',
+                width: 'auto',
+                height: 'auto',
+                marginTop: '0',
                 marginBottom: '0',
                 padding: '14px',
                 background: isPauseWorkoutHovering ? '#000' : 'transparent',
@@ -694,7 +686,7 @@ const IPhoneMockup = memo(({ logoSrc }) => {
             display: 'flex',
             flexDirection: 'column',
             zIndex: 200,
-            padding: '6px 20px 72px 20px',
+            padding: '6px 28px 72px 28px',
             overflow: 'hidden'
           }}>
             {/* Header with back button */}
@@ -733,7 +725,7 @@ const IPhoneMockup = memo(({ logoSrc }) => {
             <div style={{
               flex: 1,
               overflowY: 'hidden',
-              marginBottom: '10px'
+              marginBottom: '0'
             }}>
               <div style={{
                 fontSize: '10px',
@@ -867,7 +859,14 @@ const IPhoneMockup = memo(({ logoSrc }) => {
               onMouseEnter={() => setIsWorkoutHovering(true)}
               onMouseLeave={() => setIsWorkoutHovering(false)}
               style={{
-                width: '100%',
+                position: 'absolute',
+                bottom: '60px',
+                left: '28px',
+                right: '28px',
+                width: 'auto',
+                height: 'auto',
+                marginTop: '0',
+                marginBottom: '0',
                 padding: '14px',
                 background: isWorkoutHovering ? '#000' : 'transparent',
                 border: '1.5px solid #000',
@@ -880,7 +879,8 @@ const IPhoneMockup = memo(({ logoSrc }) => {
                 letterSpacing: '2px',
                 cursor: 'pointer',
                 transition: 'all 0.2s ease',
-                marginTop: 'auto'
+                boxSizing: 'border-box',
+                display: 'block'
               }}
             >
               Start Workout
@@ -1096,7 +1096,7 @@ const IPhoneMockup = memo(({ logoSrc }) => {
                 fontSize: '11px',
                 color: '#666',
                 fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
-                marginBottom: '12px'
+                marginBottom: '0'
               }}>50 min · Quads, hamstrings, glutes</div>
               
               {/* Start Button - minimal outline style */}
@@ -1105,7 +1105,14 @@ const IPhoneMockup = memo(({ logoSrc }) => {
                 onMouseEnter={() => setIsHovering(true)}
                 onMouseLeave={() => setIsHovering(false)}
                 style={{
-                  width: '100%',
+                  position: 'absolute',
+                  bottom: '60px',
+                  left: '28px',
+                  right: '28px',
+                  width: 'auto',
+                  height: 'auto',
+                  marginTop: '0',
+                  marginBottom: '0',
                   padding: '14px',
                   background: isHovering ? '#000' : 'transparent',
                   border: '1.5px solid #000',
@@ -1117,8 +1124,9 @@ const IPhoneMockup = memo(({ logoSrc }) => {
                   textTransform: 'uppercase',
                   letterSpacing: '2px',
                   cursor: 'pointer',
-                  marginBottom: '0',
-                  transition: 'all 0.2s ease'
+                  transition: 'all 0.2s ease',
+                  boxSizing: 'border-box',
+                  display: 'block'
                 }}>
                 Begin
               </button>
