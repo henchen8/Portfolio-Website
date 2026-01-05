@@ -738,111 +738,131 @@ const IPhoneMockup = memo(({ logoSrc }) => {
               
               {/* Exercise 1 */}
               <div style={{
-                background: '#f5f5e6',
-                borderRadius: '12px',
-                padding: '6px 12px',
-                marginBottom: '6px',
-                border: '1px solid #ddd'
+                padding: '8px 0',
+                marginBottom: '4px'
               }}>
                 <div style={{
                   fontSize: '13px',
                   fontWeight: '600',
                   color: '#000',
                   fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
-                  marginBottom: '2px'
-                }}>Bench Press</div>
+                  marginBottom: '2px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px'
+                }}>
+                  <span>{'\u27F6'}</span>
+                  <span>Bench Press</span>
+                </div>
                 <div style={{
                   fontSize: '10px',
                   color: '#666',
-                  fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif'
+                  fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
+                  paddingLeft: '20px'
                 }}>3 sets × 10 reps</div>
               </div>
 
               {/* Exercise 2 */}
               <div style={{
-                background: '#f5f5e6',
-                borderRadius: '12px',
-                padding: '6px 12px',
-                marginBottom: '6px',
-                border: '1px solid #ddd'
+                padding: '8px 0',
+                marginBottom: '4px'
               }}>
                 <div style={{
                   fontSize: '13px',
                   fontWeight: '600',
                   color: '#000',
                   fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
-                  marginBottom: '2px'
-                }}>Shoulder Press</div>
+                  marginBottom: '2px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px'
+                }}>
+                  <span>{'\u27F6'}</span>
+                  <span>Shoulder Press</span>
+                </div>
                 <div style={{
                   fontSize: '10px',
                   color: '#666',
-                  fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif'
+                  fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
+                  paddingLeft: '20px'
                 }}>3 sets × 12 reps</div>
               </div>
 
               {/* Exercise 3 */}
               <div style={{
-                background: '#f5f5e6',
-                borderRadius: '12px',
-                padding: '6px 12px',
-                marginBottom: '6px',
-                border: '1px solid #ddd'
+                padding: '8px 0',
+                marginBottom: '4px'
               }}>
                 <div style={{
                   fontSize: '13px',
                   fontWeight: '600',
                   color: '#000',
                   fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
-                  marginBottom: '2px'
-                }}>Tricep Extension</div>
+                  marginBottom: '2px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px'
+                }}>
+                  <span>{'\u27F6'}</span>
+                  <span>Tricep Extension</span>
+                </div>
                 <div style={{
                   fontSize: '10px',
                   color: '#666',
-                  fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif'
+                  fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
+                  paddingLeft: '20px'
                 }}>3 sets × 15 reps</div>
               </div>
 
               {/* Exercise 4 */}
               <div style={{
-                background: '#f5f5e6',
-                borderRadius: '12px',
-                padding: '6px 12px',
-                marginBottom: '6px',
-                border: '1px solid #ddd'
+                padding: '8px 0',
+                marginBottom: '4px'
               }}>
                 <div style={{
                   fontSize: '13px',
                   fontWeight: '600',
                   color: '#000',
                   fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
-                  marginBottom: '2px'
-                }}>Chest Fly</div>
+                  marginBottom: '2px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px'
+                }}>
+                  <span>{'\u27F6'}</span>
+                  <span>Chest Fly</span>
+                </div>
                 <div style={{
                   fontSize: '10px',
                   color: '#666',
-                  fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif'
+                  fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
+                  paddingLeft: '20px'
                 }}>3 sets × 12 reps</div>
               </div>
 
               {/* Exercise 5 */}
               <div style={{
-                background: '#f5f5e6',
-                borderRadius: '12px',
-                padding: '6px 12px',
-                marginBottom: '6px',
-                border: '1px solid #ddd'
+                padding: '8px 0',
+                marginBottom: '4px'
               }}>
                 <div style={{
                   fontSize: '13px',
                   fontWeight: '600',
                   color: '#000',
                   fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
-                  marginBottom: '2px'
-                }}>Cable Lateral Raise</div>
+                  marginBottom: '2px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px'
+                }}>
+                  <span>{'\u27F6'}</span>
+                  <span>Cable Lateral Raise</span>
+                </div>
                 <div style={{
                   fontSize: '10px',
                   color: '#666',
-                  fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif'
+                  fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
+                  paddingLeft: '20px'
                 }}>3 sets × 12 reps</div>
               </div>
             </div>
