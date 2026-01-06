@@ -818,7 +818,7 @@ body.loading {
 .projects-section {
   padding-top: calc(5rem - 75px + 200px + 100px) !important; /* Further reduced from 425px to 375px total spacing above projects */
   margin-top: 30px !important; /* Further reduced from 50px to 30px */
-  padding-bottom: 5rem !important; /* More breathing room at bottom */
+  padding-bottom: calc(5rem - 120px) !important; /* Reduced by 120px from bottom (20px less than before) */
 }
 
 
@@ -839,6 +839,10 @@ body.loading {
 .experience-section .container {
   position: relative;
   z-index: 2;
+}
+
+.projects-section .section-title {
+  margin-bottom: calc(3rem - 0.625rem); /* Reduced by 20px (1.25rem) */
 }
 
 .projects-grid {
@@ -1032,13 +1036,16 @@ body.loading {
 
 /* Footer */
 .footer {
-  background: #fafaf8 !important;
+  background: transparent !important;
   color: #333;
   text-align: center;
-  padding: 2rem 0;
+  padding-top: calc(2rem - 0.9375rem); /* Reduced by 15px (0.9375rem) above footer icons */
+  padding-bottom: calc(2rem - 0.625rem); /* Reduced by 10px (0.625rem) below footer icons */
+  padding-left: 0;
+  padding-right: 0;
   margin-top: 0; /* Removed auto margin to reduce gap from projects */
   position: relative;
-  z-index: 1000;
+  z-index: 1;
   background-image: none !important;
   background-attachment: initial !important;
   min-height: 100px;
@@ -1065,6 +1072,7 @@ body.loading {
   height: 50px;
   width: auto;
   object-fit: contain;
+  filter: brightness(0);
 }
 
 .footer-social {

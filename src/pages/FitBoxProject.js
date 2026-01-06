@@ -293,32 +293,16 @@ const IPhoneMockup = memo(({ logoSrc }) => {
             overflow: 'visible',
             justifyContent: 'flex-start'
           }}>
-            {/* Header with back button and connection indicator */}
+            {/* Header with connection indicator */}
             <div style={{
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'space-between',
+              justifyContent: 'center',
               marginBottom: '6px',
               marginTop: '0',
               position: 'relative'
             }}>
-              <button
-                onClick={() => setIsActiveWorkout(false)}
-                style={{
-                  background: 'transparent',
-                  border: 'none',
-                  fontSize: '18px',
-                  color: '#000',
-                  cursor: 'pointer',
-                  padding: '4px 8px'
-                }}
-              >
-                ←
-              </button>
               <div style={{
-                position: 'absolute',
-                left: '50%',
-                transform: 'translateX(-50%)',
                 fontSize: '13px',
                 fontWeight: '600',
                 color: '#000',
@@ -689,27 +673,14 @@ const IPhoneMockup = memo(({ logoSrc }) => {
             padding: '6px 28px 72px 28px',
             overflow: 'hidden'
           }}>
-            {/* Header with back button */}
+            {/* Header */}
             <div style={{
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'space-between',
+              justifyContent: 'center',
               marginBottom: '12px',
               marginTop: '4px'
             }}>
-              <button
-                onClick={() => setShowWorkout(false)}
-                style={{
-                  background: 'transparent',
-                  border: 'none',
-                  fontSize: '16px',
-                  color: '#000',
-                  cursor: 'pointer',
-                  padding: '4px 8px'
-                }}
-              >
-                ←
-              </button>
               <div style={{
                 fontSize: '12px',
                 fontWeight: '600',
@@ -718,7 +689,6 @@ const IPhoneMockup = memo(({ logoSrc }) => {
                 textTransform: 'uppercase',
                 letterSpacing: '1px'
               }}>Upper Body Push</div>
-              <div style={{ width: '32px' }}></div>
             </div>
 
             {/* Exercise list */}
@@ -2063,6 +2033,7 @@ const IPhoneMockup = memo(({ logoSrc }) => {
           )}
           
           {/* Bottom Navigation Bar */}
+          {!(showWorkout || isActiveWorkout) && (
           <div style={{
             position: 'absolute',
             bottom: showLoading ? '-60px' : '16px',
@@ -2190,6 +2161,57 @@ const IPhoneMockup = memo(({ logoSrc }) => {
               <span style={{ fontSize: '7px', marginTop: '2px', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif', color: '#000', fontWeight: activePage === 'compete' ? '600' : '400' }}>Compete</span>
             </div>
           </div>
+          )}
+          
+          {/* Overlay Back Button - Upper Body Push */}
+          {showWorkout && !isActiveWorkout && (
+            <div style={{
+              position: 'absolute',
+              bottom: showLoading ? '-60px' : '16px',
+              left: '28px',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              padding: '6px 16px',
+              background: '#f5f5e6',
+              zIndex: 1000,
+              transition: 'bottom 0.2s ease-out, opacity 0.2s ease-out',
+              opacity: showLoading ? 0 : 1,
+              cursor: 'pointer'
+            }}
+            onClick={() => setShowWorkout(false)}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+              </svg>
+              <span style={{ fontSize: '7px', marginTop: '2px', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif', color: '#000', fontWeight: '400' }}>Back</span>
+            </div>
+          )}
+          
+          {/* Overlay Back Button - Active Workout */}
+          {isActiveWorkout && (
+            <div style={{
+              position: 'absolute',
+              bottom: showLoading ? '-60px' : '16px',
+              left: '28px',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              padding: '6px 16px',
+              background: '#f5f5e6',
+              zIndex: 1000,
+              transition: 'bottom 0.2s ease-out, opacity 0.2s ease-out',
+              opacity: showLoading ? 0 : 1,
+              cursor: 'pointer'
+            }}
+            onClick={() => setIsActiveWorkout(false)}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+              </svg>
+              <span style={{ fontSize: '7px', marginTop: '2px', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif', color: '#000', fontWeight: '400' }}>Back</span>
+            </div>
+          )}
           
           {/* Home Indicator */}
           <div style={{

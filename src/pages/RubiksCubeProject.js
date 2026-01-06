@@ -200,11 +200,11 @@ function RubiksCubeProject() {
               <div className="stats-grid">
                 <div className="stat-card">
                   <div className="stat-value">1s</div>
-                  <div className="stat-label">Average Solve Times</div>
+                  <div className="stat-label">Solve Times</div>
                 </div>
                 <div className="stat-card">
                   <div className="stat-value">&lt;20</div>
-                  <div className="stat-label">Rotations Per Solve
+                  <div className="stat-label">Turns Per Solve
                   </div>
                 </div>
                 <div className="stat-card">

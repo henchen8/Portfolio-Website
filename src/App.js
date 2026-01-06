@@ -1,6 +1,6 @@
 import './App.css';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
-import { useEffect, useState, useLayoutEffect, useCallback } from 'react';
+import { useEffect, useState, useLayoutEffect, useCallback, useRef } from 'react';
 import { Analytics } from '@vercel/analytics/react';
 import Home from './pages/Home';
 import RubiksCubeProject from './pages/RubiksCubeProject';
@@ -9,6 +9,7 @@ import FitBoxProject from './pages/FitBoxProject';
 
 function ScrollToTop({ loading, onScrollReady }) {
   const { pathname, hash } = useLocation();
+  const hasHandledReturn = useRef(false);
 
   // Use useLayoutEffect for synchronous scroll positioning BEFORE paint
   useLayoutEffect(() => {
@@ -34,14 +35,60 @@ function ScrollToTop({ loading, onScrollReady }) {
     }
     
     // Check if we're returning to home from a project page
+    // This must be checked BEFORE any other scroll logic to prevent scroll to top
     const returnToHome = sessionStorage.getItem('returnToHome') === 'true';
     
+    // Reset the ref when navigating away from home or when not returning
+    if (pathname !== '/') {
+      hasHandledReturn.current = false;
+    }
+    
+    // If returning to home (with or without hash), handle it specially
     if (returnToHome && pathname === '/') {
+      // Mark that we've handled this return to prevent other scroll logic from running
+      hasHandledReturn.current = true;
+      
+      // Remove flag immediately to prevent multiple executions
       sessionStorage.removeItem('returnToHome');
       
-      // Wait for page to be fully rendered before scrolling
-      // Use multiple requestAnimationFrame calls to ensure layout is stable
-      // Also wait for images to load in Home component
+      // Try to calculate and set scroll position immediately if DOM is ready
+      // This prevents the blink to top that happens during navigation
+      const section = document.getElementById('projects');
+      if (section) {
+        // Try immediate calculation - if layout is ready, this will work
+        const sectionRect = section.getBoundingClientRect();
+        if (sectionRect.height > 0) {
+          // DOM is ready, calculate and set position immediately
+          const sectionTop = sectionRect.top + window.pageYOffset;
+          const viewportHeight = window.innerHeight;
+          const sectionHeight = sectionRect.height;
+          
+          const targetScroll = sectionTop + sectionHeight - viewportHeight + 100;
+          const pageHeight = document.documentElement.scrollHeight;
+          const distanceFromBottom = pageHeight - (sectionTop + sectionHeight);
+          
+          const scrollPosition = distanceFromBottom < 200 
+            ? pageHeight - viewportHeight
+            : Math.max(0, targetScroll);
+          
+          // Set immediately to prevent any intermediate scroll
+          window.scrollTo({
+            top: scrollPosition,
+            behavior: 'auto'
+          });
+          
+          onScrollReady?.();
+          return; // Don't continue to other scroll logic
+        }
+      }
+      
+      // If DOM not ready yet, wait for it but prevent scroll to top
+      // by maintaining current position or a safe position
+      const currentScroll = window.scrollY;
+      const safePosition = currentScroll > 0 ? currentScroll : Math.max(500, window.innerHeight);
+      window.scrollTo(0, safePosition);
+      
+      // Wait for page to be fully rendered before scrolling to final position
       const performScroll = () => {
         const section = document.getElementById('projects');
         if (section) {
@@ -55,18 +102,15 @@ function ScrollToTop({ loading, onScrollReady }) {
             const viewportHeight = window.innerHeight;
             const sectionHeight = sectionRect.height;
             
-            // Scroll to show projects section at the bottom of the viewport
-            // This ensures the section is fully visible and positioned at the bottom
             const targetScroll = sectionTop + sectionHeight - viewportHeight + 100;
-            
-            // If section is near the bottom of the page, scroll to page bottom instead
             const pageHeight = document.documentElement.scrollHeight;
             const distanceFromBottom = pageHeight - (sectionTop + sectionHeight);
             
             const scrollPosition = distanceFromBottom < 200 
-              ? pageHeight - viewportHeight // Scroll to very bottom of page
-              : Math.max(0, targetScroll); // Scroll to show projects at bottom of viewport
+              ? pageHeight - viewportHeight
+              : Math.max(0, targetScroll);
             
+            // Use instant scroll (no smooth behavior) to prevent any intermediate positions
             window.scrollTo({
               top: scrollPosition,
               behavior: 'auto'
@@ -80,7 +124,6 @@ function ScrollToTop({ loading, onScrollReady }) {
         requestAnimationFrame(() => {
           requestAnimationFrame(() => {
             performScroll();
-            // Signal that scroll is ready after initiating scroll
             onScrollReady?.();
           });
         });
@@ -88,11 +131,37 @@ function ScrollToTop({ loading, onScrollReady }) {
       return; // Don't continue to other scroll logic
     } else if (hash === '#projects' && pathname === '/') {
       // Handle hash navigation to projects section
+      // Check if this is a return from project page (even if returnToHome wasn't caught earlier)
+      const wasReturning = sessionStorage.getItem('returnToHome') === 'true' || hasHandledReturn.current;
+      if (wasReturning) {
+        sessionStorage.removeItem('returnToHome');
+        hasHandledReturn.current = true;
+      }
+      
       const section = document.getElementById('projects');
       if (section) {
-        const elementPosition = section.getBoundingClientRect().top + window.pageYOffset;
-        const offsetPosition = elementPosition + 300;
-        window.scrollTo(0, offsetPosition);
+        // If returning from project page, use the same logic as returnToHome
+        if (wasReturning) {
+          const sectionRect = section.getBoundingClientRect();
+          const sectionTop = sectionRect.top + window.pageYOffset;
+          const viewportHeight = window.innerHeight;
+          const sectionHeight = sectionRect.height;
+          const targetScroll = sectionTop + sectionHeight - viewportHeight + 100;
+          const pageHeight = document.documentElement.scrollHeight;
+          const distanceFromBottom = pageHeight - (sectionTop + sectionHeight);
+          const scrollPosition = distanceFromBottom < 200 
+            ? pageHeight - viewportHeight
+            : Math.max(0, targetScroll);
+          window.scrollTo({
+            top: scrollPosition,
+            behavior: 'auto'
+          });
+        } else {
+          // Normal hash navigation
+          const elementPosition = section.getBoundingClientRect().top + window.pageYOffset;
+          const offsetPosition = elementPosition + 300;
+          window.scrollTo(0, offsetPosition);
+        }
       }
     } else if (hash === '#experience' && pathname === '/') {
       // Handle hash navigation to experience section
@@ -103,11 +172,16 @@ function ScrollToTop({ loading, onScrollReady }) {
         window.scrollTo(0, offsetPosition);
       }
     } else if (!hash && pathname !== '/') {
-      // Navigating to a project page - scroll to 90px
-      window.scrollTo(0, 90);
+      // Navigating to a project page - scroll to 75px
+      window.scrollTo(0, 75);
     } else if (!hash && pathname === '/') {
       // Navigating to home page without hash - scroll to top
-      window.scrollTo(0, 0);
+      // BUT only if not returning from a project page
+      // Check returnToHome again here in case useLayoutEffect runs before hash is processed
+      const stillReturning = sessionStorage.getItem('returnToHome') === 'true';
+      if (!stillReturning && !hasHandledReturn.current) {
+        window.scrollTo(0, 0);
+      }
     }
     
     // Signal that scroll is ready
