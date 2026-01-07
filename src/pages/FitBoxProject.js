@@ -558,7 +558,7 @@ const IPhoneMockup = memo(({ logoSrc }) => {
                       x="195" 
                       y={95 - (MIN_THRESHOLD_DISPLACEMENT * 95 / 100) - 4} 
                       fill="#4caf50" 
-                      fontSize="13" 
+                      fontSize="12" 
                       fontFamily="-apple-system, BlinkMacSystemFont, sans-serif"
                       textAnchor="end"
                     >
