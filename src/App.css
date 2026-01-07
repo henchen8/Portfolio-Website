@@ -1040,7 +1040,7 @@ body.loading {
   color: #333;
   text-align: center;
   padding-top: calc(2rem - 0.9375rem); /* Reduced by 15px (0.9375rem) above footer icons */
-  padding-bottom: calc(2rem - 0.625rem); /* Reduced by 10px (0.625rem) below footer icons */
+  padding-bottom: calc(2rem - 0.625rem - 0.5rem); /* Reduced by 10px (0.625rem) below footer icons + 8px (0.5rem) from bottom */
   padding-left: 0;
   padding-right: 0;
   margin-top: 0; /* Removed auto margin to reduce gap from projects */
@@ -1080,7 +1080,7 @@ body.loading {
   right: 0;
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0rem;
 }
 
 .linkedin-icon,
@@ -1088,8 +1088,8 @@ body.loading {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: 72px;
+  height: 72px;
   background: transparent;
   color: #000000;
   text-decoration: none;
@@ -1102,16 +1102,22 @@ body.loading {
   transform: scale(1.05);
 }
 
-.linkedin-icon svg,
-.email-icon svg {
-  width: 24px;
-  height: 24px;
-  fill: currentColor;
+.linkedin-icon-img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  display: block;
 }
 
-.linkedin-icon svg {
-  fill: #000000;
-  background: transparent;
+.email-icon-img {
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+  display: block;
+}
+
+.email-icon {
+  margin-left: -20px;
 }
 
 /* Anchor offset for section targets */

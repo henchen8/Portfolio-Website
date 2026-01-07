@@ -116,7 +116,7 @@ const IPhoneMockup = memo(({ logoSrc }) => {
     }
   }, [activePage, showWorkout, isActiveWorkout]);
 
-  // Handle wheel events on phone - prevent page scroll and enable internal scrolling
+  // Handle wheel events on phone - prevent page scroll only when scrolling within scrollable areas
   // Defer setup until after page load to prevent interference with loading screen
   useEffect(() => {
     // Wait for page to finish loading before setting up wheel handler
@@ -131,14 +131,26 @@ const IPhoneMockup = memo(({ logoSrc }) => {
       if (!phone) return;
 
       const handleWheel = (e) => {
-        // Prevent page from scrolling
-        e.preventDefault();
-        
-        // Find scrollable content within the phone and scroll it
+        // Find scrollable content within the phone
         const scrollable = e.target.closest('[data-phone-scroll]');
+        
         if (scrollable) {
-          scrollable.scrollTop += e.deltaY;
+          // Check if the scrollable element can scroll in the direction of the wheel event
+          const canScrollUp = scrollable.scrollTop > 0;
+          const canScrollDown = scrollable.scrollTop < (scrollable.scrollHeight - scrollable.clientHeight);
+          const scrollingDown = e.deltaY > 0;
+          const scrollingUp = e.deltaY < 0;
+          
+          // Only prevent page scroll if we're scrolling within a scrollable area that has room to scroll
+          if ((scrollingDown && canScrollDown) || (scrollingUp && canScrollUp)) {
+            e.preventDefault();
+            e.stopPropagation();
+            // Scroll the element
+            scrollable.scrollTop += e.deltaY;
+          }
+          // If we're at the top/bottom and trying to scroll further, allow page scroll
         }
+        // If not over a scrollable area, allow normal page scrolling
       };
 
       // Use native event listener with passive: false to allow preventDefault
@@ -289,7 +301,7 @@ const IPhoneMockup = memo(({ logoSrc }) => {
             display: 'flex',
             flexDirection: 'column',
             zIndex: 250,
-            padding: '4px 28px 46px 28px',
+            padding: '20px 28px 46px 28px',
             overflow: 'visible',
             justifyContent: 'flex-start'
           }}>
@@ -297,25 +309,24 @@ const IPhoneMockup = memo(({ logoSrc }) => {
             <div style={{
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'center',
-              marginBottom: '6px',
-              marginTop: '0',
+              justifyContent: 'space-between',
+              marginBottom: '10px',
+              marginTop: '-6px',
               position: 'relative'
             }}>
               <div style={{
-                fontSize: '13px',
+                fontSize: '18px',
                 fontWeight: '600',
                 color: '#000',
                 fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
-                textTransform: 'uppercase',
-                letterSpacing: '1px',
                 whiteSpace: 'nowrap'
               }}>Workout Active</div>
               {/* Subtle connection indicator in top right */}
               <div style={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: '4px'
+                gap: '6px',
+                marginLeft: '2rem'
               }}>
                 <div className={isConnected ? 'connection-pulse' : ''} style={{
                   width: '6px',
@@ -323,6 +334,11 @@ const IPhoneMockup = memo(({ logoSrc }) => {
                   borderRadius: '50%',
                   background: isConnected ? '#4caf50' : '#f44336'
                 }}></div>
+                <span style={{
+                  fontSize: '9px',
+                  color: '#666',
+                  fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif'
+                }}>Connected</span>
               </div>
             </div>
 
@@ -462,66 +478,77 @@ const IPhoneMockup = memo(({ logoSrc }) => {
             </div>
 
             {/* Cable Displacement Graph */}
-            <div style={{
-              marginBottom: '4px',
-              padding: '4px 0'
-            }}>
+            <div style={{ marginBottom: '4px' }}>
               <div style={{
-                fontSize: '8px',
-                color: '#666',
+                fontSize: '11px',
+                fontWeight: '600',
+                color: '#000',
                 fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
-                textTransform: 'uppercase',
-                letterSpacing: '1.5px',
-                marginBottom: '4px',
-                textAlign: 'center'
+                marginBottom: '8px'
               }}>
                 Cable Displacement
               </div>
               {/* Graph Area */}
-              <div style={{ position: 'relative', height: '95px', marginBottom: '2px' }}>
+              <div style={{ position: 'relative', height: '115px', marginBottom: '6px' }}>
                 {/* Y-axis labels */}
                 <div style={{ 
                   position: 'absolute', 
                   left: '0', 
                   top: '0', 
-                  bottom: '16px', 
-                  width: '24px', 
+                  bottom: '20px', 
+                  width: '32px', 
                   display: 'flex', 
                   flexDirection: 'column', 
                   justifyContent: 'space-between' 
                 }}>
-                  <span style={{ fontSize: '6px', color: '#999', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>100%</span>
-                  <span style={{ fontSize: '6px', color: '#999', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>75%</span>
-                  <span style={{ fontSize: '6px', color: '#999', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>50%</span>
-                  <span style={{ fontSize: '6px', color: '#999', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>25%</span>
-                  <span style={{ fontSize: '6px', color: '#999', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>0%</span>
+                  <span style={{ fontSize: '8px', color: '#666', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif', fontWeight: '500' }}>100%</span>
+                  <span style={{ fontSize: '8px', color: '#666', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif', fontWeight: '500' }}>75%</span>
+                  <span style={{ fontSize: '8px', color: '#666', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif', fontWeight: '500' }}>50%</span>
+                  <span style={{ fontSize: '8px', color: '#666', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif', fontWeight: '500' }}>25%</span>
+                  <span style={{ fontSize: '8px', color: '#666', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif', fontWeight: '500' }}>0%</span>
                 </div>
                 
                 {/* Chart area */}
-                <div style={{ marginLeft: '28px', height: '85px', position: 'relative' }}>
-                  <svg width="100%" height="85" viewBox="0 0 200 100" preserveAspectRatio="none" style={{ overflow: 'visible' }}>
-                    {/* Grid lines */}
-                    <line x1="0" y1="25" x2="200" y2="25" stroke="#e0e0e0" strokeWidth="0.5" strokeDasharray="2,2" />
-                    <line x1="0" y1="50" x2="200" y2="50" stroke="#e0e0e0" strokeWidth="0.5" strokeDasharray="2,2" />
-                    <line x1="0" y1="75" x2="200" y2="75" stroke="#e0e0e0" strokeWidth="0.5" strokeDasharray="2,2" />
+                <div style={{ marginLeft: '36px', height: '95px', position: 'relative' }}>
+                  {/* Grid lines */}
+                  <div style={{ position: 'absolute', top: '0', left: '0', right: '0', borderTop: '1px solid #e0e0e0' }} />
+                  <div style={{ position: 'absolute', top: '25%', left: '0', right: '0', borderTop: '1px dashed #e0e0e0' }} />
+                  <div style={{ position: 'absolute', top: '50%', left: '0', right: '0', borderTop: '1px dashed #e0e0e0' }} />
+                  <div style={{ position: 'absolute', top: '75%', left: '0', right: '0', borderTop: '1px dashed #e0e0e0' }} />
+                  <div style={{ position: 'absolute', bottom: '0', left: '0', right: '0', borderTop: '1px solid #e0e0e0' }} />
+                  
+                  <svg width="100%" height="95" viewBox="0 0 200 95" preserveAspectRatio="none" style={{ overflow: 'visible' }}>
+                    {/* Gradient fill under line */}
+                    <defs>
+                      <linearGradient id="displacementGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" stopColor="#000" stopOpacity="0.2" />
+                        <stop offset="100%" stopColor="#000" stopOpacity="0" />
+                      </linearGradient>
+                    </defs>
                     
-                    {/* Threshold line (goal) */}
+                    {/* Area fill - scaled to 95px height */}
+                    <path
+                      d="M 0,77 2,71 4,62 6,50 8,36 10,25 12,21 14,17 16,24 18,33 20,45 22,59 24,70 26,74 28,71 30,63 32,45 34,35 36,24 38,17 40,14 42,22 44,33 46,45 48,59 50,71 52,81 54,74 56,66 58,56 60,42 62,22 64,17 66,17 68,17 70,29 72,39 74,53 76,63 78,73 80,77 82,71 84,62 86,50 88,36 90,25 92,21 94,17 96,24 98,33 100,45 102,59 104,70 106,74 108,71 110,63 112,45 114,35 116,24 118,17 120,14 122,22 124,33 126,45 128,59 130,71 132,81 134,74 136,66 138,56 140,42 142,22 144,17 146,17 148,17 150,29 152,39 154,53 156,63 158,73 160,77 162,71 164,62 166,50 168,36 170,25 172,21 174,17 176,24 178,33 180,45 182,59 184,70 186,74 188,71 190,63 192,45 194,35 196,24 198,17 200,14 L 200 95 L 0 95 Z"
+                      fill="url(#displacementGradient)"
+                    />
+                    
+                    {/* Threshold line (goal) - scaled to 95px height */}
                     <line 
                       x1="0" 
-                      y1={100 - MIN_THRESHOLD_DISPLACEMENT} 
+                      y1={95 - (MIN_THRESHOLD_DISPLACEMENT * 95 / 100)} 
                       x2="200" 
-                      y2={100 - MIN_THRESHOLD_DISPLACEMENT} 
+                      y2={95 - (MIN_THRESHOLD_DISPLACEMENT * 95 / 100)} 
                       stroke="#4caf50" 
-                      strokeWidth="1" 
+                      strokeWidth="1.5" 
                       strokeDasharray="3,2"
                     />
                     
-                    {/* Sample displacement data - position vs time (sinusoidal pattern with multiple rep cycles) */}
+                    {/* Sample displacement data - scaled to 95px height */}
                     <polyline
-                      points="0,82 2,75 4,65 6,52 8,38 10,28 12,22 14,18 16,25 18,35 20,48 22,62 24,72 26,78 28,75 30,68 32,58 34,45 36,32 38,23 40,15 42,24 44,34 46,48 48,62 50,74 52,85 54,78 56,70 58,58 60,45 62,32 64,24 66,22 68,22 70,30 72,42 74,56 76,68 78,76 80,82 82,75 84,65 86,52 88,38 90,28 92,22 94,18 96,25 98,35 100,48 102,62 104,72 106,78 108,75 110,68 112,58 114,45 116,32 118,24 120,15 122,24 124,34 126,48 128,62 130,74 132,85 134,78 136,70 138,58 140,45 142,32 144,24 146,22 148,22 150,30 152,42 154,56 156,68 158,76 160,82 162,75 164,65 166,52 168,38 170,28 172,22 174,18 176,25 178,35 180,48 182,62 184,72 186,78 188,75 190,68 192,58 194,45 196,32 198,24 200,18"
+                      points="0,77 2,71 4,62 6,50 8,36 10,25 12,21 14,17 16,24 18,33 20,45 22,59 24,70 26,74 28,71 30,63 32,45 34,35 36,24 38,17 40,14 42,22 44,33 46,45 48,59 50,71 52,81 54,74 56,66 58,56 60,42 62,22 64,17 66,17 68,17 70,29 72,39 74,53 76,63 78,73 80,77 82,71 84,62 86,50 88,36 90,25 92,21 94,17 96,24 98,33 100,45 102,59 104,70 106,74 108,71 110,63 112,45 114,35 116,24 118,17 120,14 122,22 124,33 126,45 128,59 130,71 132,81 134,74 136,66 138,56 140,42 142,22 144,17 146,17 148,17 150,29 152,39 154,53 156,63 158,73 160,77 162,71 164,62 166,50 168,36 170,25 172,21 174,17 176,24 178,33 180,45 182,59 184,70 186,74 188,71 190,63 192,45 194,35 196,24 198,17 200,14"
                       fill="none"
                       stroke="#000"
-                      strokeWidth="1.5"
+                      strokeWidth="2.5"
                       strokeLinecap="round"
                       strokeLinejoin="round"
                     />
@@ -529,9 +556,9 @@ const IPhoneMockup = memo(({ logoSrc }) => {
                     {/* Threshold label */}
                     <text 
                       x="195" 
-                      y={100 - MIN_THRESHOLD_DISPLACEMENT - 2} 
+                      y={95 - (MIN_THRESHOLD_DISPLACEMENT * 95 / 100) - 4} 
                       fill="#4caf50" 
-                      fontSize="6" 
+                      fontSize="13" 
                       fontFamily="-apple-system, BlinkMacSystemFont, sans-serif"
                       textAnchor="end"
                     >
@@ -541,15 +568,11 @@ const IPhoneMockup = memo(({ logoSrc }) => {
                   
                   {/* X-axis label */}
                   <div style={{
-                    position: 'absolute',
-                    bottom: '-12px',
-                    left: '50%',
-                    transform: 'translateX(-50%)',
-                    fontSize: '7px',
-                    color: '#666',
-                    fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif'
+                    display: 'flex',
+                    justifyContent: 'center',
+                    marginTop: '1px'
                   }}>
-                    Time
+                    <span style={{ fontSize: '9px', color: '#666', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif', fontWeight: '500' }}>Time</span>
                   </div>
                 </div>
               </div>
@@ -670,24 +693,19 @@ const IPhoneMockup = memo(({ logoSrc }) => {
             display: 'flex',
             flexDirection: 'column',
             zIndex: 200,
-            padding: '6px 28px 72px 28px',
+            padding: '20px 28px 72px 28px',
             overflow: 'hidden'
           }}>
             {/* Header */}
             <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginBottom: '12px',
-              marginTop: '4px'
+              marginBottom: '10px',
+              marginTop: '-6px'
             }}>
               <div style={{
-                fontSize: '12px',
+                fontSize: '18px',
                 fontWeight: '600',
                 color: '#000',
-                fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
-                textTransform: 'uppercase',
-                letterSpacing: '1px'
+                fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif'
               }}>Upper Body Push</div>
             </div>
 
@@ -1127,17 +1145,16 @@ const IPhoneMockup = memo(({ logoSrc }) => {
           {activePage === 'analytics' && !isActiveWorkout && (
             <>
               <div style={{
-                fontSize: '10px',
-                color: '#666',
+                fontSize: '18px',
+                fontWeight: '600',
+                color: '#000',
                 fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
-                textTransform: 'uppercase',
-                letterSpacing: '2px',
-                marginBottom: '4px',
-                marginTop: '-8px'
+                marginBottom: '10px',
+                marginTop: '-6px'
               }}>Analytics</div>
               
               <div style={{
-                fontSize: '16px',
+                fontSize: '14px',
                 fontWeight: '500',
                 color: '#000',
                 fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
@@ -1145,187 +1162,174 @@ const IPhoneMockup = memo(({ logoSrc }) => {
               }}>This Week</div>
               
               {/* Calories Chart */}
-              <div style={{
-                background: '#f5f5e6',
-                border: '1px solid #ddd',
-                borderRadius: '8px',
-                padding: '10px',
-                marginBottom: '10px'
-              }}>
+              <div style={{ marginBottom: '14px' }}>
                 <div style={{
-                  fontSize: '8px',
-                  color: '#666',
+                  fontSize: '11px',
+                  fontWeight: '600',
+                  color: '#000',
                   fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
-                  textTransform: 'uppercase',
-                  letterSpacing: '1.5px',
                   marginBottom: '8px'
                 }}>Calories per Workout</div>
                 
                 {/* Line Chart */}
-                <div style={{ position: 'relative', height: '70px', marginBottom: '4px' }}>
+                <div style={{ position: 'relative', height: '100px', marginBottom: '6px' }}>
                   {/* Y-axis labels */}
-                  <div style={{ position: 'absolute', left: '0', top: '0', bottom: '14px', width: '24px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                    <span style={{ fontSize: '6px', color: '#999', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>600</span>
-                    <span style={{ fontSize: '6px', color: '#999', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>300</span>
-                    <span style={{ fontSize: '6px', color: '#999', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>0</span>
+                  <div style={{ position: 'absolute', left: '0', top: '0', bottom: '18px', width: '32px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                    <span style={{ fontSize: '8px', color: '#666', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif', fontWeight: '500' }}>600</span>
+                    <span style={{ fontSize: '8px', color: '#666', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif', fontWeight: '500' }}>300</span>
+                    <span style={{ fontSize: '8px', color: '#666', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif', fontWeight: '500' }}>0</span>
                   </div>
                   
                   {/* Chart area */}
-                  <div style={{ marginLeft: '28px', height: '55px', position: 'relative' }}>
+                  <div style={{ marginLeft: '36px', height: '82px', position: 'relative' }}>
                     {/* Grid lines */}
-                    <div style={{ position: 'absolute', top: '0', left: '0', right: '0', borderTop: '1px solid #eee' }} />
-                    <div style={{ position: 'absolute', top: '50%', left: '0', right: '0', borderTop: '1px dashed #eee' }} />
-                    <div style={{ position: 'absolute', bottom: '0', left: '0', right: '0', borderTop: '1px solid #ddd' }} />
+                    <div style={{ position: 'absolute', top: '0', left: '0', right: '0', borderTop: '1px solid #e0e0e0' }} />
+                    <div style={{ position: 'absolute', top: '50%', left: '0', right: '0', borderTop: '1px dashed #e0e0e0' }} />
+                    <div style={{ position: 'absolute', bottom: '0', left: '0', right: '0', borderTop: '1px solid #e0e0e0' }} />
                     
                     {/* SVG Line Chart */}
-                    <svg width="100%" height="55" viewBox="0 0 160 55" preserveAspectRatio="none" style={{ overflow: 'visible' }}>
+                    <svg width="100%" height="82" viewBox="0 0 160 82" preserveAspectRatio="none" style={{ overflow: 'visible' }}>
                       {/* Gradient fill under line */}
                       <defs>
                         <linearGradient id="lineGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                          <stop offset="0%" stopColor="#000" stopOpacity="0.15" />
+                          <stop offset="0%" stopColor="#000" stopOpacity="0.2" />
                           <stop offset="100%" stopColor="#000" stopOpacity="0" />
                         </linearGradient>
                       </defs>
                       
                       {/* Area fill */}
                       <path
-                        d="M 0 25 L 27 12 L 53 32 L 80 7 L 107 18 L 133 23 L 160 14 L 160 55 L 0 55 Z"
+                        d="M 0 37 L 27 18 L 53 48 L 80 11 L 107 27 L 133 34 L 160 21 L 160 82 L 0 82 Z"
                         fill="url(#lineGradient)"
                       />
                       
                       {/* Line - values: 320, 480, 290, 520, 410, 380, 450 */}
                       <polyline
-                        points="0,25 27,12 53,32 80,7 107,18 133,23 160,14"
+                        points="0,37 27,18 53,48 80,11 107,27 133,34 160,21"
                         fill="none"
                         stroke="#000"
-                        strokeWidth="1.5"
+                        strokeWidth="2.5"
                         strokeLinecap="round"
                         strokeLinejoin="round"
                       />
                       
                       {/* Data points */}
                       {[
-                        { x: 0, y: 25 },
-                        { x: 27, y: 12 },
-                        { x: 53, y: 32 },
-                        { x: 80, y: 7 },
-                        { x: 107, y: 18 },
-                        { x: 133, y: 23 },
-                        { x: 160, y: 14 }
+                        { x: 0, y: 37 },
+                        { x: 27, y: 18 },
+                        { x: 53, y: 48 },
+                        { x: 80, y: 11 },
+                        { x: 107, y: 27 },
+                        { x: 133, y: 34 },
+                        { x: 160, y: 21 }
                       ].map((point, i) => (
-                        <circle key={i} cx={point.x} cy={point.y} r="2.5" fill="#fff" stroke="#000" strokeWidth="1.5" />
+                        <circle key={i} cx={point.x} cy={point.y} r="3.5" fill="#fff" stroke="#000" strokeWidth="2" />
                       ))}
                     </svg>
                     
                     {/* X-axis labels */}
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '2px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '3px' }}>
                       {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((day, i) => (
-                        <span key={i} style={{ fontSize: '6px', color: '#666', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>{day}</span>
+                        <span key={i} style={{ fontSize: '9px', color: '#666', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif', fontWeight: '500' }}>{day}</span>
                       ))}
                     </div>
                   </div>
                 </div>
                 
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginTop: '6px' }}>
                   <div style={{
-                    fontSize: '18px',
-                    fontWeight: '300',
+                    fontSize: '20px',
+                    fontWeight: '600',
                     color: '#000',
-                    fontFamily: "'SF Pro Display', 'Helvetica Neue', sans-serif"
-                  }}>2,850 <span style={{ fontSize: '10px', color: '#666' }}>cal</span></div>
-                  <div style={{ fontSize: '9px', color: '#666', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>7 workouts</div>
+                    fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif'
+                  }}>2,850 <span style={{ fontSize: '12px', color: '#666', fontWeight: '400' }}>cal</span></div>
+                  <div style={{ fontSize: '10px', color: '#666', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>avg 407 cal/workout</div>
                 </div>
               </div>
               
               {/* Workout Duration Chart */}
-              <div style={{
-                background: '#f5f5e6',
-                border: '1px solid #ddd',
-                borderRadius: '8px',
-                padding: '10px'
-              }}>
+              <div>
                 <div style={{
-                  fontSize: '8px',
-                  color: '#666',
+                  fontSize: '11px',
+                  fontWeight: '600',
+                  color: '#000',
                   fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
-                  textTransform: 'uppercase',
-                  letterSpacing: '1.5px',
                   marginBottom: '8px'
                 }}>Workout Duration</div>
                 
                 {/* Line Chart for Duration */}
-                <div style={{ position: 'relative', height: '70px', marginBottom: '4px' }}>
+                <div style={{ position: 'relative', height: '100px', marginBottom: '6px' }}>
                   {/* Y-axis labels */}
-                  <div style={{ position: 'absolute', left: '0', top: '0', bottom: '14px', width: '20px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                    <span style={{ fontSize: '6px', color: '#999', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>60m</span>
-                    <span style={{ fontSize: '6px', color: '#999', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>30m</span>
-                    <span style={{ fontSize: '6px', color: '#999', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>0</span>
+                  <div style={{ position: 'absolute', left: '0', top: '0', bottom: '18px', width: '32px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                    <span style={{ fontSize: '8px', color: '#666', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif', fontWeight: '500' }}>60m</span>
+                    <span style={{ fontSize: '8px', color: '#666', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif', fontWeight: '500' }}>30m</span>
+                    <span style={{ fontSize: '8px', color: '#666', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif', fontWeight: '500' }}>0</span>
                   </div>
                   
                   {/* Chart area */}
-                  <div style={{ marginLeft: '24px', height: '55px', position: 'relative' }}>
+                  <div style={{ marginLeft: '36px', height: '82px', position: 'relative' }}>
                     {/* Grid lines */}
                     <div style={{ position: 'absolute', top: '0', left: '0', right: '0', borderTop: '1px solid #e0e0e0' }} />
                     <div style={{ position: 'absolute', top: '50%', left: '0', right: '0', borderTop: '1px dashed #e0e0e0' }} />
-                    <div style={{ position: 'absolute', bottom: '0', left: '0', right: '0', borderTop: '1px solid #ccc' }} />
+                    <div style={{ position: 'absolute', bottom: '0', left: '0', right: '0', borderTop: '1px solid #e0e0e0' }} />
                     
                     {/* SVG Line Chart */}
-                    <svg width="100%" height="55" viewBox="0 0 160 55" preserveAspectRatio="none" style={{ overflow: 'visible' }}>
+                    <svg width="100%" height="82" viewBox="0 0 160 82" preserveAspectRatio="none" style={{ overflow: 'visible' }}>
                       {/* Gradient fill under line */}
                       <defs>
                         <linearGradient id="durationGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                          <stop offset="0%" stopColor="#666" stopOpacity="0.2" />
-                          <stop offset="100%" stopColor="#666" stopOpacity="0" />
+                          <stop offset="0%" stopColor="#000" stopOpacity="0.2" />
+                          <stop offset="100%" stopColor="#000" stopOpacity="0" />
                         </linearGradient>
                       </defs>
                       
                       {/* Area fill - values: 45, 30, 50, 45, 35, 55, 40 min */}
                       <path
-                        d="M 0 14 L 27 27.5 L 53 9 L 80 14 L 107 23 L 133 4.5 L 160 18 L 160 55 L 0 55 Z"
+                        d="M 0 21 L 27 41 L 53 14 L 80 21 L 107 34 L 133 7 L 160 27 L 160 82 L 0 82 Z"
                         fill="url(#durationGradient)"
                       />
                       
                       {/* Line */}
                       <polyline
-                        points="0,14 27,27.5 53,9 80,14 107,23 133,4.5 160,18"
+                        points="0,21 27,41 53,14 80,21 107,34 133,7 160,27"
                         fill="none"
-                        stroke="#666"
-                        strokeWidth="1.5"
+                        stroke="#000"
+                        strokeWidth="2.5"
                         strokeLinecap="round"
                         strokeLinejoin="round"
                       />
                       
                       {/* Data points */}
                       {[
-                        { x: 0, y: 14 },
-                        { x: 27, y: 27.5 },
-                        { x: 53, y: 9 },
-                        { x: 80, y: 14 },
-                        { x: 107, y: 23 },
-                        { x: 133, y: 4.5 },
-                        { x: 160, y: 18 }
+                        { x: 0, y: 21 },
+                        { x: 27, y: 41 },
+                        { x: 53, y: 14 },
+                        { x: 80, y: 21 },
+                        { x: 107, y: 34 },
+                        { x: 133, y: 7 },
+                        { x: 160, y: 27 }
                       ].map((point, i) => (
-                        <circle key={i} cx={point.x} cy={point.y} r="2.5" fill="#f5f5e6" stroke="#666" strokeWidth="1.5" />
+                        <circle key={i} cx={point.x} cy={point.y} r="3.5" fill="#fff" stroke="#000" strokeWidth="2" />
                       ))}
                     </svg>
                     
                     {/* X-axis labels */}
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '2px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '3px' }}>
                       {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((day, i) => (
-                        <span key={i} style={{ fontSize: '6px', color: '#666', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>{day}</span>
+                        <span key={i} style={{ fontSize: '9px', color: '#666', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif', fontWeight: '500' }}>{day}</span>
                       ))}
                     </div>
                   </div>
                 </div>
                 
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginTop: '6px' }}>
                   <div style={{
-                    fontSize: '18px',
-                    fontWeight: '300',
+                    fontSize: '20px',
+                    fontWeight: '600',
                     color: '#000',
-                    fontFamily: "'SF Pro Display', 'Helvetica Neue', sans-serif"
-                  }}>300 <span style={{ fontSize: '10px', color: '#666' }}>min</span></div>
-                  <div style={{ fontSize: '9px', color: '#666', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>avg 43 min/workout</div>
+                    fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif'
+                  }}>300 <span style={{ fontSize: '12px', color: '#666', fontWeight: '400' }}>min</span></div>
+                  <div style={{ fontSize: '10px', color: '#666', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>avg 43 min/workout</div>
                 </div>
               </div>
             </>
@@ -2033,7 +2037,6 @@ const IPhoneMockup = memo(({ logoSrc }) => {
           )}
           
           {/* Bottom Navigation Bar */}
-          {!(showWorkout || isActiveWorkout) && (
           <div style={{
             position: 'absolute',
             bottom: showLoading ? '-60px' : '16px',
@@ -2161,57 +2164,6 @@ const IPhoneMockup = memo(({ logoSrc }) => {
               <span style={{ fontSize: '7px', marginTop: '2px', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif', color: '#000', fontWeight: activePage === 'compete' ? '600' : '400' }}>Compete</span>
             </div>
           </div>
-          )}
-          
-          {/* Overlay Back Button - Upper Body Push */}
-          {showWorkout && !isActiveWorkout && (
-            <div style={{
-              position: 'absolute',
-              bottom: showLoading ? '-60px' : '16px',
-              left: '28px',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              padding: '6px 16px',
-              background: '#f5f5e6',
-              zIndex: 1000,
-              transition: 'bottom 0.2s ease-out, opacity 0.2s ease-out',
-              opacity: showLoading ? 0 : 1,
-              cursor: 'pointer'
-            }}
-            onClick={() => setShowWorkout(false)}
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M19 12H5M12 19l-7-7 7-7"/>
-              </svg>
-              <span style={{ fontSize: '7px', marginTop: '2px', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif', color: '#000', fontWeight: '400' }}>Back</span>
-            </div>
-          )}
-          
-          {/* Overlay Back Button - Active Workout */}
-          {isActiveWorkout && (
-            <div style={{
-              position: 'absolute',
-              bottom: showLoading ? '-60px' : '16px',
-              left: '28px',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              padding: '6px 16px',
-              background: '#f5f5e6',
-              zIndex: 1000,
-              transition: 'bottom 0.2s ease-out, opacity 0.2s ease-out',
-              opacity: showLoading ? 0 : 1,
-              cursor: 'pointer'
-            }}
-            onClick={() => setIsActiveWorkout(false)}
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M19 12H5M12 19l-7-7 7-7"/>
-              </svg>
-              <span style={{ fontSize: '7px', marginTop: '2px', fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif', color: '#000', fontWeight: '400' }}>Back</span>
-            </div>
-          )}
           
           {/* Home Indicator */}
           <div style={{
