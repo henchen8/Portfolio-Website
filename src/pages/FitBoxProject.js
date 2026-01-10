@@ -344,7 +344,7 @@ const IPhoneMockup = memo(({ logoSrc }) => {
 
             {/* Current Exercise */}
             <div style={{
-              textAlign: 'center',
+              textAlign: 'left',
               marginBottom: '6px'
             }}>
               <div style={{
@@ -721,7 +721,8 @@ const IPhoneMockup = memo(({ logoSrc }) => {
                 fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
                 textTransform: 'uppercase',
                 letterSpacing: '1.5px',
-                marginBottom: '10px'
+                marginBottom: '10px',
+                paddingLeft: '3px'
               }}>Exercises</div>
               
               {/* Exercise 1 */}
@@ -739,7 +740,7 @@ const IPhoneMockup = memo(({ logoSrc }) => {
                   alignItems: 'center',
                   gap: '8px'
                 }}>
-                  <span>{'\u27F6'}</span>
+                  <span>—</span>
                   <span>Bench Press</span>
                 </div>
                 <div style={{
@@ -765,7 +766,7 @@ const IPhoneMockup = memo(({ logoSrc }) => {
                   alignItems: 'center',
                   gap: '8px'
                 }}>
-                  <span>{'\u27F6'}</span>
+                  <span>—</span>
                   <span>Shoulder Press</span>
                 </div>
                 <div style={{
@@ -791,7 +792,7 @@ const IPhoneMockup = memo(({ logoSrc }) => {
                   alignItems: 'center',
                   gap: '8px'
                 }}>
-                  <span>{'\u27F6'}</span>
+                  <span>—</span>
                   <span>Tricep Extension</span>
                 </div>
                 <div style={{
@@ -817,7 +818,7 @@ const IPhoneMockup = memo(({ logoSrc }) => {
                   alignItems: 'center',
                   gap: '8px'
                 }}>
-                  <span>{'\u27F6'}</span>
+                  <span>—</span>
                   <span>Chest Fly</span>
                 </div>
                 <div style={{
@@ -843,7 +844,7 @@ const IPhoneMockup = memo(({ logoSrc }) => {
                   alignItems: 'center',
                   gap: '8px'
                 }}>
-                  <span>{'\u27F6'}</span>
+                  <span>—</span>
                   <span>Cable Lateral Raise</span>
                 </div>
                 <div style={{
@@ -937,7 +938,7 @@ const IPhoneMockup = memo(({ logoSrc }) => {
             fontWeight: '600', 
             fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
             color: '#000'
-          }}>9:41</span>
+          }}>10:10</span>
           <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
             {/* Signal bars */}
             <svg width="18" height="12" viewBox="0 0 18 12">
@@ -2367,7 +2368,8 @@ function FitBoxProject() {
                 width: '100%', 
                 height: 'auto', 
                 borderRadius: '8px',
-                boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+                boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+                marginTop: '-20px'
               }} 
             />
           </div>

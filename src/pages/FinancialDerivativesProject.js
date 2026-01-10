@@ -77,8 +77,8 @@ function FinancialDerivativesProject() {
                   maxWidth: '800px',
                   width: '100%',
                   height: 'auto',
-                  borderRadius: '8px',
-                  boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+                  mixBlendMode: 'multiply',
+                  background: 'transparent'
                 }}
               />
             </div>
@@ -122,8 +122,8 @@ function FinancialDerivativesProject() {
                   maxWidth: '800px',
                   width: '100%',
                   height: 'auto',
-                  borderRadius: '8px',
-                  boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+                  mixBlendMode: 'multiply',
+                  background: 'transparent'
                 }}
               />
             </div>
@@ -161,8 +161,8 @@ function FinancialDerivativesProject() {
                   maxWidth: '800px',
                   width: '100%',
                   height: 'auto',
-                  borderRadius: '8px',
-                  boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+                  mixBlendMode: 'multiply',
+                  background: 'transparent'
                 }}
               />
             </div>
@@ -187,9 +187,10 @@ function FinancialDerivativesProject() {
           </p>
           <ul>
             <li>• Finite difference methods for PDE solving</li>
+            <li>• Itô calculus for stochastic differential equations</li>
             <li>• Monte Carlo simulation for option pricing</li>
             <li>• Binomial tree models for American options</li>
-            <li>• Numerical integration and optimization algorithms</li>
+            <li>• Numerical multivariable optimization algorithms</li>
           </ul>
         </div>
         

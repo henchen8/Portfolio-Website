@@ -34,6 +34,64 @@ function Home() {
     };
 
     preloadImages();
+
+    // Prefetch routes when project cards come into view (using Intersection Observer)
+    // Wait for DOM to be ready
+    const setupRoutePrefetching = () => {
+      const prefetchRoute = (route) => {
+        // Check if already prefetched
+        const existingLink = document.querySelector(`link[href="${route}"]`);
+        if (existingLink) return;
+        
+        const link = document.createElement('link');
+        link.rel = 'prefetch';
+        link.href = route;
+        link.as = 'document';
+        document.head.appendChild(link);
+      };
+
+      const projectCards = document.querySelectorAll('.project-card');
+      if (projectCards.length > 0 && 'IntersectionObserver' in window) {
+        const routes = [
+          '/projects/rubiks-cube',
+          '/projects/fitbox',
+          '/projects/financial-derivatives'
+        ];
+        
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                const card = entry.target;
+                // Prefetch based on card index
+                const cardIndex = Array.from(card.parentElement.children).indexOf(card);
+                if (routes[cardIndex]) {
+                  prefetchRoute(routes[cardIndex]);
+                  // Unobserve after prefetching to avoid redundant work
+                  observer.unobserve(card);
+                }
+              }
+            });
+          },
+          {
+            rootMargin: '200px' // Start prefetching 200px before card is visible
+          }
+        );
+
+        projectCards.forEach(card => observer.observe(card));
+
+        return () => {
+          projectCards.forEach(card => observer.unobserve(card));
+        };
+      }
+    };
+
+    // Wait for next frame to ensure DOM is ready
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        setupRoutePrefetching();
+      });
+    });
   }, []);
 
   const scrollToProjects = () => {
@@ -273,7 +331,7 @@ function Home() {
                 Hi, I'm <span className="highlight">Henry!</span>
               </h1>
               <p className="hero-subtitle">
-                Aspiring Robotics Engineer and Entrepreneur
+                Robotics Engineer & Entrepreneur
               </p>
               <p className="hero-description">
               I'm a Student at the University of Pennsylvania, studying Mechanical Engineering 
@@ -307,8 +365,9 @@ function Home() {
                   <h3>Business Operations + Fluid Systems Engineer</h3>
                   <p className="timeline-company">Penn Hyperloop • September 2024 - Present</p>
                   <p>
-                    Ran fluids calculations to model and find tolerances for slurry input and muck retrieval from
-                    the TBM system given the specifications outlined by the Not-a-Boring Competition.
+                    Ran fluids calculations to model, identify, and characterize tolerances for slurry 
+                    management and muck retreival systems abord TBM to optimize performance in the 
+                    Not-a-Boring Competition.
 
                   </p>
                 </div>
@@ -328,7 +387,7 @@ function Home() {
                 <div className="timeline-marker"></div>
                 <div className="timeline-content">
                   <h3>Student</h3>
-                  <p className="timeline-company">Jerome Fisher Program Management and Technology Program (M&T) • June 2024 - July 2024</p>
+                  <p className="timeline-company">Jerome Fisher Management and Technology Program (M&T) • June 2024 - July 2024</p>
                   <p>
                     M&TSI is a three-week for-credit course (EAS 00280) run by the Jerome Fisher Program in Management and Technology (M&T).
                     Co-Founder and Mechanical Lead for FitBox—a revolutionary portable workout solution. Designed GTM strategy 
@@ -370,9 +429,20 @@ function Home() {
           <div className="container">
             <h2 className="section-title">Featured Projects</h2>
             <div className="projects-grid">
-              <div className="project-card" onClick={() => {
-                navigate('/projects/rubiks-cube');
-              }}>
+              <div 
+                className="project-card" 
+                onClick={() => {
+                  navigate('/projects/rubiks-cube');
+                }}
+                onMouseEnter={() => {
+                  // Prefetch route on hover for instant navigation
+                  const link = document.createElement('link');
+                  link.rel = 'prefetch';
+                  link.href = '/projects/rubiks-cube';
+                  link.as = 'document';
+                  document.head.appendChild(link);
+                }}
+              >
                 <div className="project-image" style={{ backgroundImage: `url(${rubiksImage})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
                 </div>
                 <div className="project-content">
@@ -381,9 +451,20 @@ function Home() {
                 </div>
               </div>
 
-              <div className="project-card" onClick={() => {
-                navigate('/projects/fitbox');
-              }}>
+              <div 
+                className="project-card" 
+                onClick={() => {
+                  navigate('/projects/fitbox');
+                }}
+                onMouseEnter={() => {
+                  // Prefetch route on hover for instant navigation
+                  const link = document.createElement('link');
+                  link.rel = 'prefetch';
+                  link.href = '/projects/fitbox';
+                  link.as = 'document';
+                  document.head.appendChild(link);
+                }}
+              >
                 <div className="project-image" style={{ backgroundImage: `url(${fitboxImage})`, backgroundSize: 'contain', backgroundPosition: 'center', backgroundColor: 'white', backgroundRepeat: 'no-repeat', borderBottom: 'none' }}>
                 </div>
                 <div className="project-content">
@@ -392,9 +473,20 @@ function Home() {
                 </div>
               </div>
 
-              <div className="project-card" onClick={() => {
-                navigate('/projects/financial-derivatives');
-              }}>
+              <div 
+                className="project-card" 
+                onClick={() => {
+                  navigate('/projects/financial-derivatives');
+                }}
+                onMouseEnter={() => {
+                  // Prefetch route on hover for instant navigation
+                  const link = document.createElement('link');
+                  link.rel = 'prefetch';
+                  link.href = '/projects/financial-derivatives';
+                  link.as = 'document';
+                  document.head.appendChild(link);
+                }}
+              >
                 <div className="project-image" style={{ backgroundImage: `url(${srprojImage})`, backgroundSize: 'cover', backgroundPosition: 'center 35%' }}>
                 </div>
                 <div className="project-content">

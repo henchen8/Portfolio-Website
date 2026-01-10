@@ -1,5 +1,5 @@
 import './App.css';
-import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useState, useLayoutEffect, useCallback, useRef } from 'react';
 import { Analytics } from '@vercel/analytics/react';
 import Home from './pages/Home';
@@ -8,6 +8,23 @@ import FinancialDerivativesProject from './pages/FinancialDerivativesProject';
 import FitBoxProject from './pages/FitBoxProject';
 import portemailicon from './assets/portemailicon.png';
 import linkedinLogo from './assets/Remove White Background.png';
+
+// Import all images for preloading
+import profileImage from './assets/profile.png';
+import rubiksImage from './assets/rubiks1.jpeg';
+import srprojImage from './assets/portsrproj3.png';
+import fitboxImage from './assets/FitBoxlogo.png';
+import rubiksAssembly from './assets/rubiks_assembly7.png';
+import rubiksDrawing from './assets/1rubiksdrawing.png';
+import rubiksGUI from './assets/websiterubiksimg1.png';
+import tmcDriver from './assets/TMC2209V2.0.png';
+import nema17 from './assets/PORTFOLIONEMA17.png';
+import arduinoMega from './assets/PORTarduinomega.png';
+import srprojImageDetailed from './assets/Capture-2026-01-01-134649.png';
+import blackscholesImage from './assets/blackscholes.png';
+import simplifiedBlackscholesImage from './assets/port_simplifiedblackscholes.png';
+import famafrenchImage from './assets/portfamafrench.png';
+import explosionDrawing from './assets/website_m&tsi explosion drawing.png';
 
 function ScrollToTop({ loading, onScrollReady }) {
   const { pathname, hash } = useLocation();
@@ -131,7 +148,64 @@ function ScrollToTop({ loading, onScrollReady }) {
         });
       });
       return; // Don't continue to other scroll logic
-    } else if (hash === '#projects' && pathname === '/') {
+    }
+    
+    // Check for navigation target hash from sessionStorage (set by navbar when navigating from other pages)
+    const navTargetHash = sessionStorage.getItem('navTargetHash');
+    if (navTargetHash && pathname === '/') {
+      sessionStorage.removeItem('navTargetHash');
+      // Handle the navigation target directly
+      const targetHash = navTargetHash;
+      if (targetHash === '#projects') {
+        const section = document.getElementById('projects');
+        if (section) {
+          // Wait for DOM to be ready
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              const sectionRect = section.getBoundingClientRect();
+              const sectionTop = sectionRect.top + window.pageYOffset;
+              const viewportHeight = window.innerHeight;
+              const sectionHeight = sectionRect.height;
+              const targetScroll = sectionTop + sectionHeight - viewportHeight + 100;
+              const pageHeight = document.documentElement.scrollHeight;
+              const distanceFromBottom = pageHeight - (sectionTop + sectionHeight);
+              const scrollPosition = distanceFromBottom < 200 
+                ? pageHeight - viewportHeight
+                : Math.max(0, targetScroll);
+              window.scrollTo({
+                top: scrollPosition,
+                behavior: 'auto'
+              });
+              // Set hash after scrolling
+              window.location.hash = targetHash;
+              onScrollReady?.();
+            });
+          });
+        } else {
+          onScrollReady?.();
+        }
+        return;
+      } else if (targetHash === '#experience') {
+        const section = document.getElementById('experience');
+        if (section) {
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              const elementPosition = section.getBoundingClientRect().top + window.pageYOffset;
+              const offsetPosition = elementPosition + 55;
+              window.scrollTo(0, offsetPosition);
+              // Set hash after scrolling
+              window.location.hash = targetHash;
+              onScrollReady?.();
+            });
+          });
+        } else {
+          onScrollReady?.();
+        }
+        return;
+      }
+    }
+    
+    if (hash === '#projects' && pathname === '/') {
       // Handle hash navigation to projects section
       // Check if this is a return from project page (even if returnToHome wasn't caught earlier)
       const wasReturning = sessionStorage.getItem('returnToHome') === 'true' || hasHandledReturn.current;
@@ -194,6 +268,55 @@ function ScrollToTop({ loading, onScrollReady }) {
 }
 
 function Navbar() {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleNavClick = (e, hash) => {
+    e.preventDefault();
+    
+    // If we're not on the home page, navigate to home and set hash
+    if (location.pathname !== '/') {
+      // Store the target hash in sessionStorage so ScrollToTop can handle it
+      sessionStorage.setItem('navTargetHash', hash);
+      // Navigate to home page - ScrollToTop will handle the hash
+      navigate('/');
+    } else {
+      // Already on home page, update hash and scroll
+      window.location.hash = hash;
+      // Use requestAnimationFrame to ensure DOM is ready
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          const section = document.getElementById(hash.substring(1));
+          if (section) {
+            if (hash === '#projects') {
+              const sectionRect = section.getBoundingClientRect();
+              const sectionTop = sectionRect.top + window.pageYOffset;
+              const viewportHeight = window.innerHeight;
+              const sectionHeight = sectionRect.height;
+              const targetScroll = sectionTop + sectionHeight - viewportHeight + 100;
+              const pageHeight = document.documentElement.scrollHeight;
+              const distanceFromBottom = pageHeight - (sectionTop + sectionHeight);
+              const scrollPosition = distanceFromBottom < 200 
+                ? pageHeight - viewportHeight
+                : Math.max(0, targetScroll);
+              window.scrollTo({
+                top: scrollPosition,
+                behavior: 'smooth'
+              });
+            } else if (hash === '#experience') {
+              const elementPosition = section.getBoundingClientRect().top + window.pageYOffset;
+              const offsetPosition = elementPosition + 55;
+              window.scrollTo({
+                top: offsetPosition,
+                behavior: 'smooth'
+              });
+            }
+          }
+        });
+      });
+    }
+  };
+
   return (
     <nav className="navbar">
       <div className="nav-container">
@@ -206,10 +329,10 @@ function Navbar() {
             <Link to="/" className="nav-link">Home</Link>
           </li>
           <li className="nav-item">
-            <Link to="/#experience" className="nav-link">Experience</Link>
+            <a href="/#experience" className="nav-link" onClick={(e) => handleNavClick(e, '#experience')}>Experience</a>
           </li>
           <li className="nav-item">
-            <Link to="/#projects" className="nav-link">Projects</Link>
+            <a href="/#projects" className="nav-link" onClick={(e) => handleNavClick(e, '#projects')}>Projects</a>
           </li>
         </ul>
       </div>
@@ -276,27 +399,108 @@ function App() {
     document.body.classList.add('loading');
     document.documentElement.classList.add('loading');
     
-    // Preload all critical assets during loading screen
-    // This ensures content is ready when user quickly scrolls or clicks on projects
-    // Since all components are now eagerly loaded (no lazy loading), their bundled assets
-    // will be included in the initial bundle and load with the page.
-    // Here we preload the video file which is in the public folder.
-    const preloadAssets = () => {
-      // Preload video for RubiksCubeProject (public folder asset)
-      const videoLink = document.createElement('link');
-      videoLink.rel = 'preload';
-      videoLink.as = 'video';
-      videoLink.href = '/rubik_solve_vid0.mov';
-      document.head.appendChild(videoLink);
-      
-      // Also preload video using video element for better browser support
-      const video = document.createElement('video');
-      video.preload = 'auto';
-      video.src = '/rubik_solve_vid0.mov';
+    // Comprehensive asset preloading function
+    const preloadAllAssets = () => {
+      // List of all images used across all pages (using imported references)
+      const allImages = [
+        // Home page images
+        profileImage,
+        rubiksImage,
+        srprojImage,
+        fitboxImage,
+        rubiksAssembly,
+        // RubiksCubeProject images
+        rubiksDrawing,
+        rubiksGUI,
+        tmcDriver,
+        nema17,
+        arduinoMega,
+        // FinancialDerivativesProject images
+        srprojImageDetailed,
+        blackscholesImage,
+        simplifiedBlackscholesImage,
+        famafrenchImage,
+        // FitBoxProject images
+        explosionDrawing,
+      ];
+
+      // Preload all images efficiently
+      const imagePromises = allImages.map((src, index) => {
+        return new Promise((resolve) => {
+          // Use Image object with decode for modern browsers (more efficient)
+          const img = new Image();
+          img.onload = resolve;
+          img.onerror = resolve; // Resolve even on error to not block
+          // Set fetchpriority for critical images
+          if (index < 5 && 'fetchPriority' in img) {
+            img.fetchPriority = 'high';
+          }
+          img.src = src;
+          
+          // Use decode API if available for better performance
+          if (img.decode) {
+            img.decode().then(resolve).catch(() => {
+              // Fallback to onload if decode fails
+              if (img.complete) resolve();
+            });
+          }
+        });
+      });
+
+      // Preload video for RubiksCubeProject with multiple strategies
+      const videoPromises = [
+        new Promise((resolve) => {
+          // Use link preload for video
+          const videoLink = document.createElement('link');
+          videoLink.rel = 'preload';
+          videoLink.as = 'video';
+          videoLink.href = '/rubik_solve_vid0.mov';
+          videoLink.crossOrigin = 'anonymous';
+          document.head.appendChild(videoLink);
+          resolve();
+        }),
+        new Promise((resolve) => {
+          // Also preload using video element for better browser support
+          const video = document.createElement('video');
+          video.preload = 'auto';
+          video.muted = true; // Muted videos load faster
+          video.src = '/rubik_solve_vid0.mov';
+          video.onloadeddata = () => resolve();
+          video.oncanplaythrough = () => resolve();
+          video.onerror = () => resolve(); // Resolve even on error to not block
+          // Trigger loading by setting preload
+          video.load();
+          // Timeout fallback
+          setTimeout(() => resolve(), 5000);
+        })
+      ];
+
+      // Wait for all assets to load (don't block on slow assets)
+      return Promise.allSettled([...imagePromises, ...videoPromises]);
     };
 
-    // Start preloading immediately
-    preloadAssets();
+    // Add resource hints for all routes during loading
+    const addResourceHints = () => {
+      const routes = [
+        '/projects/rubiks-cube',
+        '/projects/financial-derivatives',
+        '/projects/fitbox'
+      ];
+      
+      routes.forEach(route => {
+        const link = document.createElement('link');
+        link.rel = 'prefetch';
+        link.href = route;
+        link.as = 'document';
+        document.head.appendChild(link);
+      });
+    };
+
+    // Start comprehensive preloading
+    const preloadPromise = preloadAllAssets();
+    
+    // Add resource hints immediately
+    addResourceHints();
     
     // Save scroll position and set refresh flag before page unloads
     const handleBeforeUnload = () => {
@@ -306,15 +510,17 @@ function App() {
     
     window.addEventListener('beforeunload', handleBeforeUnload);
     
-    // Hide loading screen after animation (1.35s animation + 0.2s fadeout = 1.55s)
-    // Note: body.loading class is removed in ScrollToTop's useLayoutEffect to ensure
-    // scroll position is set BEFORE position:fixed is removed (prevents flash)
-    const timer = setTimeout(() => {
+    // Hide loading screen after animation completes AND assets are loaded
+    // Minimum time is 1.55s for animation, but wait for assets if they take longer
+    // Use Promise.allSettled to not block on slow assets
+    Promise.all([
+      preloadPromise.then(() => Promise.resolve()),
+      new Promise(resolve => setTimeout(resolve, 1550)) // Minimum animation time
+    ]).then(() => {
       setLoading(false);
-    }, 1550);
+    });
 
     return () => {
-      clearTimeout(timer);
       document.body.classList.remove('loading');
       document.documentElement.classList.remove('loading');
       window.removeEventListener('beforeunload', handleBeforeUnload);

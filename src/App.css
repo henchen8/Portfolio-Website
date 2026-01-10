@@ -818,7 +818,7 @@ body.loading {
 .projects-section {
   padding-top: calc(5rem - 75px + 200px + 100px) !important; /* Further reduced from 425px to 375px total spacing above projects */
   margin-top: 30px !important; /* Further reduced from 50px to 30px */
-  padding-bottom: calc(5rem - 120px) !important; /* Reduced by 120px from bottom (20px less than before) */
+  padding-bottom: calc(5rem - 120px + 6.25rem) !important; /* Reduced by 120px from bottom (20px less than before) + 100px (6.25rem) below */
 }
 
 

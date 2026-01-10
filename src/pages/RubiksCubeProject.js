@@ -388,10 +388,11 @@ function RubiksCubeProject() {
                 src={rubiksDrawing}
                 alt="Rubik's Cube Robot Design"
                 style={{
-                  width: '435px',
+                  width: '425px',
                   maxWidth: 'none',
                   height: 'auto',
-                  borderRadius: '8px'
+                  borderRadius: '8px',
+                  marginTop: '-35px'
                 }}
               />
             </div>
