@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import rubiksDrawing from '../assets/1rubiksdrawing.png';
 import rubiksImage from '../assets/rubiks1.jpeg';
 import rubiksGUI from '../assets/websiterubiksimg1.png';
-import tmcDriver from '../assets/TMC2209V2.0.png';
+import tmcDriver from '../assets/portTMC2209.png';
 import nema17 from '../assets/PORTFOLIONEMA17.png';
 import arduinoMega from '../assets/PORTarduinomega.png';
 
@@ -411,21 +411,22 @@ function RubiksCubeProject() {
           transform: 'translateX(-50%)',
           padding: '0 2rem'
         }}>
-          <div style={{ flex: '1', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem', marginTop: '-25px' }}>
+          <div style={{ flex: '1', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.5rem', marginTop: '-25px' }}>
             <div style={{
-              maxWidth: '380px',
+              maxWidth: '390px',
               width: '100%',
               borderRadius: '8px',
-              overflow: 'hidden',
-              display: 'flex'
+              overflow: 'hidden'
             }}>
               <img
                 src={tmcDriver}
-                alt="TMC2209 V2.0 Stepper Motor Driver"
+                alt="TMC 2209 V2.0 Stepper Motor Driver"
                 style={{
                   width: '100%',
                   height: 'auto',
-                  display: 'block'
+                  display: 'block',
+                  background: 'transparent',
+                  mixBlendMode: 'multiply'
                 }}
               />
             </div>
@@ -438,7 +439,8 @@ function RubiksCubeProject() {
                 height: 'auto',
                 borderRadius: '8px',
                 background: 'transparent',
-                mixBlendMode: 'multiply'
+                mixBlendMode: 'multiply',
+                marginTop: '-17px'
               }}
             />
           </div>
@@ -484,8 +486,8 @@ function RubiksCubeProject() {
             <div className="project-section" style={{ flex: 1, marginBottom: 0 }}>
               <h2>Microcontroller Software</h2>
               <p>
-                The Arduino microcontroller serves as the brain of the system, integrating solving algorithm
-                with all the mechanical and electrical components. Key programming features included:
+                The Arduino microcontroller integrates the solving algorithm
+                with all the electrical and mechanical components. Key software features included:
               </p>
               <ul>
                 <li>• Real-time stepper motor control with precise timing</li>

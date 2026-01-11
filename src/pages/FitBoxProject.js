@@ -2398,7 +2398,7 @@ function FitBoxProject() {
             Key financial analyses include:
           </p>
           <ul>
-            <li>• Unit economics and cost of goods sold (COGS) breakdown</li>
+            <li>• Unit economics and COGS breakdown</li>
             <li>• Revenue projections and growth modeling</li>
             <li>• Break-even analysis and profitability timeline</li>
             <li>• Funding requirements and capital allocation strategy</li>
@@ -2421,14 +2421,14 @@ function FitBoxProject() {
             <div className="project-section">
               <h2>User Experience</h2>
               <p>
-                Designed user interface and interaction flow using Figma to create an intuitive companion app experience.
+                Designed user interface and interaction flow using Figma to create an intuitive app experience.
                 Key UX elements include:
               </p>
               <ul>
                 <li>• Workout tracking and progress visualization</li>
                 <li>• Guided exercise routines with visual instructions</li>
                 <li>• Personalized fitness goals and recommendations</li>
-                <li>• Social comptetitions with friends for accountability and motivation. </li>
+                <li>• Social competitions with friends for accountability and motivation </li>
               </ul>
             </div>
           </div>

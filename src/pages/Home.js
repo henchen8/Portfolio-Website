@@ -204,25 +204,35 @@ function Home() {
         const experienceTop = experienceRect.top;
         const experienceBottom = experienceRect.bottom;
         
-        const EXPERIENCE_FADE_IN_START = 1000;
-        const EXPERIENCE_FADE_IN_END = 200;
+        const EXPERIENCE_FADE_IN_START = 650;
+        const EXPERIENCE_FADE_IN_END = -50;
         const EXPERIENCE_FADE_OUT_START = 1000;
         const EXPERIENCE_FADE_OUT_END = 500;
         
-        if (experienceTop < EXPERIENCE_FADE_IN_START && experienceTop > EXPERIENCE_FADE_IN_END) {
+        // Determine opacity based on fade-in and fade-out thresholds
+        // Fade-in: section is approaching the viewport
+        if (experienceTop > EXPERIENCE_FADE_IN_START) {
+          // Section is above fade-in start, fully transparent
+          experienceOpacity = 0;
+        } else if (experienceTop > EXPERIENCE_FADE_IN_END) {
+          // Section is between fade-in start and end, fade in
           const fadeInProgress = (EXPERIENCE_FADE_IN_START - experienceTop) / (EXPERIENCE_FADE_IN_START - EXPERIENCE_FADE_IN_END);
           const curveProgress = Math.pow(fadeInProgress, .75);
           experienceOpacity = curveProgress;
-        } else if (experienceTop <= EXPERIENCE_FADE_IN_END) {
-          experienceOpacity = 1;
-        }
-        
-        if (experienceOpacity > 0 && experienceBottom < EXPERIENCE_FADE_OUT_START && experienceBottom > EXPERIENCE_FADE_OUT_END) {
-          const fadeOutProgress = (EXPERIENCE_FADE_OUT_START - experienceBottom) / (EXPERIENCE_FADE_OUT_START - EXPERIENCE_FADE_OUT_END);
-          const curveProgress = Math.pow(fadeOutProgress, 2);
-          experienceOpacity = 1 - curveProgress;
-        } else if (experienceBottom <= EXPERIENCE_FADE_OUT_END) {
-          experienceOpacity = 0;
+        } else {
+          // Section top has passed fade-in end, check for fade-out
+          if (experienceBottom > EXPERIENCE_FADE_OUT_START) {
+            // Bottom hasn't reached fade-out start, fully opaque
+            experienceOpacity = 1;
+          } else if (experienceBottom > EXPERIENCE_FADE_OUT_END) {
+            // Bottom is between fade-out start and end, fade out
+            const fadeOutProgress = (EXPERIENCE_FADE_OUT_START - experienceBottom) / (EXPERIENCE_FADE_OUT_START - EXPERIENCE_FADE_OUT_END);
+            const curveProgress = Math.pow(fadeOutProgress, 2);
+            experienceOpacity = 1 - curveProgress;
+          } else {
+            // Bottom has passed fade-out end, fully transparent
+            experienceOpacity = 0;
+          }
         }
       }
       
