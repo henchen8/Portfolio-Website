@@ -55,7 +55,9 @@ html:has(body.loading) {
   background: linear-gradient(90deg, #f0f0ed 0%, #f0f0ed 50%, black 50%, black 100%);
   background-size: 200% 100%;
   background-position: 0% 0%;
-  animation: backgroundSweep 1.35s cubic-bezier(0.95, 0, 0.05, 1) forwards;
+  animation: backgroundSweep 1.35s cubic-bezier(0.95, 0, 0.05, 1) both;
+  animation-delay: 0s;
+  will-change: background-position;
   z-index: 1;
 }
 

@@ -255,7 +255,6 @@ function RubiksCubeProject() {
                   <video
                     ref={videoRef}
                     loop={false}
-                    muted
                     playsInline
                     controls={!showReplay}
                     controlsList="nodownload nofullscreen noremoteplayback noplaybackrate"
