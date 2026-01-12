@@ -378,6 +378,8 @@ function Footer() {
 function App() {
   const [loading, setLoading] = useState(true);
   const [scrollReady, setScrollReady] = useState(false);
+  const [animationReady, setAnimationReady] = useState(false);
+  const loadingScreenRef = useRef(null);
 
   // Immediately restore scroll position on mount (before paint) for page refresh
   useLayoutEffect(() => {
@@ -392,6 +394,20 @@ function App() {
       window.scrollTo(0, 0);
     }
   }, []);
+
+  // Ensure loading screen is painted before starting animations
+  useLayoutEffect(() => {
+    if (loading && loadingScreenRef.current) {
+      // Use double requestAnimationFrame to ensure element is painted
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          setAnimationReady(true);
+        });
+      });
+    } else if (!loading) {
+      setAnimationReady(false);
+    }
+  }, [loading]);
 
   useEffect(() => {
     // Always show loading screen on mount (page load/refresh)
@@ -572,7 +588,11 @@ function App() {
     <>
       {/* Loading screen - rendered outside Router to ensure it always shows consistently on all pages */}
       {loading && (
-        <div className="loading-screen" key="app-loading-screen">
+        <div 
+          ref={loadingScreenRef}
+          className={`loading-screen ${animationReady ? 'animation-ready' : ''}`} 
+          key="app-loading-screen"
+        >
           <div className="loading-content">
             <div className="loading-logo-container">
               <div 
