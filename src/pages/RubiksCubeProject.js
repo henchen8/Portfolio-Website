@@ -224,7 +224,7 @@ function RubiksCubeProject() {
                 Key mechanical components include:
               </p>
               <ul>
-                <li>• End effector optimized for precise control and to prevent backlash  </li>
+                <li>• End effector optimized for precise control and preventing backlash  </li>
                 <li>• Cube/motor interface connecting end effector with motor shaft</li>
                 <li>• Base to hold the bottom 5 stepper motors</li>
                 <li>• Removable "motor hat" that houses the top motor</li>

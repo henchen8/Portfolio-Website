@@ -344,8 +344,8 @@ function Home() {
                 Robotics Engineer & Entrepreneur
               </p>
               <p className="hero-description">
-              I'm a Student at the University of Pennsylvania, studying Mechanical Engineering 
-              concentrating in Dynamics, Controls, and Robotics.
+              I'm a student at the University of Pennsylvania, studying Mechanical Engineering 
+              with a concentration in Dynamics, Controls, and Robotics.
               </p>
               <div className="hero-buttons">
                 <button className="btn btn-primary" onClick={scrollToProjects}>My Projects</button>
@@ -376,7 +376,7 @@ function Home() {
                   <p className="timeline-company">Penn Hyperloop • September 2024 - Present</p>
                   <p>
                     Ran fluids calculations to model, identify, and characterize tolerances for slurry 
-                    management and muck retreival systems abord TBM to optimize performance in the 
+                    management and muck retrieval systems aboard TBM to optimize performance in the 
                     Not-a-Boring Competition.
 
                   </p>

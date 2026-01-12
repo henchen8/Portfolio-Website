@@ -27,7 +27,7 @@ function FinancialDerivativesProject() {
             A brief exploration of the world of quantitative finance through CAPM, PCA, and Black-Scholes-Merton options model.
           </p>
           <p>
-            The scope of this research project is split into two main areas: the first is educating the individual who is interested
+            The scope of this research project is split into two main areas: the first is educating individuals who are interested
             in retail investment, where concepts such as ETFs, dividends, and basic trading strategies are introduced. 
             The second half focuses more on the technical side—the application of data analytics, mathematics, 
             and numerical analysis to quantitative finance. Mathematical concepts discussed include linear 

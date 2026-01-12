@@ -2341,7 +2341,7 @@ function FitBoxProject() {
           </p>
           <p>
             FitBox was developed during the Management and Technology Summer Institute at the University 
-            of Pennsylvania. As technical Co-Founder, I  designed the GTM strategy and MVP,
+            of Pennsylvania. As technical Co-Founder, I designed the GTM strategy and MVP,
             combining mechanical innovations with business strategy to create a practical fitness 
             solution for people on the go.
           </p>
@@ -2462,7 +2462,7 @@ function FitBoxProject() {
         <div className="project-section">
           <h2>Electronics</h2>
           <p>
-            Integrated Arduino-based control system for  functionality, enabling real-time workout feedback.
+            Integrated Arduino-based control system for sensor functionality, enabling real-time workout feedback.
             Key electronic features include:
           </p>
           <ul>
@@ -2491,7 +2491,7 @@ function FitBoxProject() {
         <div className="project-section">
           <h2>Technologies Used</h2>
           <div className="project-tech">
-            <span className="tech-tag">Financial Modelling</span>
+            <span className="tech-tag">Financial Modeling</span>
             <span className="tech-tag">Onshape</span>
             <span className="tech-tag">Figma</span>
             <span className="tech-tag">C</span>
@@ -2505,7 +2505,7 @@ function FitBoxProject() {
             <a href="https://youtu.be/JnfntLZAGBE" target="_blank" rel="noopener noreferrer" className="project-link-btn">Live Demo</a>
             <a href="https://docs.google.com/presentation/d/1XXMJS2hofXJqpHwX3uvxKPht97CCMyoBtOF3lLLi4Bc/edit?usp=sharing" target="_blank" rel="noopener noreferrer" className="project-link-btn">Slides</a>
             <a href="https://cad.onshape.com/documents/cfd0d20e2c53157ccca464c4/w/7b40b5013232732c438b29e9/e/784c86c2b4418326fd73f6e6" target="_blank" rel="noopener noreferrer" className="project-link-btn">CAD</a>
-            <a href="https://docs.google.com/spreadsheets/d/1sKK92uZeAGJtolWAh7wznRvRncsIrT7I8mjkVkPdV6c/edit?usp=sharing" target="_blank" rel="noopener noreferrer" className="project-link-btn">Financial Modelling</a>
+            <a href="https://docs.google.com/spreadsheets/d/1sKK92uZeAGJtolWAh7wznRvRncsIrT7I8mjkVkPdV6c/edit?usp=sharing" target="_blank" rel="noopener noreferrer" className="project-link-btn">Financial Modeling</a>
             <a href="https://docs.google.com/document/d/16BLjd1bWl2OHBLal30bFIdV5pIzva3wmQyLRJ9i1YFM/edit?tab=t.0" target="_blank" rel="noopener noreferrer" className="project-link-btn">Executive Summary</a>
           </div>
         </div>
