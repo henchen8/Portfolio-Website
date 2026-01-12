@@ -18,10 +18,10 @@ const IPhoneMockup = memo(({ logoSrc }) => {
   const [currentWeight, setCurrentWeight] = useState(25);
   const [currentReps, setCurrentReps] = useState(0);
   const [totalCalories, setTotalCalories] = useState(0);
+  // eslint-disable-next-line no-unused-vars
   const [cableDisplacement, setCableDisplacement] = useState([]); // Array of {time, position} points
   const [currentExercise, setCurrentExercise] = useState(0);
-  const [isConnected, setIsConnected] = useState(true);
-  const workoutStartTime = useRef(null);
+  const [isConnected] = useState(true);
   const hasLoadedRef = useRef(false);
   // Store previous home state when navigating away
   const previousHomeState = useRef({ showWorkout: false, isActiveWorkout: false });

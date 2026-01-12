@@ -9,7 +9,6 @@ import arduinoMega from '../assets/PORTarduinomega.png';
 
 function RubiksCubeProject() {
   const [timerValue, setTimerValue] = useState(0);
-  const [isHovering, setIsHovering] = useState(false);
   const [showReplay, setShowReplay] = useState(false);
   const timerIntervalRef = useRef(null);
   const videoRef = useRef(null);
@@ -42,7 +41,7 @@ function RubiksCubeProject() {
     if (videoRef.current) {
       videoRef.current.playbackRate = VIDEO_PLAYBACK_RATE;
     }
-  }, []);
+  }, [VIDEO_PLAYBACK_RATE]);
 
   // Only play video when it's fully visible in viewport (first time only)
   useEffect(() => {
@@ -118,7 +117,7 @@ function RubiksCubeProject() {
         timerIntervalRef.current = null;
       }
     };
-  }, []);
+  }, [TIMER_SCALE, SOLVE_START_TIME, SOLVE_END_TIME, TARGET_SOLVE_TIME]);
 
   const handleTimeUpdate = (e) => {
     // Timer now automatically syncs with video position
@@ -243,11 +242,9 @@ function RubiksCubeProject() {
                 <div 
                   style={{ position: 'relative', width: '315px', height: '550px' }}
                   onMouseEnter={() => {
-                    setIsHovering(true);
                     isHoveringRef.current = true;
                   }}
                   onMouseLeave={() => {
-                    setIsHovering(false);
                     isHoveringRef.current = false;
                     // Show replay overlay when cursor leaves if video has ended
                     if (videoRef.current && videoRef.current.ended) {

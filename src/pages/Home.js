@@ -241,7 +241,6 @@ function Home() {
       if (projectsSection) {
         const projectsRect = projectsSection.getBoundingClientRect();
         const projectsTop = projectsRect.top;
-        const projectsBottom = projectsRect.bottom;
         
         // Check if we're near the bottom of the page
         const distanceFromBottom = document.documentElement.scrollHeight - (window.scrollY + window.innerHeight);
