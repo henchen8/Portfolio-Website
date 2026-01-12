@@ -36,12 +36,15 @@ html:has(body.loading) {
   align-items: center !important;
   justify-content: center !important;
   z-index: 999999 !important; /* Increased to ensure it's above everything */
-  animation: fadeOut 0.2s ease-out 1.35s forwards;
   overflow: hidden !important;
   pointer-events: auto !important;
   isolation: isolate !important;
   contain: layout style paint !important; /* Isolate rendering */
   will-change: opacity !important;
+}
+
+.loading-screen.animation-ready {
+  animation: fadeOut 0.2s ease-out 1.35s forwards;
 }
 
 

@@ -527,11 +527,12 @@ function App() {
     window.addEventListener('beforeunload', handleBeforeUnload);
     
     // Hide loading screen after animation completes AND assets are loaded
-    // Minimum time is 1.55s for animation, but wait for assets if they take longer
-    // Use Promise.allSettled to not block on slow assets
+    // Animation starts after animation-ready class is added (~33ms delay from double RAF)
+    // Animation duration: 1.35s, fadeOut starts at 1.4s, fadeOut duration: 0.2s
+    // Total: ~1.6s minimum, using 1.65s to ensure animation fully completes
     Promise.all([
       preloadPromise.then(() => Promise.resolve()),
-      new Promise(resolve => setTimeout(resolve, 1550)) // Minimum animation time
+      new Promise(resolve => setTimeout(resolve, 1650)) // Minimum animation time + buffer
     ]).then(() => {
       setLoading(false);
     });
