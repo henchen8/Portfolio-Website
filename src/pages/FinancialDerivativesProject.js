@@ -1,10 +1,13 @@
 import { Link } from 'react-router-dom';
+import { useIsMobile } from '../hooks/useIsMobile';
 import srprojImage from '../assets/Capture-2026-01-01-134649.png';
 import blackscholesImage from '../assets/blackscholes.png';
 import simplifiedBlackscholesImage from '../assets/port_simplifiedblackscholes.png';
 import famafrenchImage from '../assets/portfamafrench.png';
 
 function FinancialDerivativesProject() {
+  const isMobile = useIsMobile(768); // Breakpoint at 768px
+  
   const handleBackClick = () => {
     sessionStorage.setItem('returnToHome', 'true');
   };
@@ -65,8 +68,8 @@ function FinancialDerivativesProject() {
           <div style={{
             background: 'linear-gradient(135deg, #fafaf8 0%, #f0f0ed 100%)',
             borderRadius: '12px',
-            padding: '2rem',
-            marginTop: '2rem',
+            padding: isMobile ? '1.5rem' : '2rem',
+            marginTop: isMobile ? '1.5rem' : '2rem',
             boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)'
           }}>
             <div style={{ textAlign: 'center' }}>
@@ -74,7 +77,7 @@ function FinancialDerivativesProject() {
                 src={famafrenchImage}
                 alt="Fama-French Principal Component Analysis"
                 style={{
-                  maxWidth: '800px',
+                  maxWidth: isMobile ? '100%' : '800px',
                   width: '100%',
                   height: 'auto',
                   mixBlendMode: 'multiply',
@@ -104,22 +107,22 @@ function FinancialDerivativesProject() {
           <div style={{
             background: 'linear-gradient(135deg, #fafaf8 0%, #f0f0ed 100%)',
             borderRadius: '12px',
-            padding: '2rem',
-            marginTop: '2.5rem',
+            padding: isMobile ? '1.5rem' : '2rem',
+            marginTop: isMobile ? '1.5rem' : '2.5rem',
             boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)'
           }}>
             <h3 style={{ 
-              fontSize: '1.5rem', 
+              fontSize: isMobile ? '1.25rem' : '1.5rem', 
               fontWeight: '600',
-              marginBottom: '1.5rem', 
+              marginBottom: isMobile ? '1rem' : '1.5rem', 
               color: '#000000'
             }}>Closed-Form Equation</h3>
-            <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
+            <div style={{ textAlign: 'center', marginBottom: isMobile ? '1rem' : '1.5rem' }}>
               <img
                 src={simplifiedBlackscholesImage}
                 alt="Simplified Black-Scholes Formula"
                 style={{
-                  maxWidth: '800px',
+                  maxWidth: isMobile ? '100%' : '800px',
                   width: '100%',
                   height: 'auto',
                   mixBlendMode: 'multiply',
@@ -132,10 +135,10 @@ function FinancialDerivativesProject() {
               padding: 0, 
               margin: 0 
             }}>
-              <li style={{ fontSize: '1.05rem', color: '#555', lineHeight: '1.8', marginBottom: '0.5rem' }}>• Closed-form solution for pricing European put and call options</li>
-              <li style={{ fontSize: '1.05rem', color: '#555', lineHeight: '1.8', marginBottom: '0.5rem' }}>• Assumes constant volatility, constant risk-free rate, no dividends, and continuous trading</li>
-              <li style={{ fontSize: '1.05rem', color: '#555', lineHeight: '1.8', marginBottom: '0.5rem' }}>• Uses cumulative normal distribution function for probability calculations</li>
-              <li style={{ fontSize: '1.05rem', color: '#555', lineHeight: '1.8' }}>• Inputs: stock price, strike price, time to expiration, risk-free rate, volatility</li>
+              <li style={{ fontSize: isMobile ? '0.95rem' : '1.05rem', color: '#555', lineHeight: '1.8', marginBottom: '0.5rem' }}>• Closed-form solution for pricing European put and call options</li>
+              <li style={{ fontSize: isMobile ? '0.95rem' : '1.05rem', color: '#555', lineHeight: '1.8', marginBottom: '0.5rem' }}>• Assumes constant volatility, constant risk-free rate, no dividends, and continuous trading</li>
+              <li style={{ fontSize: isMobile ? '0.95rem' : '1.05rem', color: '#555', lineHeight: '1.8', marginBottom: '0.5rem' }}>• Uses cumulative normal distribution function for probability calculations</li>
+              <li style={{ fontSize: isMobile ? '0.95rem' : '1.05rem', color: '#555', lineHeight: '1.8' }}>• Inputs: stock price, strike price, time to expiration, risk-free rate, volatility</li>
             </ul>
           </div>
 
@@ -143,22 +146,22 @@ function FinancialDerivativesProject() {
           <div style={{
             background: 'linear-gradient(135deg, #fafaf8 0%, #f0f0ed 100%)',
             borderRadius: '12px',
-            padding: '2rem',
-            marginTop: '1.5rem',
+            padding: isMobile ? '1.5rem' : '2rem',
+            marginTop: isMobile ? '1rem' : '1.5rem',
             boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)'
           }}>
             <h3 style={{ 
-              fontSize: '1.5rem', 
+              fontSize: isMobile ? '1.25rem' : '1.5rem', 
               fontWeight: '600',
-              marginBottom: '1.5rem', 
+              marginBottom: isMobile ? '1rem' : '1.5rem', 
               color: '#000000'
             }}>Free Boundary Formula</h3>
-            <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
+            <div style={{ textAlign: 'center', marginBottom: isMobile ? '1rem' : '1.5rem' }}>
               <img
                 src={blackscholesImage}
                 alt="Black-Scholes Free Boundary Formula"
                 style={{
-                  maxWidth: '800px',
+                  maxWidth: isMobile ? '100%' : '800px',
                   width: '100%',
                   height: 'auto',
                   mixBlendMode: 'multiply',
@@ -171,10 +174,10 @@ function FinancialDerivativesProject() {
               padding: 0, 
               margin: 0 
             }}>
-              <li style={{ fontSize: '1.05rem', color: '#555', lineHeight: '1.8', marginBottom: '0.5rem' }}>• Extends Black-Scholes to American options with early exercise rights</li>
-              <li style={{ fontSize: '1.05rem', color: '#555', lineHeight: '1.8', marginBottom: '0.5rem' }}>• Creates moving boundary between optimal hold vs exercise regions</li>
-              <li style={{ fontSize: '1.05rem', color: '#555', lineHeight: '1.8', marginBottom: '0.5rem' }}>• Results in PDE with complementarity conditions</li>
-              <li style={{ fontSize: '1.05rem', color: '#555', lineHeight: '1.8' }}>• Requires numerical methods to solve (no closed-form solution)</li>
+              <li style={{ fontSize: isMobile ? '0.95rem' : '1.05rem', color: '#555', lineHeight: '1.8', marginBottom: '0.5rem' }}>• Extends Black-Scholes to American options with early exercise rights</li>
+              <li style={{ fontSize: isMobile ? '0.95rem' : '1.05rem', color: '#555', lineHeight: '1.8', marginBottom: '0.5rem' }}>• Creates moving boundary between optimal hold vs exercise regions</li>
+              <li style={{ fontSize: isMobile ? '0.95rem' : '1.05rem', color: '#555', lineHeight: '1.8', marginBottom: '0.5rem' }}>• Results in PDE with complementarity conditions</li>
+              <li style={{ fontSize: isMobile ? '0.95rem' : '1.05rem', color: '#555', lineHeight: '1.8' }}>• Requires numerical methods to solve (no closed-form solution)</li>
             </ul>
           </div>
         </div>

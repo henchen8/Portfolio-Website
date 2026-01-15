@@ -237,7 +237,7 @@ function RubiksCubeProject() {
 
           <div style={{ flex: '0 0 auto', maxWidth: '360px' }}>
             <div className="project-section">
-              <h2>Live Demo</h2>
+              <h2>Solve Video</h2>
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '1.5rem' }}>
                 <div 
                   style={{ position: 'relative', width: '315px', height: '550px' }}
@@ -255,6 +255,7 @@ function RubiksCubeProject() {
                   <video
                     ref={videoRef}
                     loop={false}
+                    muted
                     playsInline
                     controls={!showReplay}
                     controlsList="nodownload nofullscreen noremoteplayback noplaybackrate"
