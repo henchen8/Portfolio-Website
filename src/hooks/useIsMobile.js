@@ -40,7 +40,7 @@ export function useIsMobile(breakpoint = 768) {
  * @returns {boolean} - True if the device is a mobile device
  */
 export function useIsMobileDevice() {
-  const [isMobileDevice, setIsMobileDevice] = useState(() => {
+  const [isMobileDevice] = useState(() => {
     if (typeof window !== 'undefined') {
       const userAgent = navigator.userAgent || navigator.vendor || window.opera;
       return /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(
