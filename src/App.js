@@ -368,7 +368,7 @@ function Footer() {
               <img src={linkedinLogo} alt="LinkedIn" className="linkedin-icon-img" />
             </a>
           </div>
-          <p>&copy; 2025 Henry Chen. All rights reserved.</p>
+          <p>&copy; 2026 Henry Chen. All rights reserved.</p>
         </div>
       </div>
     </footer>
