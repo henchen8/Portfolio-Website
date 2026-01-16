@@ -10,7 +10,7 @@ import portemailicon from './assets/portemailicon.png';
 import linkedinLogo from './assets/Remove White Background.png';
 
 // Import all images for preloading
-import profileImage from './assets/profile.png';
+import profileImage from './assets/profile1.jpeg';
 import rubiksImage from './assets/rubiks1.jpeg';
 import srprojImage from './assets/portsrproj3.png';
 import fitboxImage from './assets/FitBoxlogo.png';
