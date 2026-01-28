@@ -255,7 +255,6 @@ function RubiksCubeProject() {
                   <video
                     ref={videoRef}
                     loop={false}
-                    muted
                     playsInline
                     controls={!showReplay}
                     controlsList="nodownload nofullscreen noremoteplayback noplaybackrate"
@@ -408,7 +407,7 @@ function RubiksCubeProject() {
           transform: 'translateX(-50%)',
           padding: '0 2rem'
         }}>
-          <div style={{ flex: '1', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.5rem', marginTop: '-25px' }}>
+          <div style={{ flex: '1', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '1.5rem', marginTop: '-25px' }}>
             <div style={{
               maxWidth: '390px',
               width: '100%',
@@ -549,7 +548,7 @@ function RubiksCubeProject() {
               </p>
               <ul>
                 <li>• Computer vision algorithms for cube state detection and color recognition</li>
-                <li>• Optimized solving algorithms (CFOP method) for minimum move count</li>
+                <li>• Optimized solving algorithms (Kociemba Algorithm) optimal solve paths</li>
                 <li>• Real-time GUI displaying current cube state and solving progress</li>
                 <li>• Statistical analysis of solve times and move optimization</li>
               </ul>

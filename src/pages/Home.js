@@ -1,15 +1,73 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import profileImage from '../assets/profile1.jpeg';
 import rubiksImage from '../assets/rubiks1.jpeg';
 import srprojImage from '../assets/portsrproj3.png';
 import fitboxImage from '../assets/FitBoxlogo.png';
 import rubiksAssembly from '../assets/rubiks_assembly7.png';
 
+// Portfolio showcase images
+import webport1 from '../assets/homepage/webport1.png';
+import webport2 from '../assets/homepage/webport2.png';
+import webport3 from '../assets/homepage/webport3.png';
+import webport4 from '../assets/homepage/webport4.png';
+import webport5 from '../assets/homepage/webport5.png';
+import webport6 from '../assets/homepage/webport6.png';
+import webport7 from '../assets/homepage/webport7.png';
+import webport8 from '../assets/homepage/webport8.png';
+import webport9 from '../assets/homepage/webport9.png';
+import webport10 from '../assets/homepage/webport10.png';
+import webport11 from '../assets/homepage/webport11.png';
+import webport12 from '../assets/homepage/webport12.JPG';
+
+const portfolioImages = [
+  webport1, webport2, webport3, webport4, webport5,
+  webport6, webport7, webport8, webport9, webport10,
+  webport11, webport12
+];
+
+// Configuration: how long each image displays (in milliseconds)
+const IMAGE_DISPLAY_TIME = 2000;
+
 function Home() {
   const navigate = useNavigate();
   const scrollHandlerReady = useRef(false);
   const [imagesLoaded, setImagesLoaded] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(2); // Testing: webport3
+  const intervalRef = useRef(null);
+  const slideshowRef = useRef(null);
+
+  // Image cycling - DISABLED FOR TESTING (showing webport3)
+  // useEffect(() => {
+  //   const LOADING_SCREEN_DURATION = 1550; // 1.35s animation + 0.2s fade out
+
+  //   // Wait for loading screen to complete, then start cycling
+  //   const startTimeout = setTimeout(() => {
+  //     intervalRef.current = setInterval(() => {
+  //       setCurrentImageIndex((prev) => (prev + 1) % portfolioImages.length);
+  //     }, IMAGE_DISPLAY_TIME);
+  //   }, LOADING_SCREEN_DURATION);
+
+  //   return () => {
+  //     clearTimeout(startTimeout);
+  //     if (intervalRef.current) {
+  //       clearInterval(intervalRef.current);
+  //     }
+  //   };
+  // }, []);
+
+  // Parallax scroll effect - direct DOM manipulation for instant response
+  useEffect(() => {
+    const handleParallax = () => {
+      if (slideshowRef.current) {
+        slideshowRef.current.style.transform = `translateY(${window.scrollY * 0.4}px)`;
+      }
+    };
+
+    window.addEventListener('scroll', handleParallax, { passive: true });
+    handleParallax(); // Initial call
+    return () => window.removeEventListener('scroll', handleParallax);
+  }, []);
+
 
   // Preload project images to prevent glitchy first scroll
   useEffect(() => {
@@ -149,11 +207,11 @@ function Home() {
           const currentScrollY = window.scrollY;
           const navbar = document.querySelector('.navbar');
           const scrollDifference = Math.abs(currentScrollY - lastScrollY);
-          
-          if (navbar && scrollDifference > 10) {
-            if (currentScrollY > lastScrollY && currentScrollY > 150) {
+
+          if (navbar && scrollDifference > 1) {
+            if (currentScrollY > lastScrollY && currentScrollY > 80) {
               navbar.classList.add('navbar-hidden');
-            } else if (currentScrollY < lastScrollY || currentScrollY < 100) {
+            } else if (currentScrollY < lastScrollY || currentScrollY < 50) {
               navbar.classList.remove('navbar-hidden');
             }
           }
@@ -334,8 +392,29 @@ function Home() {
       <main className="main-content">
         {/* Hero Section */}
         <section id="home" className="hero-section">
-          <div className="hero-container">
-            <div className="hero-content">
+          {/* Background slideshow - all images rendered, only current one visible */}
+          <div
+            ref={slideshowRef}
+            className="hero-background-slideshow"
+          >
+            {portfolioImages.map((img, index) => (
+              <img
+                key={index}
+                src={img}
+                alt=""
+                className="hero-background-image"
+                style={{ 
+                  opacity: index === currentImageIndex ? 0.225 : 0,
+                  position: index === 0 ? 'relative' : 'absolute',
+                  top: 0,
+                  left: 0,
+                  objectPosition: index === 10 ? 'center 00%' : 'center'
+                }}
+              />
+            ))}
+          </div>
+          <div className="hero-container hero-container-centered">
+            <div className="hero-content hero-content-centered">
               <h1 className="hero-title">
                 Hi, I'm <span className="highlight">Henry!</span>
               </h1>
@@ -343,22 +422,12 @@ function Home() {
                 Robotics Engineer & Entrepreneur
               </p>
               <p className="hero-description">
-              I'm a student at the University of Pennsylvania, studying Mechanical Engineering 
-              with a concentration in Dynamics, Controls, and Robotics.
+              I'm a Varsity Student-Athelete at the University of Pennsylvania, studying Electrical Engineering
+              with a concentration in Controls and Robotics.
               </p>
               <div className="hero-buttons">
                 <button className="btn btn-primary" onClick={scrollToProjects}>My Projects</button>
               </div>
-            </div>
-            <div className="hero-image">
-              <a 
-                href="https://linkedin.com/in/henry-w-chen" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="profile-placeholder"
-              >
-                <img src={profileImage} alt="Henry Chen" className="profile-image" />
-              </a>
             </div>
           </div>
         </section>
@@ -436,71 +505,77 @@ function Home() {
         {/* Projects Section */}
         <section id="projects" className="section projects-section">
           <div className="container">
-            <h2 className="section-title">Featured Projects</h2>
-            <div className="projects-grid">
-              <div 
-                className="project-card" 
-                onClick={() => {
-                  navigate('/projects/rubiks-cube');
-                }}
-                onMouseEnter={() => {
-                  // Prefetch route on hover for instant navigation
-                  const link = document.createElement('link');
-                  link.rel = 'prefetch';
-                  link.href = '/projects/rubiks-cube';
-                  link.as = 'document';
-                  document.head.appendChild(link);
-                }}
-              >
-                <div className="project-image" style={{ backgroundImage: `url(${rubiksImage})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
-                </div>
-                <div className="project-content">
-                  <h3>Rubik's Cube Robot</h3>
-                  <p className="project-tagline">Autonomous cube-solving in under 1 second</p>
-                </div>
-              </div>
-
-              <div 
-                className="project-card" 
-                onClick={() => {
-                  navigate('/projects/fitbox');
-                }}
-                onMouseEnter={() => {
-                  // Prefetch route on hover for instant navigation
-                  const link = document.createElement('link');
-                  link.rel = 'prefetch';
-                  link.href = '/projects/fitbox';
-                  link.as = 'document';
-                  document.head.appendChild(link);
-                }}
-              >
-                <div className="project-image" style={{ backgroundImage: `url(${fitboxImage})`, backgroundSize: 'contain', backgroundPosition: 'center', backgroundColor: 'white', backgroundRepeat: 'no-repeat', borderBottom: 'none' }}>
-                </div>
-                <div className="project-content">
-                  <h3>FitBox</h3>
-                  <p className="project-tagline">A revolutionary portable workout solution</p>
+            <div className="projects-layout">
+              {/* Featured Project - Rubik's Cube (Left) */}
+              <div className="featured-project-column">
+                <h3 className="column-title">Featured Project</h3>
+                <div 
+                  className="project-card featured-project-card" 
+                  onClick={() => {
+                    navigate('/projects/rubiks-cube');
+                  }}
+                  onMouseEnter={() => {
+                    const link = document.createElement('link');
+                    link.rel = 'prefetch';
+                    link.href = '/projects/rubiks-cube';
+                    link.as = 'document';
+                    document.head.appendChild(link);
+                  }}
+                >
+                  <div className="project-image" style={{ backgroundImage: `url(${rubiksImage})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
+                  </div>
+                  <div className="project-content">
+                    <h3>Rubik's Cube Robot</h3>
+                    <p className="project-tagline">Autonomous cube-solving in under 1 second</p>
+                  </div>
                 </div>
               </div>
 
-              <div 
-                className="project-card" 
-                onClick={() => {
-                  navigate('/projects/financial-derivatives');
-                }}
-                onMouseEnter={() => {
-                  // Prefetch route on hover for instant navigation
-                  const link = document.createElement('link');
-                  link.rel = 'prefetch';
-                  link.href = '/projects/financial-derivatives';
-                  link.as = 'document';
-                  document.head.appendChild(link);
-                }}
-              >
-                <div className="project-image" style={{ backgroundImage: `url(${srprojImage})`, backgroundSize: 'cover', backgroundPosition: 'center 35%' }}>
-                </div>
-                <div className="project-content">
-                  <h3>Pricing Financial Derivatives</h3>
-                  <p className="project-tagline">Exploring CAPM, PCA, and Black-Scholes options pricing</p>
+              {/* Additional Projects (Right) */}
+              <div className="additional-projects-column">
+                <h3 className="column-title">Additional Projects</h3>
+                <div className="additional-projects-stack">
+                  <div 
+                    className="project-card" 
+                    onClick={() => {
+                      navigate('/projects/fitbox');
+                    }}
+                    onMouseEnter={() => {
+                      const link = document.createElement('link');
+                      link.rel = 'prefetch';
+                      link.href = '/projects/fitbox';
+                      link.as = 'document';
+                      document.head.appendChild(link);
+                    }}
+                  >
+                    <div className="project-image" style={{ backgroundImage: `url(${fitboxImage})`, backgroundSize: 'contain', backgroundPosition: 'center', backgroundColor: 'white', backgroundRepeat: 'no-repeat', borderBottom: 'none' }}>
+                    </div>
+                    <div className="project-content">
+                      <h3>FitBox</h3>
+                      <p className="project-tagline">A revolutionary portable workout solution</p>
+                    </div>
+                  </div>
+
+                  <div 
+                    className="project-card" 
+                    onClick={() => {
+                      navigate('/projects/financial-derivatives');
+                    }}
+                    onMouseEnter={() => {
+                      const link = document.createElement('link');
+                      link.rel = 'prefetch';
+                      link.href = '/projects/financial-derivatives';
+                      link.as = 'document';
+                      document.head.appendChild(link);
+                    }}
+                  >
+                    <div className="project-image" style={{ backgroundImage: `url(${srprojImage})`, backgroundSize: 'cover', backgroundPosition: 'center 35%' }}>
+                    </div>
+                    <div className="project-content">
+                      <h3>Pricing Financial Derivatives</h3>
+                      <p className="project-tagline">Exploring CAPM, PCA, and Black-Scholes options pricing</p>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
