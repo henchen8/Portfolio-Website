@@ -26,6 +26,20 @@ import simplifiedBlackscholesImage from './assets/port_simplifiedblackscholes.pn
 import famafrenchImage from './assets/portfamafrench.png';
 import explosionDrawing from './assets/website_m&tsi explosion drawing.png';
 
+// Homepage slideshow images - preload these for hero section
+import webport1 from './assets/homepage/webport1.png';
+import webport2 from './assets/homepage/webport2.png';
+import webport3 from './assets/homepage/webport3.png';
+import webport4 from './assets/homepage/webport4.png';
+import webport5 from './assets/homepage/webport5.png';
+import webport6 from './assets/homepage/webport6.png';
+import webport7 from './assets/homepage/webport7.png';
+import webport8 from './assets/homepage/webport8.png';
+import webport9 from './assets/homepage/webport9.png';
+import webport10 from './assets/homepage/webport10.png';
+import webport11 from './assets/homepage/webport11.png';
+import webport12 from './assets/homepage/webport12.JPG';
+
 function ScrollToTop({ loading, onScrollReady }) {
   const { pathname, hash } = useLocation();
   const hasHandledReturn = useRef(false);
@@ -417,14 +431,27 @@ function App() {
     
     // Comprehensive asset preloading function
     const preloadAllAssets = () => {
-      // List of all images used across all pages (using imported references)
-      const allImages = [
-        // Home page images
-        profileImage,
+      // Critical images - load these with highest priority (above-the-fold)
+      const criticalImages = [
+        webport3, // The visible hero background image (index 2)
+        '/roboiconimg.png', // Logo used in navbar and loading screen
+        rubiksAssembly, // Gap section image
+      ];
+
+      // Secondary images - load after critical
+      const secondaryImages = [
+        // Other homepage slideshow images (not immediately visible)
+        webport1, webport2, webport4, webport5, webport6,
+        webport7, webport8, webport9, webport10, webport11, webport12,
+        // Project card images
         rubiksImage,
         srprojImage,
         fitboxImage,
-        rubiksAssembly,
+        profileImage,
+      ];
+
+      // Tertiary images - project page assets (prefetch for smoother navigation)
+      const tertiaryImages = [
         // RubiksCubeProject images
         rubiksDrawing,
         rubiksGUI,
@@ -440,28 +467,38 @@ function App() {
         explosionDrawing,
       ];
 
-      // Preload all images efficiently
+      // Combine all images with priority ordering
+      const allImages = [...criticalImages, ...secondaryImages, ...tertiaryImages];
+
+      // Preload critical images first with high priority and decode
+      const criticalImageCount = criticalImages.length;
+      
       const imagePromises = allImages.map((src, index) => {
         return new Promise((resolve) => {
-          // Use Image object with decode for modern browsers (more efficient)
           const img = new Image();
-          img.onload = resolve;
-          img.onerror = resolve; // Resolve even on error to not block
+          const isCritical = index < criticalImageCount;
+          
           // Set fetchpriority for critical images
-          if (index < 5 && 'fetchPriority' in img) {
+          if (isCritical && 'fetchPriority' in img) {
             img.fetchPriority = 'high';
           }
-          img.src = src;
           
-          // Use decode API if available for better performance
-          if (img.decode) {
-            img.decode().then(resolve).catch(() => {
-              // Fallback to onload if decode fails
-              if (img.complete) resolve();
-            });
-          }
+          img.onload = () => {
+            // For critical images, ensure they're decoded before resolving
+            if (isCritical && img.decode) {
+              img.decode().then(resolve).catch(resolve);
+            } else {
+              resolve();
+            }
+          };
+          img.onerror = resolve; // Resolve even on error to not block
+          img.src = src;
         });
       });
+
+      // Wait for critical images first, then continue loading others
+      const criticalPromises = imagePromises.slice(0, criticalImageCount);
+      const otherPromises = imagePromises.slice(criticalImageCount);
 
       // Preload video for RubiksCubeProject with multiple strategies
       const videoPromises = [
@@ -491,8 +528,11 @@ function App() {
         })
       ];
 
-      // Wait for all assets to load (don't block on slow assets)
-      return Promise.allSettled([...imagePromises, ...videoPromises]);
+      // Start loading non-critical images in background (don't await)
+      Promise.allSettled([...otherPromises, ...videoPromises]);
+
+      // Only wait for critical images to be loaded before showing page
+      return Promise.all(criticalPromises);
     };
 
     // Add resource hints for all routes during loading

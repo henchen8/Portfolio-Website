@@ -49,21 +49,44 @@ function Home() {
   // Preload project images to prevent glitchy first scroll
   useEffect(() => {
     const preloadImages = () => {
-      const imagePromises = [
+      // Critical images for this page - preload with decode for smooth rendering
+      const criticalImages = [
+        portfolioImages[currentImageIndex], // The visible hero background
+        rubiksAssembly, // Gap section image
+      ];
+      
+      const secondaryImages = [
         rubiksImage,
         srprojImage,
         fitboxImage,
-        rubiksAssembly
-      ].map((src) => {
-        return new Promise((resolve, reject) => {
+        // Other portfolio images (not immediately visible)
+        ...portfolioImages.filter((_, i) => i !== currentImageIndex)
+      ];
+
+      // Load critical images with decode for smooth initial render
+      const criticalPromises = criticalImages.map((src) => {
+        return new Promise((resolve) => {
           const img = new Image();
-          img.onload = resolve;
-          img.onerror = resolve; // Resolve even on error to not block
+          img.onload = () => {
+            // Ensure the image is fully decoded before resolving
+            if (img.decode) {
+              img.decode().then(resolve).catch(resolve);
+            } else {
+              resolve();
+            }
+          };
+          img.onerror = resolve;
           img.src = src;
         });
       });
 
-      Promise.all(imagePromises).then(() => {
+      // Load secondary images in background
+      secondaryImages.forEach((src) => {
+        const img = new Image();
+        img.src = src;
+      });
+
+      Promise.all(criticalPromises).then(() => {
         setImagesLoaded(true);
       });
     };
@@ -374,21 +397,28 @@ function Home() {
             ref={slideshowRef}
             className="hero-background-slideshow"
           >
-            {portfolioImages.map((img, index) => (
-              <img
-                key={index}
-                src={img}
-                alt=""
-                className="hero-background-image"
-                style={{ 
-                  opacity: index === currentImageIndex ? 0.225 : 0,
-                  position: index === 0 ? 'relative' : 'absolute',
-                  top: 0,
-                  left: 0,
-                  objectPosition: index === 10 ? 'center 00%' : 'center'
-                }}
-              />
-            ))}
+            {portfolioImages.map((img, index) => {
+              const isVisible = index === currentImageIndex;
+              return (
+                <img
+                  key={index}
+                  src={img}
+                  alt=""
+                  className="hero-background-image"
+                  // Critical rendering attributes for the visible image
+                  loading={isVisible ? "eager" : "lazy"}
+                  decoding={isVisible ? "sync" : "async"}
+                  fetchpriority={isVisible ? "high" : "low"}
+                  style={{ 
+                    opacity: isVisible ? 0.225 : 0,
+                    position: index === 0 ? 'relative' : 'absolute',
+                    top: 0,
+                    left: 0,
+                    objectPosition: index === 10 ? 'center 00%' : 'center'
+                  }}
+                />
+              );
+            })}
           </div>
           <div className="hero-container hero-container-centered">
             <div className="hero-content hero-content-centered">

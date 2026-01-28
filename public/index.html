@@ -46,6 +46,14 @@
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
     <title>Henry Chen</title>
+    
+    <!-- DNS prefetch for external resources -->
+    <link rel="dns-prefetch" href="https://vitals.vercel-insights.com" />
+    <link rel="preconnect" href="https://vitals.vercel-insights.com" crossorigin />
+    
+    <!-- Preload critical above-the-fold assets -->
+    <link rel="preload" href="%PUBLIC_URL%/roboiconimg.png" as="image" type="image/png" fetchpriority="high" />
+    
     <style id="initial-background-opacity">
       /* Inline CSS to set initial background opacity before React loads - prevents flash */
       .experience-section::before,
