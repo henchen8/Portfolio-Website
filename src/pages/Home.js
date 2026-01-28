@@ -25,35 +25,12 @@ const portfolioImages = [
   webport11, webport12
 ];
 
-// Configuration: how long each image displays (in milliseconds)
-const IMAGE_DISPLAY_TIME = 2000;
-
 function Home() {
   const navigate = useNavigate();
   const scrollHandlerReady = useRef(false);
   const [imagesLoaded, setImagesLoaded] = useState(false);
-  const [currentImageIndex, setCurrentImageIndex] = useState(2); // Testing: webport3
-  const intervalRef = useRef(null);
+  const [currentImageIndex] = useState(2); // Fixed to webport3
   const slideshowRef = useRef(null);
-
-  // Image cycling - DISABLED FOR TESTING (showing webport3)
-  // useEffect(() => {
-  //   const LOADING_SCREEN_DURATION = 1550; // 1.35s animation + 0.2s fade out
-
-  //   // Wait for loading screen to complete, then start cycling
-  //   const startTimeout = setTimeout(() => {
-  //     intervalRef.current = setInterval(() => {
-  //       setCurrentImageIndex((prev) => (prev + 1) % portfolioImages.length);
-  //     }, IMAGE_DISPLAY_TIME);
-  //   }, LOADING_SCREEN_DURATION);
-
-  //   return () => {
-  //     clearTimeout(startTimeout);
-  //     if (intervalRef.current) {
-  //       clearInterval(intervalRef.current);
-  //     }
-  //   };
-  // }, []);
 
   // Parallax scroll effect - direct DOM manipulation for instant response
   useEffect(() => {
