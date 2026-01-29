@@ -62,6 +62,17 @@
         opacity: 0 !important;
       }
     </style>
+    <style>
+      /* Critical CSS for loading screen - shows immediately before React loads */
+      /* This ensures users see the loading background color instantly */
+      html, body {
+        background-color: #f0f0ed;
+      }
+      #root {
+        background-color: #f0f0ed;
+        min-height: 100vh;
+      }
+    </style>
     <script>
       // Disable browser's automatic scroll restoration to prevent flash
       if ('scrollRestoration' in history) {

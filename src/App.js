@@ -412,10 +412,23 @@ function App() {
   // Ensure loading screen is painted before starting animations
   useLayoutEffect(() => {
     if (loading && loadingScreenRef.current) {
-      // Use double requestAnimationFrame to ensure element is painted
+      // Force a style recalculation to ensure the loading screen is rendered
+      // This is critical for Chrome which can be aggressive with batching
+      const element = loadingScreenRef.current;
+      
+      // Force layout calculation
+      void element.offsetHeight;
+      
+      // Use triple requestAnimationFrame + small timeout for maximum browser compatibility
+      // This ensures the loading screen is fully painted before animations start
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
-          setAnimationReady(true);
+          // Additional small delay for Chrome to ensure paint is complete
+          setTimeout(() => {
+            requestAnimationFrame(() => {
+              setAnimationReady(true);
+            });
+          }, 16); // One frame (~16ms at 60fps)
         });
       });
     } else if (!loading) {
@@ -429,63 +442,25 @@ function App() {
     document.body.classList.add('loading');
     document.documentElement.classList.add('loading');
     
-    // Comprehensive asset preloading function
-    const preloadAllAssets = () => {
-      // Critical images - load these with highest priority (above-the-fold)
+    // Minimal critical asset preloading - only what's needed for first paint
+    const preloadCriticalAssets = () => {
+      // Only preload what's absolutely needed for first paint:
+      // 1. Logo (used in loading screen and navbar)
+      // 2. Hero background (first visible content)
       const criticalImages = [
-        webport3, // The visible hero background image (index 2)
         '/roboiconimg.png', // Logo used in navbar and loading screen
-        rubiksAssembly, // Gap section image
+        webport3, // The visible hero background image (index 2)
       ];
 
-      // Secondary images - load after critical
-      const secondaryImages = [
-        // Other homepage slideshow images (not immediately visible)
-        webport1, webport2, webport4, webport5, webport6,
-        webport7, webport8, webport9, webport10, webport11, webport12,
-        // Project card images
-        rubiksImage,
-        srprojImage,
-        fitboxImage,
-        profileImage,
-      ];
-
-      // Tertiary images - project page assets (prefetch for smoother navigation)
-      const tertiaryImages = [
-        // RubiksCubeProject images
-        rubiksDrawing,
-        rubiksGUI,
-        tmcDriver,
-        nema17,
-        arduinoMega,
-        // FinancialDerivativesProject images
-        srprojImageDetailed,
-        blackscholesImage,
-        simplifiedBlackscholesImage,
-        famafrenchImage,
-        // FitBoxProject images
-        explosionDrawing,
-      ];
-
-      // Combine all images with priority ordering
-      const allImages = [...criticalImages, ...secondaryImages, ...tertiaryImages];
-
-      // Preload critical images first with high priority and decode
-      const criticalImageCount = criticalImages.length;
-      
-      const imagePromises = allImages.map((src, index) => {
+      const criticalPromises = criticalImages.map((src) => {
         return new Promise((resolve) => {
           const img = new Image();
-          const isCritical = index < criticalImageCount;
-          
-          // Set fetchpriority for critical images
-          if (isCritical && 'fetchPriority' in img) {
+          if ('fetchPriority' in img) {
             img.fetchPriority = 'high';
           }
-          
           img.onload = () => {
-            // For critical images, ensure they're decoded before resolving
-            if (isCritical && img.decode) {
+            // Decode the image to ensure it's ready for rendering
+            if (img.decode) {
               img.decode().then(resolve).catch(resolve);
             } else {
               resolve();
@@ -496,67 +471,65 @@ function App() {
         });
       });
 
-      // Wait for critical images first, then continue loading others
-      const criticalPromises = imagePromises.slice(0, criticalImageCount);
-      const otherPromises = imagePromises.slice(criticalImageCount);
-
-      // Preload video for RubiksCubeProject with multiple strategies
-      const videoPromises = [
-        new Promise((resolve) => {
-          // Use link preload for video
-          const videoLink = document.createElement('link');
-          videoLink.rel = 'preload';
-          videoLink.as = 'video';
-          videoLink.href = '/rubik_solve_vid0.mov';
-          videoLink.crossOrigin = 'anonymous';
-          document.head.appendChild(videoLink);
-          resolve();
-        }),
-        new Promise((resolve) => {
-          // Also preload using video element for better browser support
-          const video = document.createElement('video');
-          video.preload = 'auto';
-          video.muted = true; // Muted videos load faster
-          video.src = '/rubik_solve_vid0.mov';
-          video.onloadeddata = () => resolve();
-          video.oncanplaythrough = () => resolve();
-          video.onerror = () => resolve(); // Resolve even on error to not block
-          // Trigger loading by setting preload
-          video.load();
-          // Timeout fallback
-          setTimeout(() => resolve(), 5000);
-        })
-      ];
-
-      // Start loading non-critical images in background (don't await)
-      Promise.allSettled([...otherPromises, ...videoPromises]);
-
-      // Only wait for critical images to be loaded before showing page
       return Promise.all(criticalPromises);
     };
 
-    // Add resource hints for all routes during loading
-    const addResourceHints = () => {
-      const routes = [
-        '/projects/rubiks-cube',
-        '/projects/financial-derivatives',
-        '/projects/fitbox'
-      ];
+    // Defer loading of secondary assets until after page is visible
+    const loadSecondaryAssets = () => {
+      // Use requestIdleCallback if available, otherwise setTimeout
+      const scheduleIdle = window.requestIdleCallback || ((cb) => setTimeout(cb, 1));
       
-      routes.forEach(route => {
-        const link = document.createElement('link');
-        link.rel = 'prefetch';
-        link.href = route;
-        link.as = 'document';
-        document.head.appendChild(link);
-      });
+      scheduleIdle(() => {
+        // Secondary images - homepage content
+        const secondaryImages = [
+          rubiksAssembly, // Gap section image
+          rubiksImage, // Project card
+          srprojImage, // Project card
+          fitboxImage, // Project card
+        ];
+
+        secondaryImages.forEach((src) => {
+          const img = new Image();
+          img.src = src;
+        });
+      }, { timeout: 2000 });
+
+      // Load other portfolio images with even lower priority
+      scheduleIdle(() => {
+        const portfolioImages = [
+          webport1, webport2, webport4, webport5, webport6,
+          webport7, webport8, webport9, webport10, webport11, webport12,
+        ];
+        portfolioImages.forEach((src) => {
+          const img = new Image();
+          img.src = src;
+        });
+      }, { timeout: 5000 });
+
+      // Tertiary images - only load when truly idle
+      scheduleIdle(() => {
+        const tertiaryImages = [
+          profileImage,
+          rubiksDrawing,
+          rubiksGUI,
+          tmcDriver,
+          nema17,
+          arduinoMega,
+          srprojImageDetailed,
+          blackscholesImage,
+          simplifiedBlackscholesImage,
+          famafrenchImage,
+          explosionDrawing,
+        ];
+        tertiaryImages.forEach((src) => {
+          const img = new Image();
+          img.src = src;
+        });
+      }, { timeout: 10000 });
     };
 
-    // Start comprehensive preloading
-    const preloadPromise = preloadAllAssets();
-    
-    // Add resource hints immediately
-    addResourceHints();
+    // Start critical preloading immediately
+    const preloadPromise = preloadCriticalAssets();
     
     // Save scroll position and set refresh flag before page unloads
     const handleBeforeUnload = () => {
@@ -566,15 +539,17 @@ function App() {
     
     window.addEventListener('beforeunload', handleBeforeUnload);
     
-    // Hide loading screen after animation completes AND assets are loaded
+    // Hide loading screen after animation completes AND critical assets are loaded
     // Animation starts after animation-ready class is added (~33ms delay from double RAF)
     // Animation duration: 1.35s, fadeOut starts at 1.4s, fadeOut duration: 0.2s
     // Total: ~1.6s minimum, using 1.65s to ensure animation fully completes
     Promise.all([
-      preloadPromise.then(() => Promise.resolve()),
+      preloadPromise,
       new Promise(resolve => setTimeout(resolve, 1650)) // Minimum animation time + buffer
     ]).then(() => {
       setLoading(false);
+      // Start loading secondary assets after main content is visible
+      loadSecondaryAssets();
     });
 
     return () => {
