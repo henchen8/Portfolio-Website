@@ -150,7 +150,7 @@ function Home() {
         setupRoutePrefetching();
       });
     });
-  }, []);
+  }, [currentImageIndex]);
 
   const scrollToProjects = () => {
     const projectsSection = document.getElementById('projects');
