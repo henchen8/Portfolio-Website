@@ -10,7 +10,15 @@ import arduinoMega from '../assets/PORTarduinomega.png';
 function RubiksCubeProject() {
   const [timerValue, setTimerValue] = useState(0);
   const [showReplay, setShowReplay] = useState(false);
-  const [isMuted, setIsMuted] = useState(true); // Start muted to allow autoplay
+  // Check if user navigated from tile - unmute if so, otherwise start muted for autoplay
+  const [isMuted, setIsMuted] = useState(() => {
+    const navigatedFromTile = sessionStorage.getItem('navigatedFromTile') === 'true';
+    if (navigatedFromTile) {
+      sessionStorage.removeItem('navigatedFromTile');
+      return false; // Unmuted when navigating from tile
+    }
+    return true; // Muted for direct navigation/reload
+  });
   const timerIntervalRef = useRef(null);
   const videoRef = useRef(null);
   const isHoveringRef = useRef(false); // Track hover state for use in event handlers

@@ -519,6 +519,7 @@ function Home() {
                 <div 
                   className="project-card featured-project-card" 
                   onClick={() => {
+                    sessionStorage.setItem('navigatedFromTile', 'true');
                     navigate('/projects/rubiks-cube');
                   }}
                   onMouseEnter={() => {
