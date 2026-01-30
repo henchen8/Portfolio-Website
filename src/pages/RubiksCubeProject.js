@@ -10,6 +10,7 @@ import arduinoMega from '../assets/PORTarduinomega.png';
 function RubiksCubeProject() {
   const [timerValue, setTimerValue] = useState(0);
   const [showReplay, setShowReplay] = useState(false);
+  const [isMuted, setIsMuted] = useState(true); // Start muted to allow autoplay
   const timerIntervalRef = useRef(null);
   const videoRef = useRef(null);
   const isHoveringRef = useRef(false); // Track hover state for use in event handlers
@@ -50,18 +51,36 @@ function RubiksCubeProject() {
 
     let hasAutoPlayed = false;
     let playTimeout = null;
+    let initialCheckTimeout = null;
+
+    // Helper function to check if video is fully visible
+    const isVideoFullyVisible = () => {
+      const rect = video.getBoundingClientRect();
+      return (
+        rect.top >= 0 &&
+        rect.left >= 0 &&
+        rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+        rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+      );
+    };
+
+    // Helper function to trigger autoplay
+    const triggerAutoPlay = () => {
+      if (hasAutoPlayed) return;
+      hasAutoPlayed = true;
+      playTimeout = setTimeout(() => {
+        video.play();
+      }, 250); // 0.25 second delay
+    };
 
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting && entry.intersectionRatio === 1 && !hasAutoPlayed) {
             // Video is fully visible for the first time - play after a short delay
-            hasAutoPlayed = true;
-            playTimeout = setTimeout(() => {
-              video.play();
-              // Disconnect observer after first auto-play - user controls video from here
-              observer.disconnect();
-            }, 250); // 0.25 second delay
+            triggerAutoPlay();
+            // Disconnect observer after first auto-play - user controls video from here
+            observer.disconnect();
           }
         });
       },
@@ -73,8 +92,18 @@ function RubiksCubeProject() {
 
     observer.observe(video);
 
+    // Fallback check for direct navigation or page reload
+    // The IntersectionObserver may not trigger if video is already in view on mount
+    initialCheckTimeout = setTimeout(() => {
+      if (!hasAutoPlayed && isVideoFullyVisible()) {
+        triggerAutoPlay();
+        observer.disconnect();
+      }
+    }, 100); // Small delay to ensure layout is complete
+
     return () => {
       if (playTimeout) clearTimeout(playTimeout);
+      if (initialCheckTimeout) clearTimeout(initialCheckTimeout);
       observer.disconnect();
     };
   }, []);
@@ -134,6 +163,8 @@ function RubiksCubeProject() {
   const handleReplay = () => {
     if (videoRef.current) {
       videoRef.current.currentTime = 0;
+      videoRef.current.muted = false; // Unmute for subsequent plays after user interaction
+      setIsMuted(false);
       videoRef.current.play();
       setShowReplay(false);
     }
@@ -255,6 +286,7 @@ function RubiksCubeProject() {
                   <video
                     ref={videoRef}
                     loop={false}
+                    muted={isMuted}
                     playsInline
                     controls={!showReplay}
                     controlsList="nodownload nofullscreen noremoteplayback noplaybackrate"
