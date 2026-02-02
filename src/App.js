@@ -9,37 +9,6 @@ import FitBoxProject from './pages/FitBoxProject';
 import portemailicon from './assets/portemailicon.png';
 import linkedinLogo from './assets/Remove White Background.png';
 
-// Import all images for preloading
-import profileImage from './assets/profile1.jpeg';
-import rubiksImage from './assets/rubiks1.jpeg';
-import srprojImage from './assets/portsrproj3.png';
-import fitboxImage from './assets/FitBoxlogo.png';
-import rubiksAssembly from './assets/rubiks_assembly7.png';
-import rubiksDrawing from './assets/1rubiksdrawing.png';
-import rubiksGUI from './assets/websiterubiksimg1.png';
-import tmcDriver from './assets/TMC2209V2.0.png';
-import nema17 from './assets/PORTFOLIONEMA17.png';
-import arduinoMega from './assets/PORTarduinomega.png';
-import srprojImageDetailed from './assets/Capture-2026-01-01-134649.png';
-import blackscholesImage from './assets/blackscholes.png';
-import simplifiedBlackscholesImage from './assets/port_simplifiedblackscholes.png';
-import famafrenchImage from './assets/portfamafrench.png';
-import explosionDrawing from './assets/website_m&tsi explosion drawing.png';
-
-// Homepage slideshow images - preload these for hero section
-import webport1 from './assets/homepage/webport1.png';
-import webport2 from './assets/homepage/webport2.png';
-import webport3 from './assets/homepage/webport3.png';
-import webport4 from './assets/homepage/webport4.png';
-import webport5 from './assets/homepage/webport5.png';
-import webport6 from './assets/homepage/webport6.png';
-import webport7 from './assets/homepage/webport7.png';
-import webport8 from './assets/homepage/webport8.png';
-import webport9 from './assets/homepage/webport9.png';
-import webport10 from './assets/homepage/webport10.png';
-import webport11 from './assets/homepage/webport11.png';
-import webport12 from './assets/homepage/webport12.JPG';
-
 function ScrollToTop({ loading, onScrollReady }) {
   const { pathname, hash } = useLocation();
   const hasHandledReturn = useRef(false);
@@ -444,12 +413,10 @@ function App() {
     
     // Minimal critical asset preloading - only what's needed for first paint
     const preloadCriticalAssets = () => {
-      // Only preload what's absolutely needed for first paint:
-      // 1. Logo (used in loading screen and navbar)
-      // 2. Hero background (first visible content)
+      // Only preload the logo (used in loading screen and navbar)
+      // The hero background (webport3) is loaded by Home.js
       const criticalImages = [
         '/roboiconimg.png', // Logo used in navbar and loading screen
-        webport3, // The visible hero background image (index 2)
       ];
 
       const criticalPromises = criticalImages.map((src) => {
@@ -474,60 +441,6 @@ function App() {
       return Promise.all(criticalPromises);
     };
 
-    // Defer loading of secondary assets until after page is visible
-    const loadSecondaryAssets = () => {
-      // Use requestIdleCallback if available, otherwise setTimeout
-      const scheduleIdle = window.requestIdleCallback || ((cb) => setTimeout(cb, 1));
-      
-      scheduleIdle(() => {
-        // Secondary images - homepage content
-        const secondaryImages = [
-          rubiksAssembly, // Gap section image
-          rubiksImage, // Project card
-          srprojImage, // Project card
-          fitboxImage, // Project card
-        ];
-
-        secondaryImages.forEach((src) => {
-          const img = new Image();
-          img.src = src;
-        });
-      }, { timeout: 2000 });
-
-      // Load other portfolio images with even lower priority
-      scheduleIdle(() => {
-        const portfolioImages = [
-          webport1, webport2, webport4, webport5, webport6,
-          webport7, webport8, webport9, webport10, webport11, webport12,
-        ];
-        portfolioImages.forEach((src) => {
-          const img = new Image();
-          img.src = src;
-        });
-      }, { timeout: 5000 });
-
-      // Tertiary images - only load when truly idle
-      scheduleIdle(() => {
-        const tertiaryImages = [
-          profileImage,
-          rubiksDrawing,
-          rubiksGUI,
-          tmcDriver,
-          nema17,
-          arduinoMega,
-          srprojImageDetailed,
-          blackscholesImage,
-          simplifiedBlackscholesImage,
-          famafrenchImage,
-          explosionDrawing,
-        ];
-        tertiaryImages.forEach((src) => {
-          const img = new Image();
-          img.src = src;
-        });
-      }, { timeout: 10000 });
-    };
-
     // Start critical preloading immediately
     const preloadPromise = preloadCriticalAssets();
     
@@ -548,8 +461,6 @@ function App() {
       new Promise(resolve => setTimeout(resolve, 1650)) // Minimum animation time + buffer
     ]).then(() => {
       setLoading(false);
-      // Start loading secondary assets after main content is visible
-      loadSecondaryAssets();
     });
 
     return () => {

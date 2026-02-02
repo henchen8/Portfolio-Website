@@ -5,31 +5,13 @@ import srprojImage from '../assets/portsrproj3.png';
 import fitboxImage from '../assets/FitBoxlogo.png';
 import rubiksAssembly from '../assets/rubiks_assembly7.png';
 
-// Portfolio showcase images
-import webport1 from '../assets/homepage/webport1.png';
-import webport2 from '../assets/homepage/webport2.png';
-import webport3 from '../assets/homepage/webport3.png';
-import webport4 from '../assets/homepage/webport4.png';
-import webport5 from '../assets/homepage/webport5.png';
-import webport6 from '../assets/homepage/webport6.png';
-import webport7 from '../assets/homepage/webport7.png';
-import webport8 from '../assets/homepage/webport8.png';
-import webport9 from '../assets/homepage/webport9.png';
-import webport10 from '../assets/homepage/webport10.png';
-import webport11 from '../assets/homepage/webport11.png';
-import webport12 from '../assets/homepage/webport12.JPG';
-
-const portfolioImages = [
-  webport1, webport2, webport3, webport4, webport5,
-  webport6, webport7, webport8, webport9, webport10,
-  webport11, webport12
-];
+// Only import the hero background image that's actually displayed
+import webport3 from '../assets/homepage/webport3.jpg';
 
 function Home() {
   const navigate = useNavigate();
   const scrollHandlerReady = useRef(false);
   const [imagesLoaded, setImagesLoaded] = useState(false);
-  const [currentImageIndex] = useState(2); // Fixed to webport3
   const slideshowRef = useRef(null);
 
   // Parallax scroll effect - direct DOM manipulation for instant response
@@ -46,21 +28,12 @@ function Home() {
   }, []);
 
 
-  // Preload project images to prevent glitchy first scroll
+  // Preload only critical images for initial render
   useEffect(() => {
     const preloadImages = () => {
-      // Critical images for this page - preload with decode for smooth rendering
+      // Only the hero background is critical for initial render
       const criticalImages = [
-        portfolioImages[currentImageIndex], // The visible hero background
-        rubiksAssembly, // Gap section image
-      ];
-      
-      const secondaryImages = [
-        rubiksImage,
-        srprojImage,
-        fitboxImage,
-        // Other portfolio images (not immediately visible)
-        ...portfolioImages.filter((_, i) => i !== currentImageIndex)
+        webport3, // The visible hero background
       ];
 
       // Load critical images with decode for smooth initial render
@@ -78,12 +51,6 @@ function Home() {
           img.onerror = resolve;
           img.src = src;
         });
-      });
-
-      // Load secondary images in background
-      secondaryImages.forEach((src) => {
-        const img = new Image();
-        img.src = src;
       });
 
       Promise.all(criticalPromises).then(() => {
@@ -150,7 +117,7 @@ function Home() {
         setupRoutePrefetching();
       });
     });
-  }, [currentImageIndex]);
+  }, []);
 
   const scrollToProjects = () => {
     const projectsSection = document.getElementById('projects');
@@ -392,33 +359,26 @@ function Home() {
       <main className="main-content">
         {/* Hero Section */}
         <section id="home" className="hero-section">
-          {/* Background slideshow - all images rendered, only current one visible */}
+          {/* Background image - only render the visible hero image */}
           <div
             ref={slideshowRef}
             className="hero-background-slideshow"
           >
-            {portfolioImages.map((img, index) => {
-              const isVisible = index === currentImageIndex;
-              return (
-                <img
-                  key={index}
-                  src={img}
-                  alt=""
-                  className="hero-background-image"
-                  // Critical rendering attributes for the visible image
-                  loading={isVisible ? "eager" : "lazy"}
-                  decoding={isVisible ? "sync" : "async"}
-                  fetchpriority={isVisible ? "high" : "low"}
-                  style={{ 
-                    opacity: isVisible ? 0.225 : 0,
-                    position: index === 0 ? 'relative' : 'absolute',
-                    top: 0,
-                    left: 0,
-                    objectPosition: index === 10 ? 'center 00%' : 'center'
-                  }}
-                />
-              );
-            })}
+            <img
+              src={webport3}
+              alt=""
+              className="hero-background-image"
+              loading="eager"
+              decoding="sync"
+              fetchpriority="high"
+              style={{ 
+                opacity: 0.225,
+                position: 'relative',
+                top: 0,
+                left: 0,
+                objectPosition: 'center'
+              }}
+            />
           </div>
           <div className="hero-container hero-container-centered">
             <div className="hero-content hero-content-centered">

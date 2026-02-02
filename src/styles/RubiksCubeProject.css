@@ -1,0 +1,494 @@
+/* Rubik's Cube Project Page - Shinkei-inspired Editorial Design */
+
+.rubiks-page {
+  min-height: 100vh;
+  background: #fafaf8;
+  padding-top: 60px;
+}
+
+/* Navigation */
+.rubiks-nav {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 4rem;
+}
+
+.rubiks-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #666;
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  transition: color 0.2s ease;
+}
+
+.rubiks-back-link:hover {
+  color: #000;
+}
+
+.rubiks-back-arrow {
+  font-size: 1.1rem;
+  transition: transform 0.2s ease;
+}
+
+.rubiks-back-link:hover .rubiks-back-arrow {
+  transform: translateX(-3px);
+}
+
+/* Hero Section */
+.rubiks-hero {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 4rem 4rem;
+}
+
+.rubiks-category {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  color: #666;
+  text-transform: uppercase;
+  margin-bottom: 1.5rem;
+}
+
+.rubiks-headline {
+  font-family: 'Times New Roman', 'Georgia', serif;
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
+  font-weight: 400;
+  line-height: 1.1;
+  color: #000;
+  margin: 0 0 2rem 0;
+}
+
+.rubiks-headline em {
+  font-style: italic;
+}
+
+.rubiks-hero-description {
+  max-width: 600px;
+  font-size: 1.1rem;
+  line-height: 1.7;
+  color: #444;
+  margin: 0;
+}
+
+/* Hero Image */
+.rubiks-hero-image {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto 4rem;
+  padding: 0 2rem;
+}
+
+.rubiks-hero-image img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Stats Row */
+.rubiks-stats-row {
+  max-width: 1200px;
+  margin: 0 auto 6rem;
+  padding: 0 4rem;
+  display: flex;
+  justify-content: flex-start;
+  gap: 6rem;
+}
+
+.rubiks-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.rubiks-stat-value {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #000;
+  line-height: 1;
+}
+
+.rubiks-stat-label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Content Sections */
+.rubiks-section {
+  padding: 5rem 0;
+}
+
+.rubiks-section-alt {
+  background: #f5f5f3;
+}
+
+.rubiks-section-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 4rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: center;
+}
+
+.rubiks-text-left .rubiks-text-block {
+  order: 1;
+}
+
+.rubiks-text-left .rubiks-image-block,
+.rubiks-text-left .rubiks-video-block {
+  order: 2;
+}
+
+.rubiks-text-right .rubiks-text-block {
+  order: 2;
+}
+
+.rubiks-text-right .rubiks-image-block,
+.rubiks-text-right .rubiks-video-block {
+  order: 1;
+}
+
+/* Text Block */
+.rubiks-text-block {
+  max-width: 500px;
+}
+
+.rubiks-section-title {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1.25;
+  color: #000;
+  margin: 0 0 1.5rem 0;
+}
+
+.rubiks-section-body {
+  font-size: 1rem;
+  line-height: 1.75;
+  color: #444;
+  margin: 0 0 1rem 0;
+}
+
+.rubiks-section-body:last-child {
+  margin-bottom: 0;
+}
+
+/* Image Block */
+.rubiks-image-block {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.rubiks-image-block img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+.rubiks-image-stack {
+  flex-direction: column;
+  gap: 1.5rem;
+  align-items: flex-start;
+}
+
+.rubiks-component-img {
+  max-width: 350px;
+  mix-blend-mode: multiply;
+  background: transparent;
+}
+
+/* Video Block */
+.rubiks-video-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.rubiks-video-container {
+  position: relative;
+  width: 280px;
+  height: 500px;
+}
+
+.rubiks-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  cursor: pointer;
+}
+
+.rubiks-replay-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  background: rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+  animation: fadeIn 0.25s ease-out;
+}
+
+.rubiks-replay-overlay span {
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.rubiks-timer-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.rubiks-timer-label {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.rubiks-timer-value {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: #000;
+  line-height: 1;
+}
+
+/* Resources Section */
+.rubiks-resources {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 5rem 4rem;
+  border-top: 1px solid #e0e0e0;
+}
+
+.rubiks-resources-title {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #000;
+  margin: 0 0 2rem 0;
+}
+
+.rubiks-resources-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+}
+
+.rubiks-resource-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #000;
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: 500;
+  padding: 0.5rem 0;
+  border-bottom: 2px solid #000;
+  transition: all 0.2s ease;
+}
+
+.rubiks-resource-link:hover {
+  color: #666;
+  border-color: #666;
+}
+
+.rubiks-link-arrow {
+  transition: transform 0.2s ease;
+}
+
+.rubiks-resource-link:hover .rubiks-link-arrow {
+  transform: translateX(4px);
+}
+
+/* Footer */
+.rubiks-footer {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 4rem 4rem;
+  border-top: 1px solid #e0e0e0;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .rubiks-nav,
+  .rubiks-hero,
+  .rubiks-stats-row,
+  .rubiks-section-content,
+  .rubiks-resources,
+  .rubiks-footer {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+
+  .rubiks-section-content {
+    gap: 3rem;
+  }
+
+  .rubiks-stats-row {
+    gap: 4rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .rubiks-page {
+    padding-top: 40px;
+  }
+
+  .rubiks-nav {
+    padding: 1.5rem;
+  }
+
+  .rubiks-hero {
+    padding: 1.5rem 1.5rem 3rem;
+  }
+
+  .rubiks-headline {
+    font-size: 2.25rem;
+  }
+
+  .rubiks-hero-description {
+    font-size: 1rem;
+  }
+
+  .rubiks-hero-image {
+    padding: 0 1rem;
+    margin-bottom: 3rem;
+  }
+
+  .rubiks-stats-row {
+    padding: 0 1.5rem;
+    margin-bottom: 4rem;
+    flex-wrap: wrap;
+    gap: 2rem 4rem;
+  }
+
+  .rubiks-stat-value {
+    font-size: 2rem;
+  }
+
+  .rubiks-section {
+    padding: 3rem 0;
+  }
+
+  .rubiks-section-content {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    padding: 0 1.5rem;
+  }
+
+  .rubiks-text-left .rubiks-text-block,
+  .rubiks-text-right .rubiks-text-block {
+    order: 1;
+  }
+
+  .rubiks-text-left .rubiks-image-block,
+  .rubiks-text-left .rubiks-video-block,
+  .rubiks-text-right .rubiks-image-block,
+  .rubiks-text-right .rubiks-video-block {
+    order: 2;
+  }
+
+  .rubiks-text-block {
+    max-width: 100%;
+  }
+
+  .rubiks-section-title {
+    font-size: 1.5rem;
+  }
+
+  .rubiks-video-container {
+    width: 240px;
+    height: 430px;
+  }
+
+  .rubiks-timer-value {
+    font-size: 1.75rem;
+  }
+
+  .rubiks-resources,
+  .rubiks-footer {
+    padding: 2rem 1.5rem;
+  }
+
+  .rubiks-resources-links {
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .rubiks-headline {
+    font-size: 1.85rem;
+  }
+
+  .rubiks-stats-row {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .rubiks-stat-value {
+    font-size: 1.75rem;
+  }
+
+  .rubiks-section-title {
+    font-size: 1.35rem;
+  }
+
+  .rubiks-section-body {
+    font-size: 0.95rem;
+  }
+
+  .rubiks-video-container {
+    width: 200px;
+    height: 360px;
+  }
+
+  .rubiks-resources-links {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .rubiks-resource-link {
+    font-size: 0.95rem;
+  }
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Hide native video PiP button */
+.rubiks-video::-webkit-media-controls-picture-in-picture-button {
+  display: none !important;
+}
