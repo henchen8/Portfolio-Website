@@ -408,7 +408,7 @@ function Home() {
                 <div className="timeline-marker"></div>
                 <div className="timeline-content">
                   <h3>Business Operations + Fluid Systems Engineer</h3>
-                  <p className="timeline-company">Penn Hyperloop • September 2024 - Present</p>
+                  <p className="timeline-company">Penn Hyperloop • September 2025 - Present</p>
                   <p>
                     Ran fluids calculations to model, identify, and characterize tolerances for slurry 
                     management and muck retrieval systems aboard TBM to optimize performance in the 
