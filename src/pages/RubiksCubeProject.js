@@ -6,53 +6,40 @@ import rubiksGUI from '../assets/websiterubiksimg1.png';
 import tmcDriver from '../assets/portTMC2209.png';
 import nema17 from '../assets/PORTFOLIONEMA17.png';
 import arduinoMega from '../assets/PORTarduinomega.png';
+import './RubiksCubeProject.css';
 
 function RubiksCubeProject() {
   const [timerValue, setTimerValue] = useState(0);
   const [showReplay, setShowReplay] = useState(false);
-  // Check if user navigated from tile - unmute if so, otherwise start muted for autoplay
   const [isMuted, setIsMuted] = useState(() => {
     const navigatedFromTile = sessionStorage.getItem('navigatedFromTile') === 'true';
     if (navigatedFromTile) {
       sessionStorage.removeItem('navigatedFromTile');
-      return false; // Unmuted when navigating from tile
+      return false;
     }
-    return true; // Muted for direct navigation/reload
+    return true;
   });
   const timerIntervalRef = useRef(null);
   const videoRef = useRef(null);
-  const isHoveringRef = useRef(false); // Track hover state for use in event handlers
+  const isHoveringRef = useRef(false);
 
-  // ============================================
-  // 📍 START/END CONDITIONS - Video timestamps where solve starts and ends
-  // ============================================
-  const SOLVE_START_TIME = 0.02; // seconds when cube starts turning in video timeline
-  const SOLVE_END_TIME = 1.51; // seconds when last turn is done in video timeline
-  // ============================================
-  
-  // ============================================
-  // 🎯 TARGET SOLVE TIME - What time to display when solve completes
-  // ============================================
-  const TARGET_SOLVE_TIME = 0.997; // Target displayed solve time in seconds
-  // ============================================
-  
-  // Calculate scaling and playback rate
-  const ACTUAL_VIDEO_DURATION = SOLVE_END_TIME - SOLVE_START_TIME; // 1.35 seconds in video timeline
-  const TIMER_SCALE = TARGET_SOLVE_TIME / ACTUAL_VIDEO_DURATION; // 0.997 / 1.35 ≈ 0.738
-  const VIDEO_PLAYBACK_RATE = ACTUAL_VIDEO_DURATION / TARGET_SOLVE_TIME; // 1.35 / 0.997 ≈ 1.354x speed
+  const SOLVE_START_TIME = 0.02;
+  const SOLVE_END_TIME = 1.51;
+  const TARGET_SOLVE_TIME = 0.997;
+  const ACTUAL_VIDEO_DURATION = SOLVE_END_TIME - SOLVE_START_TIME;
+  const TIMER_SCALE = TARGET_SOLVE_TIME / ACTUAL_VIDEO_DURATION;
+  const VIDEO_PLAYBACK_RATE = ACTUAL_VIDEO_DURATION / TARGET_SOLVE_TIME;
 
   const handleBackClick = () => {
     sessionStorage.setItem('returnToHome', 'true');
   };
 
   useEffect(() => {
-    // Set video playback rate to speed up video
     if (videoRef.current) {
       videoRef.current.playbackRate = VIDEO_PLAYBACK_RATE;
     }
   }, [VIDEO_PLAYBACK_RATE]);
 
-  // Only play video when it's fully visible in viewport (first time only)
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
@@ -61,7 +48,6 @@ function RubiksCubeProject() {
     let playTimeout = null;
     let initialCheckTimeout = null;
 
-    // Helper function to check if video is fully visible
     const isVideoFullyVisible = () => {
       const rect = video.getBoundingClientRect();
       return (
@@ -72,42 +58,34 @@ function RubiksCubeProject() {
       );
     };
 
-    // Helper function to trigger autoplay
     const triggerAutoPlay = () => {
       if (hasAutoPlayed) return;
       hasAutoPlayed = true;
       playTimeout = setTimeout(() => {
         video.play();
-      }, 250); // 0.25 second delay
+      }, 250);
     };
 
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting && entry.intersectionRatio === 1 && !hasAutoPlayed) {
-            // Video is fully visible for the first time - play after a short delay
             triggerAutoPlay();
-            // Disconnect observer after first auto-play - user controls video from here
             observer.disconnect();
           }
         });
       },
-      {
-        threshold: 1.0, // Only trigger when 100% of the video is visible
-        rootMargin: '0px'
-      }
+      { threshold: 1.0, rootMargin: '0px' }
     );
 
     observer.observe(video);
 
-    // Fallback check for direct navigation or page reload
-    // The IntersectionObserver may not trigger if video is already in view on mount
     initialCheckTimeout = setTimeout(() => {
       if (!hasAutoPlayed && isVideoFullyVisible()) {
         triggerAutoPlay();
         observer.disconnect();
       }
-    }, 100); // Small delay to ensure layout is complete
+    }, 100);
 
     return () => {
       if (playTimeout) clearTimeout(playTimeout);
@@ -117,36 +95,23 @@ function RubiksCubeProject() {
   }, []);
 
   useEffect(() => {
-    // ============================================
-    // ⏱️ TIME UPDATE LOOP - Uses requestAnimationFrame for smooth updates
-    // Syncs with browser refresh rate (~60fps) for buttery smooth timer display
-    // ============================================
     const updateTimer = () => {
       if (videoRef.current) {
         const currentTime = videoRef.current.currentTime;
-        
-        // Always sync timer with video position
         if (currentTime < SOLVE_START_TIME) {
-          // Before solve starts - show 0
           setTimerValue(0);
         } else if (currentTime >= SOLVE_START_TIME && currentTime <= SOLVE_END_TIME) {
-          // During solve - calculate elapsed time and scale to target solve time
           const actualElapsed = currentTime - SOLVE_START_TIME;
-          const displayElapsed = actualElapsed * TIMER_SCALE; // Scale to show 0.997s at end
+          const displayElapsed = actualElapsed * TIMER_SCALE;
           setTimerValue(displayElapsed);
         } else if (currentTime > SOLVE_END_TIME) {
-          // After solve completes - lock at target solve time
           setTimerValue(TARGET_SOLVE_TIME);
         }
       }
-      
-      // Schedule next update - creates smooth animation loop
       timerIntervalRef.current = requestAnimationFrame(updateTimer);
     };
     
-    // Start the animation loop
     timerIntervalRef.current = requestAnimationFrame(updateTimer);
-    // ============================================
 
     return () => {
       if (timerIntervalRef.current) {
@@ -156,13 +121,7 @@ function RubiksCubeProject() {
     };
   }, [TIMER_SCALE, SOLVE_START_TIME, SOLVE_END_TIME, TARGET_SOLVE_TIME]);
 
-  const handleTimeUpdate = (e) => {
-    // Timer now automatically syncs with video position
-    // No manual start/stop needed - handled by the interval
-  };
-
-  const handleVideoEnded = (e) => {
-    // Video ends - show replay overlay only if cursor is not on video
+  const handleVideoEnded = () => {
     if (!isHoveringRef.current) {
       setShowReplay(true);
     }
@@ -171,24 +130,14 @@ function RubiksCubeProject() {
   const handleReplay = () => {
     if (videoRef.current) {
       videoRef.current.currentTime = 0;
-      videoRef.current.muted = false; // Unmute for subsequent plays after user interaction
+      videoRef.current.muted = false;
       setIsMuted(false);
       videoRef.current.play();
       setShowReplay(false);
     }
   };
 
-  const handleSeeked = () => {
-    // Timer automatically syncs with video position
-  };
-
-  const handlePause = () => {
-    // Timer automatically syncs with video position
-  };
-
   const handlePlay = () => {
-    // Timer automatically syncs with video position
-    // Ensure playback rate is maintained when user replays
     if (videoRef.current) {
       videoRef.current.playbackRate = VIDEO_PLAYBACK_RATE;
       setShowReplay(false);
@@ -196,424 +145,252 @@ function RubiksCubeProject() {
   };
 
   return (
-    <div className="project-detail-page">
-      <div className="project-detail-header">
-        <Link to="/#projects" className="back-button" onClick={handleBackClick}>Back to Projects</Link>
-        <h1>Rubik's Cube Robot</h1>
-      </div>
+    <div className="shinkei-page">
+      {/* Navigation */}
+      <nav className="shinkei-nav">
+        <Link to="/#projects" className="shinkei-back" onClick={handleBackClick}>
+          <span className="back-arrow">←</span>
+          Back to Projects
+        </Link>
+      </nav>
 
-      <div className="project-detail-content">
-        <div className="project-hero-image">
-          <img src={rubiksImage} alt="Rubik's Cube Robot" loading="eager" />
+      {/* Hero Section */}
+      <header className="shinkei-hero">
+        <div className="shinkei-hero-content">
+          <span className="shinkei-category">ROBOTICS & EMBEDDED SYSTEMS</span>
+          <h1 className="shinkei-title">
+            Sub-second solves<br />
+            from a fully autonomous machine.
+          </h1>
+          <p className="shinkei-subtitle">
+            A Rubik's Cube solving robot that integrates mechanical design, embedded systems, 
+            computer vision, and advanced algorithms to achieve solve times under one second.
+          </p>
         </div>
+        <div className="shinkei-hero-image">
+          <img src={rubiksImage} alt="Rubik's Cube Robot" />
+        </div>
+      </header>
 
-        <div style={{
-          display: 'flex',
-          gap: '3rem',
-          alignItems: 'flex-start',
-          flexWrap: 'wrap',
-          maxWidth: '1600px',
-          margin: '0 auto',
-          width: 'calc(100vw - 4rem)',
-          marginLeft: '50%',
-          transform: 'translateX(-50%)',
-          padding: '0 2rem'
-        }}>
-          <div style={{ flex: '1 1 550px', minWidth: '300px' }}>
-            <div className="project-section">
-              <h2>Overview</h2>
-              <p className="project-description">
-                Fully modular, autonomous cube-solving robot.
-              </p>
-              <p>
-                This project integrates mechanical and electrical design, microcontroller programming, computer vision,
-                and sophisticated cube solving algorithms to create a Rubik's Cube solving system.
+      {/* Stats Bar */}
+      <section className="shinkei-stats">
+        <div className="shinkei-stat">
+          <span className="stat-number">&lt;1s</span>
+          <span className="stat-desc">Solve Time</span>
+        </div>
+        <div className="shinkei-stat">
+          <span className="stat-number">&lt;20</span>
+          <span className="stat-desc">Moves Per Solve</span>
+        </div>
+        <div className="shinkei-stat">
+          <span className="stat-number">$125</span>
+          <span className="stat-desc">Total Build Cost</span>
+        </div>
+        <div className="shinkei-stat">
+          <span className="stat-number">6</span>
+          <span className="stat-desc">Stepper Motors</span>
+        </div>
+      </section>
 
+      {/* Section 1: Mechanical Design - Text Left, Image Right */}
+      <section className="shinkei-section">
+        <div className="shinkei-text">
+          <span className="shinkei-label">MECHANICAL DESIGN</span>
+          <h2 className="shinkei-heading">
+            Built for speed, precision,<br />
+            and modularity.
+          </h2>
+          <p>
+            Every component is custom-designed and 3D printed to enable independent rotation 
+            of each cube face. The fully modular architecture allows for easy maintenance 
+            and iterative improvements.
+          </p>
+          <p>
+            End effectors are optimized for precise control and minimal backlash. The design 
+            was refined through multiple prototypes to achieve optimal balance between speed, 
+            reliability, and robustness.
+          </p>
+        </div>
+        <div className="shinkei-image">
+          <img src={rubiksDrawing} alt="Rubik's Cube Robot CAD Drawing" />
+        </div>
+      </section>
 
-              </p>
-            </div>
-
-            <div className="project-section">
-              <h2>Notable Stats</h2>
-              <div className="stats-grid">
-                <div className="stat-card">
-                  <div className="stat-value">1s</div>
-                  <div className="stat-label">Solve Times</div>
-                </div>
-                <div className="stat-card">
-                  <div className="stat-value">&lt;20</div>
-                  <div className="stat-label">Turns Per Solve
-                  </div>
-                </div>
-                <div className="stat-card">
-                  <div className="stat-value">&lt;$125</div>
-                  <div className="stat-label">Total Cost
-                  </div>
-                </div>
+      {/* Section 2: Video Demo - Image Left, Text Right */}
+      <section className="shinkei-section shinkei-section-reverse">
+        <div className="shinkei-video-container">
+          <div 
+            className="shinkei-video-wrapper"
+            onMouseEnter={() => { isHoveringRef.current = true; }}
+            onMouseLeave={() => {
+              isHoveringRef.current = false;
+              if (videoRef.current && videoRef.current.ended) {
+                setShowReplay(true);
+              }
+            }}
+          >
+            <video
+              ref={videoRef}
+              loop={false}
+              muted={isMuted}
+              playsInline
+              controls={!showReplay}
+              controlsList="nodownload nofullscreen noremoteplayback noplaybackrate"
+              disablePictureInPicture={true}
+              disableRemotePlayback
+              className="shinkei-video"
+              onClick={(e) => {
+                if (!showReplay) {
+                  if (e.target.paused) {
+                    e.target.play();
+                  } else {
+                    e.target.pause();
+                  }
+                }
+              }}
+              onContextMenu={(e) => e.preventDefault()}
+              onLoadedData={(e) => {
+                e.target.playbackRate = VIDEO_PLAYBACK_RATE;
+              }}
+              onEnded={handleVideoEnded}
+              onPlay={handlePlay}
+            >
+              <source src="/rubik_solve_vid0.mov" type="video/mp4" />
+            </video>
+            
+            {showReplay && (
+              <div className="shinkei-replay-overlay" onClick={handleReplay}>
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
+                  <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8" />
+                  <path d="M21 3v5h-5" />
+                </svg>
+                <span>Replay</span>
               </div>
-            </div>
-
-            <div className="project-section" style={{ marginTop: 0 }}>
-              <h2>Mechanical Design</h2>
-              <p>
-                The mechanical system features custom-designed 3D printed parts and mechanisms that house
-                and allow each face of the cube to be rotated effectively and independently. Additionally,
-                by nature, the fully-modular design lends itself to easy maintenance and future improvements.
-                Key mechanical components include:
-              </p>
-              <ul>
-                <li>• End effector optimized for precise control and preventing backlash  </li>
-                <li>• Cube/motor interface connecting end effector with motor shaft</li>
-                <li>• Base to hold the bottom 5 stepper motors</li>
-                <li>• Removable "motor hat" that houses the top motor</li>
-              </ul>
-              <p>
-                The mechanical design was iteratively refined through multiple prototypes to achieve optimal balance between
-                speed, reliability, and robustness.
-              </p>
-            </div>
+            )}
           </div>
-
-          <div style={{ flex: '0 0 auto', maxWidth: '360px' }}>
-            <div className="project-section">
-              <h2>Solve Video</h2>
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '1.5rem' }}>
-                <div 
-                  style={{ position: 'relative', width: '315px', height: '550px' }}
-                  onMouseEnter={() => {
-                    isHoveringRef.current = true;
-                  }}
-                  onMouseLeave={() => {
-                    isHoveringRef.current = false;
-                    // Show replay overlay when cursor leaves if video has ended
-                    if (videoRef.current && videoRef.current.ended) {
-                      setShowReplay(true);
-                    }
-                  }}
-                >
-                  <video
-                    ref={videoRef}
-                    loop={false}
-                    muted={isMuted}
-                    playsInline
-                    controls={!showReplay}
-                    controlsList="nodownload nofullscreen noremoteplayback noplaybackrate"
-                    disablePictureInPicture={true}
-                    disableRemotePlayback
-                    className="no-pip-video"
-                    style={{
-                      width: '100%',
-                      height: '100%',
-                      borderRadius: '8px',
-                      cursor: showReplay ? 'default' : 'pointer',
-                      objectFit: 'cover',
-                      objectPosition: 'center'
-                    }}
-                    onClick={(e) => {
-                      if (!showReplay) {
-                        if (e.target.paused) {
-                          e.target.play();
-                        } else {
-                          e.target.pause();
-                        }
-                      }
-                    }}
-                    onContextMenu={(e) => e.preventDefault()}
-                    onLoadedData={(e) => {
-                      // Set playback rate as soon as video loads
-                      e.target.playbackRate = VIDEO_PLAYBACK_RATE;
-                    }}
-                    onTimeUpdate={handleTimeUpdate}
-                    onEnded={handleVideoEnded}
-                    onSeeked={handleSeeked}
-                    onPause={handlePause}
-                    onPlay={handlePlay}
-                  >
-                    <source src="/rubik_solve_vid0.mov" type="video/mp4" />
-                    Your browser does not support the video tag.
-                  </video>
-                  
-                  {/* Replay overlay - shows when video ends (unless cursor was hovering) */}
-                  {showReplay && (
-                    <div
-                      onClick={handleReplay}
-                      style={{
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        bottom: 0,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                        borderRadius: '8px',
-                        cursor: 'pointer',
-                        animation: 'fadeIn 0.25s ease-out'
-                      }}
-                    >
-                      <div style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        gap: '0.75rem',
-                        animation: 'fadeInScale 0.25s ease-out'
-                      }}>
-                        <svg 
-                          width="64" 
-                          height="64" 
-                          viewBox="0 0 24 24" 
-                          fill="none" 
-                          stroke="white" 
-                          strokeWidth="2" 
-                          strokeLinecap="round" 
-                          strokeLinejoin="round"
-                        >
-                          <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8" />
-                          <path d="M21 3v5h-5" />
-                        </svg>
-                        <span style={{
-                          color: 'white',
-                          fontSize: '1.125rem',
-                          fontWeight: '600',
-                          textTransform: 'uppercase',
-                          letterSpacing: '0.5px'
-                        }}>
-                          Replay
-                        </span>
-                      </div>
-                    </div>
-                  )}
-                </div>
-                <div style={{
-                  marginTop: '1.5rem',
-                  background: 'linear-gradient(135deg, #fafaf8 0%, #f0f0ed 100%)',
-                  padding: '1.5rem 1.5rem',
-                  borderRadius: '12px',
-                  boxShadow: '0 4px 6px rgba(0, 0, 0, 0.08)',
-                  textAlign: 'center',
-                  transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-                  width: '100%',
-                  maxWidth: '360px'
-                }}>
-                  <div style={{
-                    fontSize: '0.875rem',
-                    fontWeight: '500',
-                    color: '#555',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.5px',
-                    marginBottom: '0.5rem'
-                  }}>
-                    Solve Time
-                  </div>
-                  <div style={{
-                    fontSize: '2.5rem',
-                    fontWeight: '700',
-                    color: '#000000',
-                    fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-                    lineHeight: '1'
-                  }}>
-                    {timerValue.toFixed(3)}s
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div style={{ paddingTop: '1rem', marginLeft: '-35px' }}>
-              <img
-                src={rubiksDrawing}
-                alt="Rubik's Cube Robot Design"
-                style={{
-                  width: '425px',
-                  maxWidth: 'none',
-                  height: 'auto',
-                  borderRadius: '8px',
-                  marginTop: '-35px'
-                }}
-              />
-            </div>
+          <div className="shinkei-timer">
+            <span className="timer-label">SOLVE TIME</span>
+            <span className="timer-value">{timerValue.toFixed(3)}s</span>
           </div>
         </div>
-
-        <div style={{
-          display: 'flex',
-          gap: '3rem',
-          alignItems: 'flex-start',
-          flexWrap: 'wrap',
-          maxWidth: '1600px',
-          margin: '0 auto',
-          width: 'calc(100vw - 4rem)',
-          marginLeft: '50%',
-          transform: 'translateX(-50%)',
-          padding: '0 2rem'
-        }}>
-          <div style={{ flex: '1', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '1.5rem', marginTop: '-25px' }}>
-            <div style={{
-              maxWidth: '390px',
-              width: '100%',
-              borderRadius: '8px',
-              overflow: 'hidden'
-            }}>
-              <img
-                src={tmcDriver}
-                alt="TMC 2209 V2.0 Stepper Motor Driver"
-                style={{
-                  width: '100%',
-                  height: 'auto',
-                  display: 'block',
-                  background: 'transparent',
-                  mixBlendMode: 'multiply'
-                }}
-              />
-            </div>
-            <img
-              src={nema17}
-              alt="NEMA 17 Stepper Motor"
-              style={{
-                maxWidth: '450px',
-                width: '100%',
-                height: 'auto',
-                borderRadius: '8px',
-                background: 'transparent',
-                mixBlendMode: 'multiply',
-                marginTop: '-17px'
-              }}
-            />
-          </div>
-
-          <div style={{ flex: '1 1 500px', minWidth: '300px' }}>
-            <div className="project-section">
-              <h2>Electrical Design</h2>
-              <p>
-                The electrical system integrates the computer vision system with the 
-                mechanical mechanisms by managing sensor interfacing and motor control.
-                Key electrical features include:
-              </p>
-              <ul>
-                <li>• Arduino MEGA 2560</li>
-                <li>• 6 TMC 2209 V2.0 stepper motor drivers</li>
-                <li>• 6 NEMA 17 stepper motors</li>
-                <li>• 120+ jumper wires</li>
-                <li>• 2 breadboards</li>
-                <li>• 6 pull-up resistors (10kΩ)</li>
-                <li>• 6 decoupling capacitors (100µF)</li>
-              </ul>
-              <p>
-                The electrical design prioritizes reliability and performance, ensuring consistent operation during
-                high-speed solving sequences.
-              </p>
-            </div>
-          </div>
+        <div className="shinkei-text">
+          <span className="shinkei-label">LIVE DEMONSTRATION</span>
+          <h2 className="shinkei-heading">
+            Watch a complete solve<br />
+            in under one second.
+          </h2>
+          <p>
+            The synchronized timer displays actual solve duration from the moment 
+            the first face turns until the final move completes. Each solve averages 
+            fewer than 20 moves using the Kociemba algorithm.
+          </p>
+          <p>
+            The robot processes cube state via computer vision, computes an optimal 
+            solution path, and executes the moves with precise stepper motor control.
+          </p>
         </div>
+      </section>
 
-        <div style={{
-          display: 'flex',
-          gap: '3rem',
-          alignItems: 'stretch',
-          flexWrap: 'wrap',
-          maxWidth: '1600px',
-          margin: '0 auto 2rem',
-          width: 'calc(100vw - 4rem)',
-          marginLeft: '50%',
-          transform: 'translateX(-50%)',
-          padding: '0 2rem'
-        }}>
-          <div style={{ flex: '1 1 500px', minWidth: '300px', display: 'flex' }}>
-            <div className="project-section" style={{ flex: 1, marginBottom: 0 }}>
-              <h2>Microcontroller Software</h2>
-              <p>
-                The Arduino microcontroller integrates the solving algorithm
-                with all the electrical and mechanical components. Key software features included:
-              </p>
-              <ul>
-                <li>• Real-time stepper motor control with precise timing</li>
-                <li>• Interrupt-driven architecture for responsive sensor feedback</li>
-                <li>• Communication protocols for interfacing with computer vision system</li>
-                <li>• Streamlined functions that take face and displacement parameters</li>
-                <li>• Ability to configure motor rpm</li>
-              </ul>
-              <p>
-                The firmware is written in C++ for maximum performance and includes comprehensive error handling
-                and safety features to prevent damage during operation.
-              </p>
-            </div>
-          </div>
-
-          <div style={{ flex: '0 0 550px', display: 'flex' }}>
-            <img
-              src={arduinoMega}
-              alt="Arduino MEGA 2560"
-              style={{
-                width: '100%',
-                height: '100%',
-                borderRadius: '8px',
-                objectFit: 'cover',
-                objectPosition: 'center'
-              }}
-            />
-          </div>
+      {/* Section 3: Electrical - Text Left, Image Right */}
+      <section className="shinkei-section">
+        <div className="shinkei-text">
+          <span className="shinkei-label">ELECTRICAL SYSTEM</span>
+          <h2 className="shinkei-heading">
+            Reliable motor control<br />
+            and sensor integration.
+          </h2>
+          <p>
+            The electrical system bridges computer vision with mechanical actuation. 
+            An Arduino MEGA 2560 coordinates six TMC 2209 stepper motor drivers for 
+            smooth, precise rotation of each cube face.
+          </p>
+          <ul className="shinkei-list">
+            <li>Arduino MEGA 2560 microcontroller</li>
+            <li>6× TMC 2209 V2.0 stepper drivers</li>
+            <li>6× NEMA 17 stepper motors</li>
+            <li>Pull-up resistors and decoupling capacitors</li>
+          </ul>
         </div>
-
-        <div style={{
-          display: 'flex',
-          gap: '3rem',
-          alignItems: 'stretch',
-          flexWrap: 'wrap',
-          maxWidth: '1600px',
-          margin: '0 auto 2rem',
-          width: 'calc(100vw - 4rem)',
-          marginLeft: '50%',
-          transform: 'translateX(-50%)',
-          padding: '0 2rem'
-        }}>
-          <div style={{ flex: '0 0 350px', display: 'flex' }}>
-            <img
-              src={rubiksGUI}
-              alt="Rubik's Cube GUI"
-              style={{
-                width: '100%',
-                height: '100%',
-                borderRadius: '8px',
-                objectFit: 'cover',
-                objectPosition: 'center'
-              }}
-            />
-          </div>
-
-          <div style={{ flex: '1 1 500px', minWidth: '300px', display: 'flex' }}>
-            <div className="project-section" style={{ flex: 1, marginBottom: 0 }}>
-              <h2>Solving Algorithm & GUI</h2>
-              <p>
-                The solving system combines advanced algorithms with an intuitive user interface. Key features include:
-              </p>
-              <ul>
-                <li>• Computer vision algorithms for cube state detection and color recognition</li>
-                <li>• Optimized solving algorithms (Kociemba Algorithm) optimal solve paths</li>
-                <li>• Real-time GUI displaying current cube state and solving progress</li>
-                <li>• Statistical analysis of solve times and move optimization</li>
-              </ul>
-              <p>
-                The Python-based GUI provides real-time visualization of the solving process, allowing users to
-                monitor algorithm performance and cube state recognition accuracy. The system achieves sub-second
-                solve times with move counts consistently under 20 rotations.
-              </p>
-            </div>
-          </div>
+        <div className="shinkei-image shinkei-image-components">
+          <img src={tmcDriver} alt="TMC 2209 Stepper Driver" className="component-img driver" />
+          <img src={nema17} alt="NEMA 17 Stepper Motor" className="component-img motor" />
         </div>
+      </section>
 
-        <div className="project-section">
-          <h2>Resources</h2>
-          <div className="project-links">
-            <a href="https://www.youtube.com/shorts/J1a7RxK03xU" target="_blank" rel="noopener noreferrer" className="project-link-btn">Solve Video</a>
-            <a href="https://cad.onshape.com/documents/e64e9adb0ff9466627b47f67/w/74a34c291195daf66dba9b40/e/ef19ed1914f1db15c2699f69" target="_blank" rel="noopener noreferrer" className="project-link-btn">CAD</a>
-            <a href="https://docs.google.com/presentation/d/12Rsq6fVtxUd_KKTxoM-D5vIqgpLokWzd/edit?slide=id.p1#slide=id.p1" target="_blank" rel="noopener noreferrer" className="project-link-btn">Slides</a>
-          </div>
+      {/* Section 4: Software - Image Left, Text Right */}
+      <section className="shinkei-section shinkei-section-reverse">
+        <div className="shinkei-image">
+          <img src={arduinoMega} alt="Arduino MEGA 2560" />
         </div>
+        <div className="shinkei-text">
+          <span className="shinkei-label">FIRMWARE</span>
+          <h2 className="shinkei-heading">
+            Real-time control<br />
+            with interrupt-driven architecture.
+          </h2>
+          <p>
+            The C++ firmware manages stepper motor timing, serial communication 
+            with the vision system, and move execution. Interrupt-driven design 
+            ensures responsive sensor feedback during high-speed operations.
+          </p>
+          <ul className="shinkei-list">
+            <li>Precise timing for stepper motor control</li>
+            <li>Communication protocols for vision interface</li>
+            <li>Configurable motor RPM settings</li>
+            <li>Comprehensive error handling</li>
+          </ul>
+        </div>
+      </section>
 
-        <div className="project-footer">
-          <Link to="/#projects" className="back-button" onClick={handleBackClick}>Back to Projects</Link>
+      {/* Section 5: GUI & Algorithm - Text Left, Image Right */}
+      <section className="shinkei-section">
+        <div className="shinkei-text">
+          <span className="shinkei-label">SOLVING ALGORITHM & INTERFACE</span>
+          <h2 className="shinkei-heading">
+            Kociemba algorithm<br />
+            with real-time visualization.
+          </h2>
+          <p>
+            Computer vision detects cube state through color recognition. The Kociemba 
+            algorithm computes near-optimal solutions, typically under 20 moves. A Python 
+            GUI provides real-time visualization of solving progress.
+          </p>
+          <p>
+            The system achieves consistent sub-second solve times while maintaining 
+            high accuracy in cube state detection across varying lighting conditions.
+          </p>
         </div>
-      </div>
+        <div className="shinkei-image">
+          <img src={rubiksGUI} alt="Rubik's Cube Solving GUI" />
+        </div>
+      </section>
+
+      {/* Resources Section */}
+      <section className="shinkei-resources">
+        <span className="shinkei-label">RESOURCES</span>
+        <div className="shinkei-links">
+          <a href="https://www.youtube.com/shorts/J1a7RxK03xU" target="_blank" rel="noopener noreferrer">
+            Watch Full Video
+            <span className="link-arrow">→</span>
+          </a>
+          <a href="https://cad.onshape.com/documents/e64e9adb0ff9466627b47f67/w/74a34c291195daf66dba9b40/e/ef19ed1914f1db15c2699f69" target="_blank" rel="noopener noreferrer">
+            View CAD Models
+            <span className="link-arrow">→</span>
+          </a>
+          <a href="https://docs.google.com/presentation/d/12Rsq6fVtxUd_KKTxoM-D5vIqgpLokWzd/edit?slide=id.p1#slide=id.p1" target="_blank" rel="noopener noreferrer">
+            Project Slides
+            <span className="link-arrow">→</span>
+          </a>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="shinkei-footer">
+        <Link to="/#projects" className="shinkei-back" onClick={handleBackClick}>
+          <span className="back-arrow">←</span>
+          Back to Projects
+        </Link>
+      </footer>
     </div>
   );
 }

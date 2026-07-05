@@ -1,218 +1,216 @@
 import { Link } from 'react-router-dom';
-import { useIsMobile } from '../hooks/useIsMobile';
 import srprojImage from '../assets/Capture-2026-01-01-134649.png';
 import blackscholesImage from '../assets/blackscholes.png';
 import simplifiedBlackscholesImage from '../assets/port_simplifiedblackscholes.png';
 import famafrenchImage from '../assets/portfamafrench.png';
+import './FinancialDerivativesProject.css';
 
 function FinancialDerivativesProject() {
-  const isMobile = useIsMobile(768); // Breakpoint at 768px
-  
   const handleBackClick = () => {
     sessionStorage.setItem('returnToHome', 'true');
   };
 
   return (
-    <div className="project-detail-page">
-      <div className="project-detail-header">
-        <Link to="/#projects" className="back-button" onClick={handleBackClick}>Back to Projects</Link>
-        <h1>Pricing Financial Derivatives</h1>
-      </div>
-      
-      <div className="project-detail-content">
-        <div className="project-hero-image">
-          <img src={srprojImage} alt="Financial Derivatives Project" />
-        </div>
-        
-        <div className="project-section">
-          <h2>Overview</h2>
-          <p className="project-description">
-            A brief exploration of the world of quantitative finance through CAPM, PCA, and Black-Scholes-Merton options model.
-          </p>
-          <p>
-            The scope of this research project is split into two main areas: the first is educating individuals who are interested
-            in retail investment, where concepts such as ETFs, dividends, and basic trading strategies are introduced. 
-            The second half focuses more on the technical side—the application of data analytics, mathematics, 
-            and numerical analysis to quantitative finance. Mathematical concepts discussed include linear 
-            transformations on matrix representations of portfolios, eigendecomposition for PCA,
-            in addition to a high-level overview of stochastic calculus and free boundary problems. 
+    <div className="shinkei-page">
+      {/* Navigation */}
+      <nav className="shinkei-nav">
+        <Link to="/#projects" className="shinkei-back" onClick={handleBackClick}>
+          <span className="back-arrow">←</span>
+          Back to Projects
+        </Link>
+      </nav>
+
+      {/* Hero Section */}
+      <header className="shinkei-hero">
+        <div className="shinkei-hero-content">
+          <span className="shinkei-category">QUANTITATIVE FINANCE RESEARCH</span>
+          <h1 className="shinkei-title">
+            Complex mathematics<br />
+            with real-world applications.
+          </h1>
+          <p className="shinkei-subtitle">
+            An exploration of quantitative finance through CAPM, Principal Component Analysis, 
+            and the Black-Scholes-Merton options pricing model. From retail investment fundamentals 
+            to stochastic calculus and free boundary problems.
           </p>
         </div>
-        
-        <div className="project-section">
-          <h2>Capital Asset Pricing Model</h2>
+        <div className="shinkei-hero-image">
+          <img src={srprojImage} alt="Financial Derivatives Research" />
+        </div>
+      </header>
+
+      {/* Section 1: CAPM - Text Left, Image Right */}
+      <section className="shinkei-section">
+        <div className="shinkei-text">
+          <span className="shinkei-label">CAPITAL ASSET PRICING MODEL</span>
+          <h2 className="shinkei-heading">
+            Understanding risk-return<br />
+            relationships in markets.
+          </h2>
           <p>
-            Understanding risk-return relationships in financial markets through risk analysis.
-            Key concepts explored include:
+            The CAPM provides a framework for understanding the relationship between 
+            systematic risk and expected return. It forms the foundation for modern 
+            portfolio theory and quantitative risk management.
           </p>
-          <ul>
-            <li>• Expected return calculation using alpha and beta coefficients</li>
-            <li>• Systematic vs unsystematic risk decomposition</li>
-            <li>• Security market line and market equilibrium</li>
-            <li>• Portfolio optimization and efficient frontier</li>
+          <ul className="shinkei-list">
+            <li>Expected return via alpha and beta coefficients</li>
+            <li>Systematic vs unsystematic risk decomposition</li>
+            <li>Security market line and market equilibrium</li>
+            <li>Portfolio optimization and efficient frontier</li>
           </ul>
         </div>
-
-        <div className="project-section">
-          <h2>Principal Component Analysis</h2>
-          <p>
-            Dimensionality reduction techniques for portfolio analysis using eigendecomposition and linear transformations.
-            Key mathematical concepts include:
-          </p>
-          <ul>
-            <li>• Linear transformations on matrix representations of portfolios</li>
-            <li>• Eigendecomposition ordering for principal component identification </li>
-            <li>• Variance explained by each component</li>
-            <li>• Feature extraction and data compression in financial datasets</li>
-          </ul>
-          <div style={{
-            background: 'linear-gradient(135deg, #fafaf8 0%, #f0f0ed 100%)',
-            borderRadius: '12px',
-            padding: isMobile ? '1.5rem' : '2rem',
-            marginTop: isMobile ? '1.5rem' : '2rem',
-            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)'
-          }}>
-            <div style={{ textAlign: 'center' }}>
-              <img
-                src={famafrenchImage}
-                alt="Fama-French Principal Component Analysis"
-                style={{
-                  maxWidth: isMobile ? '100%' : '800px',
-                  width: '100%',
-                  height: 'auto',
-                  mixBlendMode: 'multiply',
-                  background: 'transparent'
-                }}
-              />
-            </div>
+        <div className="shinkei-image">
+          <div className="shinkei-equation">
+            E(Ri) = Rf + βi(E(Rm) - Rf)
           </div>
         </div>
+      </section>
 
-        <div className="project-section">
-          <h2>Black-Scholes-Merton Model</h2>
-          <p>
-            Options pricing using stochastic differential equations, free boundary problems, and stochastic calculus.
-            Key theoretical foundations include:
-          </p>
-          <ul>
-            <li>• Geometric Brownian motion for stock price modeling</li>
-            <li>• Derivation of the Black-Scholes partial differential equation via CAPM, 
-              differential heat transfer, etc.
-            </li>
-            <li>• Risk-neutral pricing and no-arbitrage principles</li>
-            <li>• Put-call parity and arbitrage relationships for European and American options</li>
-          </ul>
-          
-          {/* Simplified Formula Section */}
-          <div style={{
-            background: 'linear-gradient(135deg, #fafaf8 0%, #f0f0ed 100%)',
-            borderRadius: '12px',
-            padding: isMobile ? '1.5rem' : '2rem',
-            marginTop: isMobile ? '1.5rem' : '2.5rem',
-            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)'
-          }}>
-            <h3 style={{ 
-              fontSize: isMobile ? '1.25rem' : '1.5rem', 
-              fontWeight: '600',
-              marginBottom: isMobile ? '1rem' : '1.5rem', 
-              color: '#000000'
-            }}>Closed-Form Equation</h3>
-            <div style={{ textAlign: 'center', marginBottom: isMobile ? '1rem' : '1.5rem' }}>
-              <img
-                src={simplifiedBlackscholesImage}
-                alt="Simplified Black-Scholes Formula"
-                style={{
-                  maxWidth: isMobile ? '100%' : '800px',
-                  width: '100%',
-                  height: 'auto',
-                  mixBlendMode: 'multiply',
-                  background: 'transparent'
-                }}
-              />
-            </div>
-            <ul style={{ 
-              listStyle: 'none', 
-              padding: 0, 
-              margin: 0 
-            }}>
-              <li style={{ fontSize: isMobile ? '0.95rem' : '1.05rem', color: '#555', lineHeight: '1.8', marginBottom: '0.5rem' }}>• Closed-form solution for pricing European put and call options</li>
-              <li style={{ fontSize: isMobile ? '0.95rem' : '1.05rem', color: '#555', lineHeight: '1.8', marginBottom: '0.5rem' }}>• Assumes constant volatility, constant risk-free rate, no dividends, and continuous trading</li>
-              <li style={{ fontSize: isMobile ? '0.95rem' : '1.05rem', color: '#555', lineHeight: '1.8', marginBottom: '0.5rem' }}>• Uses cumulative normal distribution function for probability calculations</li>
-              <li style={{ fontSize: isMobile ? '0.95rem' : '1.05rem', color: '#555', lineHeight: '1.8' }}>• Inputs: stock price, strike price, time to expiration, risk-free rate, volatility</li>
-            </ul>
-          </div>
-
-          {/* Free Boundary Formula Section */}
-          <div style={{
-            background: 'linear-gradient(135deg, #fafaf8 0%, #f0f0ed 100%)',
-            borderRadius: '12px',
-            padding: isMobile ? '1.5rem' : '2rem',
-            marginTop: isMobile ? '1rem' : '1.5rem',
-            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)'
-          }}>
-            <h3 style={{ 
-              fontSize: isMobile ? '1.25rem' : '1.5rem', 
-              fontWeight: '600',
-              marginBottom: isMobile ? '1rem' : '1.5rem', 
-              color: '#000000'
-            }}>Free Boundary Formula</h3>
-            <div style={{ textAlign: 'center', marginBottom: isMobile ? '1rem' : '1.5rem' }}>
-              <img
-                src={blackscholesImage}
-                alt="Black-Scholes Free Boundary Formula"
-                style={{
-                  maxWidth: isMobile ? '100%' : '800px',
-                  width: '100%',
-                  height: 'auto',
-                  mixBlendMode: 'multiply',
-                  background: 'transparent'
-                }}
-              />
-            </div>
-            <ul style={{ 
-              listStyle: 'none', 
-              padding: 0, 
-              margin: 0 
-            }}>
-              <li style={{ fontSize: isMobile ? '0.95rem' : '1.05rem', color: '#555', lineHeight: '1.8', marginBottom: '0.5rem' }}>• Extends Black-Scholes to American options with early exercise rights</li>
-              <li style={{ fontSize: isMobile ? '0.95rem' : '1.05rem', color: '#555', lineHeight: '1.8', marginBottom: '0.5rem' }}>• Creates moving boundary between optimal hold vs exercise regions</li>
-              <li style={{ fontSize: isMobile ? '0.95rem' : '1.05rem', color: '#555', lineHeight: '1.8', marginBottom: '0.5rem' }}>• Results in PDE with complementarity conditions</li>
-              <li style={{ fontSize: isMobile ? '0.95rem' : '1.05rem', color: '#555', lineHeight: '1.8' }}>• Requires numerical methods to solve (no closed-form solution)</li>
-            </ul>
-          </div>
+      {/* Section 2: PCA - Image Left, Text Right */}
+      <section className="shinkei-section shinkei-section-reverse shinkei-section-alt">
+        <div className="shinkei-image">
+          <img 
+            src={famafrenchImage} 
+            alt="Fama-French Principal Component Analysis" 
+            className="shinkei-formula-img"
+          />
         </div>
-
-        <div className="project-section">
-          <h2>Numerical Methods</h2>
+        <div className="shinkei-text">
+          <span className="shinkei-label">PRINCIPAL COMPONENT ANALYSIS</span>
+          <h2 className="shinkei-heading">
+            Dimensionality reduction<br />
+            for portfolio analysis.
+          </h2>
           <p>
-            Computational approaches to solving complex financial models and implementing pricing algorithms.
-            Key techniques explored include:
+            PCA uses eigendecomposition and linear transformations to reduce complexity 
+            in financial datasets. By ordering eigenvalues, we identify the principal 
+            components that explain the most variance.
           </p>
-          <ul>
-            <li>• Finite difference methods for PDE solving</li>
-            <li>• Itô calculus for stochastic differential equations</li>
-            <li>• Monte Carlo simulation for option pricing</li>
-            <li>• Binomial tree models for American options</li>
-            <li>• Numerical multivariable optimization algorithms</li>
+          <ul className="shinkei-list">
+            <li>Linear transformations on portfolio matrices</li>
+            <li>Eigendecomposition for component identification</li>
+            <li>Variance explained by each component</li>
+            <li>Feature extraction in financial datasets</li>
           </ul>
         </div>
-        
-        <div className="project-section">
-          <h2>Resources</h2>
-          <div className="project-links">
-            <a href="https://youtu.be/doYoJWpjqiU" target="_blank" rel="noopener noreferrer" className="project-link-btn">Live Presentation</a>
-            <a href="https://docs.google.com/presentation/d/129P1cS45KJAWDq-8KD_RfFEJdXTyp73k/edit?slide=id.p1#slide=id.p1" target="_blank" rel="noopener noreferrer" className="project-link-btn">Slides</a>
-            <a href="https://docs.google.com/document/d/1O5VnQPQPrbvbTIRUn-OBa9-4rOL6O1LAE2362aLJe6o/edit?tab=t.0" target="_blank" rel="noopener noreferrer" className="project-link-btn">Research Notes</a>
+      </section>
+
+      {/* Section 3: Black-Scholes Intro - Text Left, Image Right */}
+      <section className="shinkei-section">
+        <div className="shinkei-text">
+          <span className="shinkei-label">BLACK-SCHOLES-MERTON MODEL</span>
+          <h2 className="shinkei-heading">
+            Options pricing through<br />
+            stochastic calculus.
+          </h2>
+          <p>
+            The Black-Scholes-Merton model revolutionized derivatives pricing by providing 
+            a closed-form solution for European options. It models stock prices as geometric 
+            Brownian motion and derives pricing through risk-neutral valuation.
+          </p>
+          <p>
+            Key assumptions include constant volatility, continuous trading, and no dividends. 
+            The model uses the cumulative normal distribution for probability calculations.
+          </p>
+        </div>
+        <div className="shinkei-image">
+          <img 
+            src={simplifiedBlackscholesImage} 
+            alt="Black-Scholes Closed-Form Equation" 
+            className="shinkei-formula-img"
+          />
+        </div>
+      </section>
+
+      {/* Section 4: Free Boundary - Image Left, Text Right */}
+      <section className="shinkei-section shinkei-section-reverse shinkei-section-alt">
+        <div className="shinkei-image">
+          <img 
+            src={blackscholesImage} 
+            alt="Free Boundary Formula" 
+            className="shinkei-formula-img"
+          />
+        </div>
+        <div className="shinkei-text">
+          <span className="shinkei-label">FREE BOUNDARY PROBLEMS</span>
+          <h2 className="shinkei-heading">
+            American options with<br />
+            early exercise rights.
+          </h2>
+          <p>
+            American options introduce early exercise rights, creating a moving boundary 
+            between optimal hold and exercise regions. This transforms the pricing problem 
+            into a free boundary PDE with complementarity conditions.
+          </p>
+          <ul className="shinkei-list">
+            <li>Moving boundary between hold/exercise regions</li>
+            <li>PDE with complementarity conditions</li>
+            <li>No closed-form solution exists</li>
+            <li>Requires numerical methods to solve</li>
+          </ul>
+        </div>
+      </section>
+
+      {/* Section 5: Numerical Methods - Text Left */}
+      <section className="shinkei-section">
+        <div className="shinkei-text">
+          <span className="shinkei-label">NUMERICAL METHODS</span>
+          <h2 className="shinkei-heading">
+            Computational approaches<br />
+            to complex models.
+          </h2>
+          <p>
+            When analytical solutions don't exist, numerical methods provide the path forward. 
+            Finite difference methods discretize the Black-Scholes PDE, while Monte Carlo 
+            simulation leverages the law of large numbers for option pricing.
+          </p>
+          <ul className="shinkei-list">
+            <li>Finite difference methods for PDE solving</li>
+            <li>Itô calculus for stochastic differential equations</li>
+            <li>Monte Carlo simulation for option pricing</li>
+            <li>Binomial tree models for American options</li>
+            <li>Numerical optimization algorithms</li>
+          </ul>
+        </div>
+        <div className="shinkei-image">
+          <div className="shinkei-equation" style={{ textAlign: 'left', fontSize: '0.95rem', fontFamily: "'Courier New', monospace", fontStyle: 'normal' }}>
+            <div style={{ color: '#666', marginBottom: '0.5rem' }}># Monte Carlo pricing</div>
+            <div>for i in range(n_simulations):</div>
+            <div style={{ paddingLeft: '1rem' }}>S = S0 * exp((r - σ²/2)*T + σ*√T*Z)</div>
+            <div style={{ paddingLeft: '1rem' }}>payoffs[i] = max(S - K, 0)</div>
+            <div style={{ marginTop: '0.5rem' }}>price = exp(-r*T) * mean(payoffs)</div>
           </div>
         </div>
-        
-        <div className="project-footer">
-          <Link to="/#projects" className="back-button" onClick={handleBackClick}>Back to Projects</Link>
+      </section>
+
+      {/* Resources Section */}
+      <section className="shinkei-resources">
+        <span className="shinkei-label">RESOURCES</span>
+        <div className="shinkei-links">
+          <a href="https://youtu.be/doYoJWpjqiU" target="_blank" rel="noopener noreferrer">
+            Watch Presentation
+            <span className="link-arrow">→</span>
+          </a>
+          <a href="https://docs.google.com/presentation/d/129P1cS45KJAWDq-8KD_RfFEJdXTyp73k/edit?slide=id.p1#slide=id.p1" target="_blank" rel="noopener noreferrer">
+            View Slides
+            <span className="link-arrow">→</span>
+          </a>
+          <a href="https://docs.google.com/document/d/1O5VnQPQPrbvbTIRUn-OBa9-4rOL6O1LAE2362aLJe6o/edit?tab=t.0" target="_blank" rel="noopener noreferrer">
+            Research Notes
+            <span className="link-arrow">→</span>
+          </a>
         </div>
-      </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="shinkei-footer">
+        <Link to="/#projects" className="shinkei-back" onClick={handleBackClick}>
+          <span className="back-arrow">←</span>
+          Back to Projects
+        </Link>
+      </footer>
     </div>
   );
 }
 
 export default FinancialDerivativesProject;
-

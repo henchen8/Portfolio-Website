@@ -18,7 +18,7 @@ function Home() {
   useEffect(() => {
     const handleParallax = () => {
       if (slideshowRef.current) {
-        slideshowRef.current.style.transform = `translateY(${window.scrollY * 0.4}px)`;
+        slideshowRef.current.style.transform = `translateY(${window.scrollY * .6}px)`;
       }
     };
 
@@ -404,6 +404,17 @@ function Home() {
           <div className="container">
             <h2 className="section-title">Experience</h2>
             <div className="timeline">
+            <div className="timeline-item">
+                <div className="timeline-marker"></div>
+                <div className="timeline-content">
+                  <h3>Robotics Intern</h3>
+                  <p className="timeline-company">Parametric (YC F25) • May 2026 - Present</p>
+                  <p>
+                    Design custom YAM end-effectors. Develop GELLO teleoperation system. 
+                    Teleoperate bimanual robots to improve deployment-specific model performance. 
+                  </p>
+                </div>
+              </div>
               <div className="timeline-item">
                 <div className="timeline-marker"></div>
                 <div className="timeline-content">
@@ -434,20 +445,9 @@ function Home() {
                   <h3>Student</h3>
                   <p className="timeline-company">Jerome Fisher Management and Technology Program (M&T) • June 2024 - July 2024</p>
                   <p>
-                    M&TSI is a three-week for-credit course (EAS 00280) run by the Jerome Fisher Program in Management and Technology (M&T).
+                    M&TSI is a three-week for-credit course (EAS 00280) run by the Jerome Fisher Program in Management and Technology.
                     Co-Founder and Mechanical Lead for FitBox—a revolutionary portable workout solution. Designed GTM strategy 
                     and built MVP.
-                  </p>
-                </div>
-              </div>
-              <div className="timeline-item">
-                <div className="timeline-marker"></div>
-                <div className="timeline-content">
-                  <h3>Senior Mechanical Engineer</h3>
-                  <p className="timeline-company">Crystal Springs Uplands School Robotics Team • August 2021 - May 2025</p>
-                  <p>
-                    Oversaw all mechanical tasks on the team as Senior Mechanical Engineer. Led design of mechanical systems on robot.
-                    Operated robot during competition. 
                   </p>
                 </div>
               </div>
