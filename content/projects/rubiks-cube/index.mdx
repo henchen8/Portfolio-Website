@@ -1,0 +1,95 @@
+---
+title: "Rubik's Cube Robot"
+tagline: "Autonomous cube-solving in under 1 second"
+category: "ROBOTICS & EMBEDDED SYSTEMS"
+heroTitle: "Sub-second solves from a fully autonomous machine."
+heroSubtitle: "A Rubik's Cube solving robot that integrates mechanical design, embedded systems, computer vision, and advanced algorithms to achieve solve times under one second."
+description: "A Rubik's Cube solving robot combining custom mechanical design, embedded systems, computer vision, and the Kociemba algorithm to achieve sub-second solves."
+date: "2025-01-01"
+order: 1
+featured: true
+heroImage: "hero"
+cardImage: "card"
+tags: ["Arduino", "C++", "Computer Vision", "CAD"]
+stats:
+  - { value: "<1s", label: "Solve Time" }
+  - { value: "<20", label: "Moves Per Solve" }
+  - { value: "$125", label: "Total Build Cost" }
+  - { value: "6", label: "Stepper Motors" }
+resources:
+  - { label: "Watch Full Video", url: "https://www.youtube.com/shorts/J1a7RxK03xU" }
+  - { label: "View CAD Models", url: "https://cad.onshape.com/documents/e64e9adb0ff9466627b47f67/w/74a34c291195daf66dba9b40/e/ef19ed1914f1db15c2699f69" }
+  - { label: "Project Slides", url: "https://docs.google.com/presentation/d/12Rsq6fVtxUd_KKTxoM-D5vIqgpLokWzd/edit?slide=id.p1#slide=id.p1" }
+---
+
+<Section>
+<Text label="MECHANICAL DESIGN" heading="Built for speed, precision, and modularity.">
+
+Every component is custom-designed and 3D printed to enable independent rotation of each cube face. The fully modular architecture allows for easy maintenance and iterative improvements.
+
+End effectors are optimized for precise control and minimal backlash. The design was refined through multiple prototypes to achieve optimal balance between speed, reliability, and robustness.
+
+</Text>
+<Media>
+<Figure img="drawing" alt="Rubik's Cube Robot CAD drawing" />
+</Media>
+</Section>
+
+<Section reverse>
+<Text label="LIVE DEMONSTRATION" heading="Watch a complete solve in under one second.">
+
+The robot processes cube state via computer vision, computes an optimal solution path, and executes the moves with precise stepper motor control. Each solve averages fewer than 20 moves using the Kociemba algorithm.
+
+From the moment the first face turns until the final move completes, the entire sequence runs in under a second.
+
+</Text>
+<Media>
+<VideoDemo src="/rubik_solve_vid0.mov" />
+</Media>
+</Section>
+
+<Section>
+<Text label="ELECTRICAL SYSTEM" heading="Reliable motor control and sensor integration.">
+
+The electrical system bridges computer vision with mechanical actuation. An Arduino MEGA 2560 coordinates six TMC 2209 stepper motor drivers for smooth, precise rotation of each cube face.
+
+- Arduino MEGA 2560 microcontroller
+- 6× TMC 2209 V2.0 stepper drivers
+- 6× NEMA 17 stepper motors
+- Pull-up resistors and decoupling capacitors
+
+</Text>
+<Media stacked>
+<Figure img="tmc" alt="TMC 2209 stepper driver" blend max={350} />
+<Figure img="nema" alt="NEMA 17 stepper motor" blend max={420} />
+</Media>
+</Section>
+
+<Section reverse>
+<Text label="FIRMWARE" heading="Real-time control with interrupt-driven architecture.">
+
+The C++ firmware manages stepper motor timing, serial communication with the vision system, and move execution. Interrupt-driven design ensures responsive sensor feedback during high-speed operations.
+
+- Precise timing for stepper motor control
+- Communication protocols for vision interface
+- Configurable motor RPM settings
+- Comprehensive error handling
+
+</Text>
+<Media>
+<Figure img="arduino" alt="Arduino MEGA 2560" blend />
+</Media>
+</Section>
+
+<Section>
+<Text label="SOLVING ALGORITHM & INTERFACE" heading="Kociemba algorithm with real-time visualization.">
+
+Computer vision detects cube state through color recognition. The Kociemba algorithm computes near-optimal solutions, typically under 20 moves. A Python GUI provides real-time visualization of solving progress.
+
+The system achieves consistent sub-second solve times while maintaining high accuracy in cube state detection across varying lighting conditions.
+
+</Text>
+<Media>
+<Figure img="gui" alt="Rubik's Cube solving GUI" />
+</Media>
+</Section>

@@ -1,70 +1,42 @@
-# Getting Started with Create React App
+# Henry Chen — Portfolio
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Personal engineering portfolio. Next.js (App Router) + TypeScript, MDX-driven content,
+deployed on Vercel at [henrychen.com](https://henrychen.com).
 
-## Available Scripts
+## Develop
 
-In the project directory, you can run:
+```bash
+npm install
+npm run dev        # http://localhost:3000
+npm run build      # production build
+npm run test       # Vitest unit tests
+npm run test:e2e   # Playwright end-to-end tests
+```
 
-### `npm start`
+## Adding a project
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Everything about a project lives in one folder — no route, card, or config edits needed.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+1. Create `content/projects/<slug>/index.mdx`.
+2. Fill in the frontmatter (`title`, `tagline`, `category`, `heroTitle`, `heroSubtitle`,
+   `description`, `date`, `order`, `heroImage`, `cardImage`, optional `featured`, `stats`,
+   `tags`, and `resources`).
+3. Register the project's images in `lib/projectImages.ts` under its slug (import from
+   `assets/<slug>/…`). The keys you use there are what `heroImage`/`cardImage` and
+   `<Figure img="…" />` in the MDX refer to.
+4. Write the body with the shared components: `<Section>` / `<Text>` / `<Media>` /
+   `<Figure>` / `<Equation>` / `<CodeBlock>` / `<TechTags>`, plus bespoke ones like
+   `<VideoDemo>` and `<PhoneMockup>`.
 
-### `npm test`
+The home card, the `/projects/<slug>` route, the sitemap entry, and the per-project
+link-preview card are all generated from that content automatically.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Structure
 
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- `app/` — routes, layout, metadata, sitemap/robots, OG images, 404
+- `content/projects/` — one MDX folder per project (the single source of truth)
+- `components/shell/` — Nav, Footer, Logo, LoadingScreen, Reveal
+- `components/project/` — ProjectLayout + MDX component library
+- `lib/` — content loader, image registry, site data
+- `assets/` — imported (optimized) images
+- `tests/` — Vitest unit + Playwright e2e

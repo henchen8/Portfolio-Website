@@ -1,0 +1,99 @@
+---
+title: "Pricing Financial Derivatives"
+tagline: "Exploring CAPM, PCA, and Black-Scholes options pricing"
+category: "QUANTITATIVE FINANCE RESEARCH"
+heroTitle: "Complex mathematics with real-world applications."
+heroSubtitle: "An exploration of quantitative finance through CAPM, Principal Component Analysis, and the Black-Scholes-Merton options pricing model — from retail investment fundamentals to stochastic calculus and free boundary problems."
+description: "Quantitative finance research covering CAPM, Principal Component Analysis, and the Black-Scholes-Merton options pricing model, including free boundary problems and numerical methods."
+date: "2025-06-01"
+order: 3
+heroImage: "hero"
+cardImage: "card"
+tags: ["Python", "Quantitative Finance", "Stochastic Calculus"]
+resources:
+  - { label: "Watch Presentation", url: "https://youtu.be/doYoJWpjqiU" }
+  - { label: "View Slides", url: "https://docs.google.com/presentation/d/129P1cS45KJAWDq-8KD_RfFEJdXTyp73k/edit?slide=id.p1#slide=id.p1" }
+  - { label: "Research Notes", url: "https://docs.google.com/document/d/1O5VnQPQPrbvbTIRUn-OBa9-4rOL6O1LAE2362aLJe6o/edit?tab=t.0" }
+---
+
+<Section>
+<Text label="CAPITAL ASSET PRICING MODEL" heading="Understanding risk-return relationships in markets.">
+
+The CAPM provides a framework for understanding the relationship between systematic risk and expected return. It forms the foundation for modern portfolio theory and quantitative risk management.
+
+- Expected return via alpha and beta coefficients
+- Systematic vs unsystematic risk decomposition
+- Security market line and market equilibrium
+- Portfolio optimization and efficient frontier
+
+</Text>
+<Media>
+<Equation>E(Ri) = Rf + βi(E(Rm) − Rf)</Equation>
+</Media>
+</Section>
+
+<Section reverse alt>
+<Text label="PRINCIPAL COMPONENT ANALYSIS" heading="Dimensionality reduction for portfolio analysis.">
+
+PCA uses eigendecomposition and linear transformations to reduce complexity in financial datasets. By ordering eigenvalues, we identify the principal components that explain the most variance.
+
+- Linear transformations on portfolio matrices
+- Eigendecomposition for component identification
+- Variance explained by each component
+- Feature extraction in financial datasets
+
+</Text>
+<Media>
+<Figure img="famafrench" alt="Fama-French principal component analysis" blend max={600} />
+</Media>
+</Section>
+
+<Section>
+<Text label="BLACK-SCHOLES-MERTON MODEL" heading="Options pricing through stochastic calculus.">
+
+The Black-Scholes-Merton model revolutionized derivatives pricing by providing a closed-form solution for European options. It models stock prices as geometric Brownian motion and derives pricing through risk-neutral valuation.
+
+Key assumptions include constant volatility, continuous trading, and no dividends. The model uses the cumulative normal distribution for probability calculations.
+
+</Text>
+<Media>
+<Figure img="simplified-bs" alt="Black-Scholes closed-form equation" blend max={600} />
+</Media>
+</Section>
+
+<Section reverse alt>
+<Text label="FREE BOUNDARY PROBLEMS" heading="American options with early exercise rights.">
+
+American options introduce early exercise rights, creating a moving boundary between optimal hold and exercise regions. This transforms the pricing problem into a free boundary PDE with complementarity conditions.
+
+- Moving boundary between hold/exercise regions
+- PDE with complementarity conditions
+- No closed-form solution exists
+- Requires numerical methods to solve
+
+</Text>
+<Media>
+<Figure img="free-boundary" alt="Free boundary formula" blend max={600} />
+</Media>
+</Section>
+
+<Section>
+<Text label="NUMERICAL METHODS" heading="Computational approaches to complex models.">
+
+When analytical solutions don't exist, numerical methods provide the path forward. Finite difference methods discretize the Black-Scholes PDE, while Monte Carlo simulation leverages the law of large numbers for option pricing.
+
+- Finite difference methods for PDE solving
+- Itô calculus for stochastic differential equations
+- Monte Carlo simulation for option pricing
+- Binomial tree models for American options
+- Numerical optimization algorithms
+
+</Text>
+<Media>
+<CodeBlock>{`# Monte Carlo pricing
+for i in range(n_simulations):
+    S = S0 * exp((r - σ²/2)*T + σ*√T*Z)
+    payoffs[i] = max(S - K, 0)
+price = exp(-r*T) * mean(payoffs)`}</CodeBlock>
+</Media>
+</Section>
