@@ -1,10 +1,26 @@
 import type { Metadata } from "next";
+import { Playfair_Display, IBM_Plex_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import { Nav } from "@/components/shell/Nav";
 import { Footer } from "@/components/shell/Footer";
 import { LoadingScreen } from "@/components/shell/LoadingScreen";
 import { site } from "@/lib/site";
 import "./globals.css";
+
+const playfairDisplay = Playfair_Display({
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  style: ["normal", "italic"],
+  variable: "--font-serif",
+  display: "swap",
+});
+
+const ibmPlexMono = IBM_Plex_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  variable: "--font-mono",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
@@ -38,7 +54,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${playfairDisplay.variable} ${ibmPlexMono.variable}`}>
       <body>
         <LoadingScreen />
         <div className="app">

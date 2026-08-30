@@ -1,55 +1,63 @@
 import Image from "next/image";
 import Link from "next/link";
 import { getAllProjects } from "@/lib/content";
-import { getImage } from "@/lib/projectImages";
 import { experience, hero, assemblyLink } from "@/lib/site";
 import { Reveal } from "@/components/shell/Reveal";
 import heroBg from "@/assets/home/hero.jpg";
 import assembly from "@/assets/home/assembly.png";
 
-function ProjectCard({
+function formatProjectDate(date: string) {
+  return new Date(date).toLocaleDateString("en-US", {
+    month: "long",
+    year: "numeric",
+  });
+}
+
+function ProjectEntry({
   slug,
   title,
   tagline,
-  href,
-  featured,
+  date,
+  tags,
+  resources,
 }: {
   slug: string;
   title: string;
   tagline: string;
-  href: string;
-  featured?: boolean;
+  date: string;
+  tags?: string[];
+  resources?: { label: string; url: string }[];
 }) {
-  const img = getImage(slug, "card");
+  const meta = [formatProjectDate(date), ...(tags ?? [])].join(" · ");
+
   return (
-    <Link
-      href={href}
-      className={`project-card${featured ? " featured-project-card" : ""}`}
-    >
-      <div className="project-image">
-        {img && (
-          <Image
-            src={img}
-            alt={title}
-            placeholder="blur"
-            sizes={featured ? "(max-width: 968px) 90vw, 55vw" : "(max-width: 968px) 45vw, 30vw"}
-            style={{ objectFit: "cover" }}
-            fill
-          />
-        )}
-      </div>
-      <div className="project-content">
-        <h3>{title}</h3>
-        <p className="project-tagline">{tagline}</p>
-      </div>
-    </Link>
+    <div className="project-entry">
+      <p className="project-meta">{meta}</p>
+      <h3>
+        <Link href={`/projects/${slug}`}>{title}</Link>
+      </h3>
+      <p className="project-tagline">{tagline}</p>
+      {resources && resources.length > 0 && (
+        <div className="project-links">
+          {resources.map((r) => (
+            <a
+              key={r.url}
+              href={r.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="project-link"
+            >
+              {r.label}
+            </a>
+          ))}
+        </div>
+      )}
+    </div>
   );
 }
 
 export default function HomePage() {
   const projects = getAllProjects();
-  const featured = projects.find((p) => p.meta.featured);
-  const others = projects.filter((p) => !p.meta.featured);
 
   return (
     <>
@@ -128,35 +136,18 @@ export default function HomePage() {
           <Reveal>
             <h2 className="section-title">Projects</h2>
           </Reveal>
-          <div className="projects-layout">
-            <div className="featured-project-column">
-              {featured && (
-                <>
-                  <p className="column-title">Featured Project</p>
-                  <ProjectCard
-                    slug={featured.meta.slug}
-                    title={featured.meta.title}
-                    tagline={featured.meta.tagline}
-                    href={`/projects/${featured.meta.slug}?from=tile`}
-                    featured
-                  />
-                </>
-              )}
-            </div>
-            <div className="additional-projects-column">
-              <p className="column-title">More Projects</p>
-              <div className="additional-projects-stack">
-                {others.map((p) => (
-                  <ProjectCard
-                    key={p.meta.slug}
-                    slug={p.meta.slug}
-                    title={p.meta.title}
-                    tagline={p.meta.tagline}
-                    href={`/projects/${p.meta.slug}`}
-                  />
-                ))}
-              </div>
-            </div>
+          <div className="projects-list">
+            {projects.map((p) => (
+              <ProjectEntry
+                key={p.meta.slug}
+                slug={p.meta.slug}
+                title={p.meta.title}
+                tagline={p.meta.tagline}
+                date={p.meta.date}
+                tags={p.meta.tags}
+                resources={p.meta.resources}
+              />
+            ))}
           </div>
         </div>
       </section>
