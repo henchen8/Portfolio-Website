@@ -2,7 +2,6 @@ import './App.css';
 import { useEffect } from 'react';
 import { Analytics } from '@vercel/analytics/react';
 import profileImage from './assets/profile.jpeg';
-import rubiksDrawing from './assets/rubiksdrawing.png';
 import rubiksAssembly from './assets/rubiks_assembly7.png';
 
 function App() {
@@ -20,19 +19,11 @@ function App() {
     } 
   };
 
-  const scrollToExperience = () => {
-    const experienceSection = document.getElementById('experience');
-    if (experienceSection) {
-      experienceSection.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
   // Handle scroll-based opacity transition
   useEffect(() => {
     const handleScroll = () => {
       const scrollY = window.scrollY;
-      const documentHeight = document.documentElement.scrollHeight - window.innerHeight;
-      
+
       // Get max opacity from CSS variable
       const maxOpacity = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--background-image-opacity'));
       
@@ -145,8 +136,7 @@ function App() {
       const scrollBackground = document.querySelector('.scroll-background');
       if (scrollBackground) {
         const footer = document.querySelector('.footer');
-        const heroSection = document.querySelector('.hero-section');
-        
+
         if (scrollY < 0) {
           // Scrolling up beyond content - show light background matching hero section
           scrollBackground.style.background = 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)';
