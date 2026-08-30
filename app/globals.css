@@ -34,7 +34,7 @@ html {
 }
 
 body {
-  font-family: var(--sans);
+  font-family: var(--serif);
   line-height: 1.6;
   color: var(--text);
   background: var(--bg);
