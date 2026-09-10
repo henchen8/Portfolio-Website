@@ -3,7 +3,7 @@ import { test, expect } from "@playwright/test";
 const SHOTS =
   "/private/tmp/claude-501/-Users-henrychen-Desktop-portfolio-site/26766726-62f8-405d-b297-57b84f986379/scratchpad";
 
-test("home renders hero, experience, and project cards", async ({ page }) => {
+test("home renders hero and project cards", async ({ page }) => {
   await page.goto("/");
   await expect(
     page.getByRole("heading", { name: "Hi, I'm Henry!", level: 1 })
@@ -13,9 +13,6 @@ test("home renders hero, experience, and project cards", async ({ page }) => {
   // Typo fixed
   await expect(page.locator("body")).toContainText("Student-Athlete");
   await expect(page.locator("body")).not.toContainText("Athelete");
-
-  // Four experience entries
-  await expect(page.locator(".timeline-item")).toHaveCount(4);
 
   // Three project cards linking to the right routes
   await expect(page.locator(".project-card")).toHaveCount(3);

@@ -67,15 +67,6 @@ export function Nav() {
           </li>
           <li>
             <Link
-              href="/#experience"
-              className="nav-link"
-              onClick={(e) => handleHashNav(e, "#experience")}
-            >
-              Experience
-            </Link>
-          </li>
-          <li>
-            <Link
               href="/#projects"
               className="nav-link"
               onClick={(e) => handleHashNav(e, "#projects")}

@@ -56,7 +56,3 @@ export const experience: ExperienceEntry[] = [
       "M&TSI is a three-week for-credit course (EAS 00280). Co-Founder and Mechanical Lead for FitBox — a revolutionary portable workout solution. Designed GTM strategy and built MVP.",
   },
 ];
-
-// Home gap-section CAD assembly link
-export const assemblyLink =
-  "https://cad.onshape.com/documents/e64e9adb0ff9466627b47f67/w/74a34c291195daf66dba9b40/e/efd1feba32d209e2a89099f3";

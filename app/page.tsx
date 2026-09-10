@@ -1,10 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { getAllProjects } from "@/lib/content";
-import { experience, hero, assemblyLink } from "@/lib/site";
+import { hero } from "@/lib/site";
 import { Reveal } from "@/components/shell/Reveal";
 import heroBg from "@/assets/home/hero.jpg";
-import assembly from "@/assets/home/assembly.png";
 
 function formatProjectDate(date: string) {
   return new Date(date).toLocaleDateString("en-US", {
@@ -84,49 +83,6 @@ export default function HomePage() {
               </a>
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* Experience */}
-      <section id="experience" className="experience-section">
-        <div className="container">
-          <Reveal>
-            <h2 className="section-title">Experience</h2>
-          </Reveal>
-          <div className="timeline">
-            {experience.map((e) => (
-              <Reveal key={`${e.org}-${e.role}`} className="timeline-item">
-                <div className="timeline-marker" aria-hidden="true" />
-                <div className="timeline-content">
-                  <h3>{e.role}</h3>
-                  <p className="timeline-company">
-                    {e.org} • {e.period}
-                  </p>
-                  <p>{e.description}</p>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Gap / assembly */}
-      <section className="gap-section">
-        <div className="gap-container">
-          <a
-            href={assemblyLink}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="assembly-link"
-            aria-label="View the CAD assembly on Onshape"
-          >
-            <Image
-              src={assembly}
-              alt="Rubik's Cube robot CAD assembly"
-              className="assembly-image"
-              sizes="(max-width: 768px) 90vw, 600px"
-            />
-          </a>
         </div>
       </section>
 
