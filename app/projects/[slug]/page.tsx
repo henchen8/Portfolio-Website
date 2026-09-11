@@ -54,7 +54,14 @@ export default async function ProjectPage({
   const { content } = await compileMDX({
     source: body,
     components,
-    options: { mdxOptions: { remarkPlugins: [remarkGfm] } },
+    // Content is authored locally by the site owner, not user-submitted, so it's safe to
+    // allow JS expressions (e.g. `<TechTags items={[...]} />`). next-mdx-remote v6 blocks
+    // these by default as a hardening against untrusted MDX; blockDangerousJS stays on to
+    // still reject genuinely dangerous constructs (eval, require, process, fs, etc.).
+    options: {
+      mdxOptions: { remarkPlugins: [remarkGfm] },
+      blockJS: false,
+    },
   });
 
   return (

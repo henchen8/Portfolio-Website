@@ -6,19 +6,23 @@ import { projectImages } from "@/lib/projectImages";
 describe("content data layer", () => {
   const projects = getAllProjects();
 
-  it("exposes the three projects", () => {
+  it("exposes all five projects", () => {
     expect(getProjectSlugs().sort()).toEqual([
       "financial-derivatives",
       "fitbox",
+      "gello-teleoperation",
       "rubiks-cube",
+      "rubiks-cube-v2",
     ]);
   });
 
-  it("sorts projects by order with rubiks-cube featured first", () => {
+  it("sorts projects by order with rubiks-cube-v2 featured first", () => {
     expect(projects.map((p) => p.meta.slug)).toEqual([
+      "rubiks-cube-v2",
       "rubiks-cube",
       "fitbox",
       "financial-derivatives",
+      "gello-teleoperation",
     ]);
     expect(projects[0].meta.featured).toBe(true);
   });
