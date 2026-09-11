@@ -31,6 +31,16 @@ export const projectImages: ImageRegistry = {
     nema: rubiksNema,
     arduino: rubiksArduino,
   },
+  // TODO: replace these placeholder images (reused from "rubiks-cube") with real V2 photos/renders.
+  "rubiks-cube-v2": {
+    hero: rubiksHero,
+    card: rubiksHero,
+    drawing: rubiksDrawing,
+    gui: rubiksGui,
+    tmc: rubiksTmc,
+    nema: rubiksNema,
+    arduino: rubiksArduino,
+  },
   "financial-derivatives": {
     hero: derivHero,
     card: derivCard,
@@ -43,6 +53,13 @@ export const projectImages: ImageRegistry = {
     card: fitboxLogo,
     logo: fitboxLogo,
     explosion: fitboxExplosion,
+  },
+  // TODO: replace these placeholder images (reused from "fitbox") with real GELLO/YAM photos or renders.
+  "gello-teleoperation": {
+    hero: fitboxLogo,
+    card: fitboxLogo,
+    endeffector: fitboxExplosion,
+    teleop: fitboxExplosion,
   },
 };
 
