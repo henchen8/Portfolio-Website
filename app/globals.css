@@ -932,20 +932,14 @@ main {
   margin-bottom: 5rem;
 }
 
-.about-photo-placeholder {
+.about-photo {
+  position: relative;
   flex: 0 0 auto;
   width: 220px;
   height: 220px;
   border-radius: 50%;
-  border: 1px dashed var(--line);
+  overflow: hidden;
   background: var(--bg-alt);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--faint);
-  font-family: var(--mono);
-  font-size: 0.8rem;
-  letter-spacing: 0.03em;
 }
 
 .about-intro {
@@ -966,35 +960,80 @@ main {
   max-width: 60ch;
 }
 
-.about-timeline {
+.about-contact-links {
+  display: flex;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.about-contact-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text);
+  font-size: 0.95rem;
+  transition: color 0.2s ease;
+}
+
+.about-contact-link:hover {
+  color: var(--accent);
+}
+
+.about-outside {
+  padding-top: 4rem;
+  margin-top: 1rem;
+  margin-bottom: 5rem;
+  border-top: 1px solid var(--line);
+  max-width: 700px;
+}
+
+.about-outside-title {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(1.6rem, 3vw, 2rem);
+  margin-bottom: 1rem;
+}
+
+.about-outside-text {
+  color: var(--text);
+  line-height: 1.7;
+  font-size: 1.05rem;
+}
+
+.about-experience-title {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(1.4rem, 2.5vw, 1.75rem);
+  margin-bottom: 1.5rem;
+}
+
+.about-experience-list {
   list-style: none;
+  max-width: 700px;
   border-top: 1px solid var(--line);
 }
 
-.about-timeline-entry {
-  padding: 2rem 0;
+.about-experience-entry {
+  padding: 1.1rem 0;
   border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
 }
 
-.about-timeline-period {
+.about-experience-role {
+  font-size: 0.95rem;
+  color: var(--text);
+}
+
+.about-experience-period {
   font-family: var(--mono);
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   letter-spacing: 0.03em;
   color: var(--faint);
-  margin-bottom: 0.5rem;
-}
-
-.about-timeline-entry h3 {
-  font-family: var(--serif);
-  font-weight: 400;
-  font-size: 1.4rem;
-  margin-bottom: 0.5rem;
-}
-
-.about-timeline-desc {
-  color: var(--text);
-  line-height: 1.6;
-  max-width: 65ch;
+  white-space: nowrap;
 }
 
 /* ---------------- Responsive ---------------- */
