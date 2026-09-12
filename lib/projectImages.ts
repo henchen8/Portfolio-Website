@@ -19,6 +19,9 @@ import derivFreeBoundary from "@/assets/derivatives/free-boundary.png";
 import fitboxLogo from "@/assets/fitbox/logo.png";
 import fitboxExplosion from "@/assets/fitbox/explosion.png";
 
+// Home hero (reused as a placeholder for GELLO below)
+import homeHero from "@/assets/home/hero.jpg";
+
 export type ImageRegistry = Record<string, Record<string, StaticImageData>>;
 
 export const projectImages: ImageRegistry = {
@@ -54,12 +57,13 @@ export const projectImages: ImageRegistry = {
     logo: fitboxLogo,
     explosion: fitboxExplosion,
   },
-  // TODO: replace these placeholder images (reused from "fitbox") with real GELLO/YAM photos or renders.
+  // TODO: replace these placeholder images (reused from the homepage hero photo and the
+  // Rubik's Cube electronics shots) with real GELLO/YAM photos or renders.
   "gello-teleoperation": {
-    hero: fitboxLogo,
-    card: fitboxLogo,
-    endeffector: fitboxExplosion,
-    teleop: fitboxExplosion,
+    hero: homeHero,
+    card: homeHero,
+    endeffector: rubiksArduino,
+    teleop: rubiksTmc,
   },
 };
 

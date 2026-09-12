@@ -1,16 +1,16 @@
 ---
 title: "Rubik's Cube Robot V2"
-tagline: "TODO: one-line summary of what V2 improves over V1"
+tagline: "A full rebuild for six-face visibility and fully autonomous solving"
 category: "ROBOTICS & EMBEDDED SYSTEMS"
-heroTitle: "TODO: large headline for the V2 machine."
-heroSubtitle: "TODO: 1-2 sentence subtitle describing the V2 rebuild — what changed and why it's faster/better than the original."
-description: "TODO: SEO/meta description (2+ sentences) summarizing the Rubik's Cube Robot V2 rebuild — mechanical, electrical, and software changes from V1."
+heroTitle: "Full cube visibility, zero manual setup."
+heroSubtitle: "A ground-up rebuild of the original Rubik's Cube robot — a redesigned frame gives two Pixy2.1 cameras a full view of all six faces for fully autonomous solves, and a custom PCB replaces the original's tangle of jumper wires."
+description: "A rebuilt Rubik's Cube-solving robot that redesigns the frame for full six-face visibility, using two Pixy2.1 cameras for fully autonomous solves, and replaces the original's jumper-wire wiring with a custom PCB."
 date: "2026-01-01"
 order: 0
 featured: true
 heroImage: "hero"
 cardImage: "card"
-tags: ["TODO", "Arduino", "C++", "Computer Vision", "CAD"]
+tags: ["Pixy2.1", "Arduino", "C++", "Computer Vision", "PCB Design", "CAD"]
 stats:
   - { value: "TODO", label: "Solve Time" }
   - { value: "TODO", label: "Moves Per Solve" }
@@ -24,7 +24,7 @@ resources:
 <Section>
 <Text label="MECHANICAL DESIGN" heading="TODO: heading describing the V2 mechanical redesign.">
 
-TODO: Describe what changed mechanically in V2 vs. V1 — new frame, end effectors, materials, tolerances, etc.
+V2 rebuilds the frame and cube-holder geometry around a single goal: giving the vision system a full view of the cube. Two Pixy2.1 cameras are mounted to cover all six faces at once, replacing V1's more limited camera placement and the manual face-checking it required — a prerequisite for solving fully autonomously, start to finish.
 
 TODO: Describe any reliability/robustness improvements from the V1 design.
 
@@ -48,11 +48,9 @@ TODO: Describe the V2 solve pipeline (vision → solve → execution) and call o
 <Section>
 <Text label="ELECTRICAL SYSTEM" heading="TODO: heading for the V2 electrical system.">
 
-TODO: Describe the V2 electronics — what's new vs. V1 (different microcontroller, drivers, motors, sensors)?
+V2 replaces V1's exposed jumper-wire wiring with a single custom-designed PCB, consolidating the stepper driver and sensor connections onto one board.
 
-- TODO: component
-- TODO: component
-- TODO: component
+TODO: list the specific ICs, connectors, and power stage on the new PCB.
 
 </Text>
 <Media stacked>

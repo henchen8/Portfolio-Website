@@ -66,6 +66,25 @@ describe("content data layer", () => {
     expect(fitbox.body).toContain("<PhoneMockup");
     expect(fitbox.body).not.toContain("IPhoneMockup");
   });
+
+  it("has real V2 copy for the redesigned mechanical and electrical systems", () => {
+    const v2 = projects.find((p) => p.meta.slug === "rubiks-cube-v2")!;
+    expect(v2.meta.tagline).not.toMatch(/TODO/);
+    expect(v2.meta.heroTitle).not.toMatch(/TODO/);
+    expect(v2.meta.heroSubtitle).not.toMatch(/TODO/);
+    expect(v2.meta.description).not.toMatch(/TODO/);
+    expect(v2.meta.tags).not.toContain("TODO");
+    expect(v2.body).toMatch(/Pixy2\.1/);
+    expect(v2.body).toMatch(/PCB/);
+  });
+
+  it("describes the GELLO leader arm's real hardware", () => {
+    const gello = projects.find((p) => p.meta.slug === "gello-teleoperation")!;
+    expect(gello.meta.tags).not.toContain("TODO");
+    expect(gello.body).toMatch(/iTurtle/);
+    expect(gello.body).toMatch(/magnetic encoder/i);
+    expect(gello.body).toMatch(/USB-C/);
+  });
 });
 
 describe("site data", () => {

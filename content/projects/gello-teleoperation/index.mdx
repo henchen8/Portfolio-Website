@@ -9,7 +9,7 @@ date: "2026-05-01"
 order: 1
 heroImage: "hero"
 cardImage: "card"
-tags: ["TODO", "GELLO", "Teleoperation", "CAD", "Robot Manipulation"]
+tags: ["Magnetic Encoders", "GELLO", "Teleoperation", "CAD", "Robot Manipulation"]
 stats:
   - { value: "TODO", label: "TODO metric" }
   - { value: "TODO", label: "TODO metric" }
@@ -43,12 +43,11 @@ TODO: Describe the custom YAM end-effector design — mechanical design goals, m
 </Section>
 
 <Section>
-<Text label="TELEOPERATION SYSTEM" heading="TODO: heading for the GELLO teleoperation system.">
+<Text label="TELEOPERATION SYSTEM" heading="A 3/8-scale, 6-DOF controller built on the iTurtle design.">
 
-TODO: Describe the GELLO teleoperation setup — controller/leader-follower hardware, low-cost design principles, latency/precision characteristics, and software stack.
+The GELLO leader arm is a 3/8-scale build of the open-source iTurtle manipulator, with 6 degrees of freedom to mirror the follower robot's joints. Each joint reports its position through a magnetic encoder, and the links themselves are custom-designed and 3D-printed rather than off-the-shelf hardware.
 
-- TODO: system detail
-- TODO: system detail
+The encoders communicate over a shared serial bus, daisy-chained down to a USB hub at the base of the arm, which connects to the host machine over a single USB-C cable.
 
 </Text>
 <Media>
@@ -67,7 +66,7 @@ TODO: Describe how teleoperated demonstrations were used to improve deployment-s
 <Section>
 <Text label="TECHNOLOGIES USED" heading="Tools and stack.">
 
-<TechTags items={["TODO", "GELLO", "CAD", "Python"]} />
+<TechTags items={["Magnetic Encoders", "GELLO", "CAD", "Python"]} />
 
 </Text>
 </Section>
