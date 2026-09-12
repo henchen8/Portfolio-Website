@@ -390,6 +390,35 @@ main {
   margin-bottom: 1.5rem;
 }
 
+.project-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  font-family: var(--mono);
+  font-size: 0.85rem;
+}
+
+.project-links a.project-link {
+  color: var(--ink);
+  text-decoration: none;
+  font-weight: 500;
+  border-bottom: 1px solid var(--ink);
+  transition: opacity 0.2s ease;
+}
+
+.project-links a.project-link:hover {
+  opacity: 0.6;
+}
+
+.project-links a.project-link:not(:last-child)::after {
+  content: "·";
+  margin-left: 0.4rem;
+  color: var(--line);
+  font-weight: 400;
+  border-bottom: none;
+  display: inline-block;
+}
+
 /* ---------------- Footer ---------------- */
 .footer {
   padding: 1rem 2rem 1.5rem;
