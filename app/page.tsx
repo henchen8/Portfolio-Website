@@ -18,14 +18,12 @@ function ProjectEntry({
   tagline,
   date,
   tags,
-  resources,
 }: {
   slug: string;
   title: string;
   tagline: string;
   date: string;
   tags?: string[];
-  resources?: { label: string; url: string }[];
 }) {
   const meta = [formatProjectDate(date), ...(tags ?? [])].join(" · ");
 
@@ -36,21 +34,6 @@ function ProjectEntry({
         <Link href={`/projects/${slug}`}>{title}</Link>
       </h3>
       <p className="project-tagline">{tagline}</p>
-      {resources && resources.length > 0 && (
-        <div className="project-links">
-          {resources.map((r) => (
-            <a
-              key={r.url}
-              href={r.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="project-link"
-            >
-              {r.label}
-            </a>
-          ))}
-        </div>
-      )}
     </div>
   );
 }
@@ -101,7 +84,6 @@ export default function HomePage() {
                 tagline={p.meta.tagline}
                 date={p.meta.date}
                 tags={p.meta.tags}
-                resources={p.meta.resources}
               />
             ))}
           </div>
