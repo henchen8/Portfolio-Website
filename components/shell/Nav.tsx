@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { Logo } from "./Logo";
 import { site } from "@/lib/site";
 
 function scrollToHash(hash: string) {
@@ -56,7 +55,6 @@ export function Nav() {
     <nav className={`navbar${hidden ? " navbar-hidden" : ""}`}>
       <div className="nav-container">
         <Link href="/" className="nav-logo" aria-label={`${site.name} — home`}>
-          <Logo size={40} className="logo-icon" />
           {site.name}
         </Link>
         <ul className="nav-menu">

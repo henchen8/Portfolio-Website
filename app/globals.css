@@ -174,10 +174,6 @@ main {
   opacity: 0.8;
 }
 
-.logo-icon {
-  filter: brightness(0);
-}
-
 .nav-menu {
   display: flex;
   list-style: none;
@@ -924,80 +920,86 @@ main {
   padding: 8rem 0 5rem;
 }
 
-.about-container {
-  display: flex;
-  gap: 3rem;
-  align-items: center;
-  flex-wrap: wrap;
-  margin-bottom: 5rem;
+.about-hero {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 4rem;
+  margin-bottom: 6rem;
 }
 
-.about-photo {
+.about-eyebrow {
+  font-family: var(--mono);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.75rem;
+  color: var(--faint);
+  margin-bottom: 1.5rem;
+}
+
+.about-heading {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(2.75rem, 5.5vw, 4rem);
+  line-height: 1.1;
+  margin-bottom: 1.25rem;
+}
+
+.about-categories {
+  font-size: 1rem;
+  color: var(--muted);
+  margin-bottom: 1.75rem;
+}
+
+.about-bio {
+  font-size: 1.05rem;
+  color: var(--text);
+  line-height: 1.75;
+  max-width: 55ch;
+}
+
+.about-bio + .about-bio {
+  margin-top: 1.5rem;
+}
+
+.about-divider {
+  border: none;
+  border-top: 1px solid var(--line);
+  margin: 2rem 0;
+  max-width: 55ch;
+}
+
+.about-hero-media {
+  display: flex;
+  flex-direction: column;
+}
+
+.about-photo-frame {
   position: relative;
-  flex: 0 0 auto;
-  width: 220px;
-  height: 220px;
-  border-radius: 50%;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  border-radius: 6px;
   overflow: hidden;
   background: var(--bg-alt);
 }
 
-.about-intro {
-  flex: 1 1 320px;
-}
-
-.about-title {
-  font-family: var(--serif);
-  font-size: clamp(2.25rem, 5vw, 3rem);
-  font-weight: 400;
-  margin-bottom: 1rem;
-}
-
-.about-bio {
-  font-size: 1.1rem;
-  color: var(--text);
-  line-height: 1.7;
-  max-width: 60ch;
-}
-
-.about-contact-links {
+.about-contact-row {
   display: flex;
-  gap: 1.5rem;
-  margin-top: 1.5rem;
+  gap: 2rem;
+  margin-top: 1.25rem;
 }
 
 .about-contact-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
+  font-family: var(--mono);
+  font-size: 0.85rem;
   color: var(--text);
-  font-size: 0.95rem;
-  transition: color 0.2s ease;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 0.35rem;
+  transition: color 0.2s ease, border-color 0.2s ease;
 }
 
 .about-contact-link:hover {
   color: var(--accent);
-}
-
-.about-outside {
-  padding-top: 4rem;
-  margin-top: 1rem;
-  margin-bottom: 5rem;
-  border-top: 1px solid var(--line);
-  max-width: 700px;
-}
-
-.about-outside-title {
-  font-family: var(--serif);
-  font-weight: 400;
-  font-size: clamp(1.6rem, 3vw, 2rem);
-  margin-bottom: 1rem;
-}
-
-.about-outside-text {
-  color: var(--text);
-  line-height: 1.7;
-  font-size: 1.05rem;
+  border-color: var(--accent);
 }
 
 .about-experience-title {
@@ -1085,6 +1087,13 @@ main {
   .shinkei-links {
     flex-direction: column;
     gap: 1.5rem;
+  }
+  .about-hero {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+  .about-hero-media {
+    max-width: 360px;
   }
 }
 
