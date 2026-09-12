@@ -1065,3 +1065,109 @@ main {
     height: 460px;
   }
 }
+
+/* ---------------- About page ---------------- */
+.about-section {
+  padding: 8rem 0 5rem;
+}
+
+.about-container {
+  margin-bottom: 4rem;
+}
+
+.about-title {
+  font-family: var(--serif);
+  font-size: clamp(2.25rem, 5vw, 3rem);
+  font-weight: 400;
+  margin-bottom: 1rem;
+}
+
+.about-bio {
+  font-size: 1.15rem;
+  color: var(--text);
+  line-height: 1.75;
+  max-width: 65ch;
+}
+
+.about-hobbies {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  margin-bottom: 6rem;
+}
+
+.hobby-card h3 {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: 1.4rem;
+  margin-bottom: 0.6rem;
+}
+
+.hobby-card p {
+  color: var(--text);
+  line-height: 1.65;
+}
+
+.hobby-photo {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 1.25rem;
+  background: var(--bg-alt);
+}
+
+.about-experience-title {
+  margin-bottom: 1.5rem;
+  font-size: clamp(1.4rem, 2.5vw, 1.75rem);
+}
+
+.about-experience-list {
+  list-style: none;
+  max-width: 700px;
+  margin: 0 auto;
+  border-top: 1px solid var(--line);
+}
+
+.about-experience-entry {
+  padding: 1.1rem 0;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.about-experience-role {
+  font-size: 0.95rem;
+  color: var(--text);
+}
+
+.about-experience-period {
+  font-family: "Courier New", monospace;
+  font-size: 0.78rem;
+  letter-spacing: 0.03em;
+  color: var(--faint);
+  white-space: nowrap;
+}
+
+.about-experience-note {
+  max-width: 700px;
+  margin: 1.5rem auto 0;
+  font-size: 0.9rem;
+  color: var(--faint);
+  text-align: center;
+}
+
+.about-experience-note a {
+  color: var(--accent);
+}
+
+@media (max-width: 768px) {
+  .about-hobbies {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+}
