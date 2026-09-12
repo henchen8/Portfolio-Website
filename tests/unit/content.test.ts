@@ -81,9 +81,38 @@ describe("content data layer", () => {
   it("describes the GELLO leader arm's real hardware", () => {
     const gello = projects.find((p) => p.meta.slug === "gello-teleoperation")!;
     expect(gello.meta.tags).not.toContain("TODO");
-    expect(gello.body).toMatch(/iTurtle/);
-    expect(gello.body).toMatch(/magnetic encoder/i);
+    expect(gello.body).toMatch(/i2rt YAM/);
+    expect(gello.body).not.toMatch(/iTurtle/);
+    expect(gello.body).toMatch(/Feetech STS3215/);
     expect(gello.body).toMatch(/USB-C/);
+  });
+
+  it("orders V2's sections differently from V1's template order", () => {
+    const v1 = projects.find((p) => p.meta.slug === "rubiks-cube")!;
+    const v2 = projects.find((p) => p.meta.slug === "rubiks-cube-v2")!;
+    expect(v1.body.indexOf("MECHANICAL DESIGN")).toBeLessThan(
+      v1.body.indexOf("ELECTRICAL SYSTEM")
+    );
+    expect(v2.body.indexOf("ELECTRICAL SYSTEM")).toBeLessThan(
+      v2.body.indexOf("MECHANICAL DESIGN")
+    );
+    expect(v2.body).toMatch(/WHAT'S NEW IN V2/);
+  });
+
+  it("reserves a GELLO demo slot and links the real repo", () => {
+    const gello = projects.find((p) => p.meta.slug === "gello-teleoperation")!;
+    expect(gello.body).toMatch(/SIMULATION DEMO/);
+    expect(gello.meta.resources?.some((r) => r.url.includes("parametricpbc/pello"))).toBe(
+      true
+    );
+  });
+
+  it("adds a BOM section to V1 (placeholder) and GELLO (real data)", () => {
+    const v1 = projects.find((p) => p.meta.slug === "rubiks-cube")!;
+    const gello = projects.find((p) => p.meta.slug === "gello-teleoperation")!;
+    expect(v1.body).toMatch(/BILL OF MATERIALS/);
+    expect(gello.body).toMatch(/BILL OF MATERIALS/);
+    expect(gello.body).toMatch(/373\.93/);
   });
 });
 

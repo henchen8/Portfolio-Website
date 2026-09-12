@@ -885,6 +885,118 @@ main {
   text-align: center;
 }
 
+/* ---------------- Bill of materials ---------------- */
+.shinkei-bom {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.shinkei-bom th,
+.shinkei-bom td {
+  text-align: left;
+  padding: 0.6rem 0.75rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.shinkei-bom th {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.03em;
+  color: var(--faint);
+  font-weight: 500;
+}
+
+.shinkei-bom td:last-child,
+.shinkei-bom th:last-child {
+  text-align: right;
+  font-family: var(--mono);
+}
+
+.shinkei-bom tfoot td {
+  border-bottom: none;
+  border-top: 2px solid var(--ink);
+  font-weight: 600;
+}
+
+/* ---------------- About page ---------------- */
+.about-section {
+  padding: 8rem 0 5rem;
+}
+
+.about-container {
+  display: flex;
+  gap: 3rem;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 5rem;
+}
+
+.about-photo-placeholder {
+  flex: 0 0 auto;
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  border: 1px dashed var(--line);
+  background: var(--bg-alt);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--faint);
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.03em;
+}
+
+.about-intro {
+  flex: 1 1 320px;
+}
+
+.about-title {
+  font-family: var(--serif);
+  font-size: clamp(2.25rem, 5vw, 3rem);
+  font-weight: 400;
+  margin-bottom: 1rem;
+}
+
+.about-bio {
+  font-size: 1.1rem;
+  color: var(--text);
+  line-height: 1.7;
+  max-width: 60ch;
+}
+
+.about-timeline {
+  list-style: none;
+  border-top: 1px solid var(--line);
+}
+
+.about-timeline-entry {
+  padding: 2rem 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.about-timeline-period {
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.03em;
+  color: var(--faint);
+  margin-bottom: 0.5rem;
+}
+
+.about-timeline-entry h3 {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: 1.4rem;
+  margin-bottom: 0.5rem;
+}
+
+.about-timeline-desc {
+  color: var(--text);
+  line-height: 1.6;
+  max-width: 65ch;
+}
+
 /* ---------------- Responsive ---------------- */
 @media (max-width: 968px) {
   .nav-menu {

@@ -116,6 +116,45 @@ function TechTags({ items }: { items: string[] }) {
   );
 }
 
+type BomItem = { component: string; qty: string; price: string };
+
+function Bom({
+  items,
+  total,
+}: {
+  items: BomItem[];
+  total?: { label: string; price: string };
+}) {
+  return (
+    <table className="shinkei-bom">
+      <thead>
+        <tr>
+          <th>Component</th>
+          <th>Qty</th>
+          <th>Price</th>
+        </tr>
+      </thead>
+      <tbody>
+        {items.map((item, i) => (
+          <tr key={i}>
+            <td>{item.component}</td>
+            <td>{item.qty}</td>
+            <td>{item.price}</td>
+          </tr>
+        ))}
+      </tbody>
+      {total && (
+        <tfoot>
+          <tr>
+            <td colSpan={2}>{total.label}</td>
+            <td>{total.price}</td>
+          </tr>
+        </tfoot>
+      )}
+    </table>
+  );
+}
+
 /** Build the MDX components map for a given project's image registry. */
 export function makeMdxComponents(images: Images = {}) {
   return {
@@ -126,6 +165,7 @@ export function makeMdxComponents(images: Images = {}) {
     Equation,
     CodeBlock,
     TechTags,
+    Bom,
     VideoDemo,
     PhoneMockup,
   };

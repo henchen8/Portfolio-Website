@@ -15,6 +15,7 @@ stats:
   - { value: "TODO", label: "TODO metric" }
 resources:
   - { label: "GELLO Paper / Project Page", url: "https://wuphilipp.github.io/gello_site/" }
+  - { label: "View Code (Pello)", url: "https://github.com/parametricpbc/pello/tree/main" }
   - { label: "TODO: Demo Video", url: "https://www.youtube.com/" }
 ---
 
@@ -43,11 +44,11 @@ TODO: Describe the custom YAM end-effector design — mechanical design goals, m
 </Section>
 
 <Section>
-<Text label="TELEOPERATION SYSTEM" heading="A 3/8-scale, 6-DOF controller built on the iTurtle design.">
+<Text label="TELEOPERATION SYSTEM" heading="A 5/8-scale, 6-DOF replica of the i2rt YAM.">
 
-The GELLO leader arm is a 3/8-scale build of the open-source iTurtle manipulator, with 6 degrees of freedom to mirror the follower robot's joints. Each joint reports its position through a magnetic encoder, and the links themselves are custom-designed and 3D-printed rather than off-the-shelf hardware.
+The GELLO leader arm is a 5/8-scale replica of the 6-DOF i2rt YAM, sensed by 7 Feetech STS3215 serial-bus servos per arm — each with magnetic position sensing built in — and built from custom-designed, 3D-printed linkages rather than off-the-shelf hardware.
 
-The encoders communicate over a shared serial bus, daisy-chained down to a USB hub at the base of the arm, which connects to the host machine over a single USB-C cable.
+The servos communicate over a shared serial bus into a Waveshare serial-bus driver board at the base of each arm, which connects to the host machine over a single USB-C cable.
 
 </Text>
 <Media>
@@ -56,9 +57,35 @@ The encoders communicate over a shared serial bus, daisy-chained down to a USB h
 </Section>
 
 <Section reverse>
+<Text label="SIMULATION DEMO" heading="TODO: heading for the GELLO sim/video demo.">
+
+TODO: Once a video or simulation recording exists, embed it with the `<VideoDemo>` component (see `content/projects/rubiks-cube-v2/index.mdx` for the pattern) inside a `<Media>` block next to this text — same as the Rubik's Cube LIVE DEMONSTRATION section.
+
+</Text>
+</Section>
+
+<Section>
 <Text label="BIMANUAL DEPLOYMENT" heading="TODO: heading for results/deployment.">
 
 TODO: Describe how teleoperated demonstrations were used to improve deployment-specific model performance on bimanual robots — data collection process, evaluation results, and outcomes.
+
+</Text>
+</Section>
+
+<Section reverse>
+<Text label="BILL OF MATERIALS" heading="One leader set, two arms, $373.93.">
+
+<Bom
+  items={[
+    { component: "Feetech STS3215 servo — 6-pack", qty: "2 packs (12 servos)", price: "$269.98" },
+    { component: "Feetech STS3215 servo — 2-pack", qty: "1 pack (2 servos)", price: "$45.98" },
+    { component: "Serial bus servo driver board (Waveshare, 2-pack)", qty: "1 pack (2 boards)", price: "$19.99" },
+    { component: "Power supply (SHNITPWR 60W adjustable)", qty: "2", price: "$37.98" },
+  ]}
+  total={{ label: "Total (one leader set / 2 arms)", price: "$373.93" }}
+/>
+
+Not included in the total above: the 3D-printed parts (~800g PETG, ~$14 in filament) and shared consumables (glue, heat-set inserts, USB-C cables). Full breakdown in the [pello repo](https://github.com/parametricpbc/pello/tree/main/hardware).
 
 </Text>
 </Section>

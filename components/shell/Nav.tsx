@@ -66,6 +66,11 @@ export function Nav() {
             </Link>
           </li>
           <li>
+            <Link href="/about" className="nav-link">
+              About
+            </Link>
+          </li>
+          <li>
             <Link
               href="/#projects"
               className="nav-link"

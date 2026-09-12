@@ -22,6 +22,31 @@ resources:
 ---
 
 <Section>
+<Text label="WHAT'S NEW IN V2" heading="Two changes drive everything else in this rebuild.">
+
+V2 is a ground-up rebuild of the original Rubik's Cube robot around two changes:
+
+- Full six-face visibility, so two Pixy2.1 cameras can see the entire cube and the robot can solve fully autonomously, start to finish.
+- A custom PCB in place of the original's loose jumper-wire wiring.
+
+</Text>
+</Section>
+
+<Section reverse>
+<Text label="ELECTRICAL SYSTEM" heading="TODO: heading for the V2 electrical system.">
+
+V2 replaces V1's exposed jumper-wire wiring with a single custom-designed PCB, consolidating the stepper driver and sensor connections onto one board.
+
+TODO: list the specific ICs, connectors, and power stage on the new PCB.
+
+</Text>
+<Media stacked>
+<Figure img="tmc" alt="TODO: V2 electrical component" blend max={350} />
+<Figure img="nema" alt="TODO: V2 electrical component" blend max={420} />
+</Media>
+</Section>
+
+<Section>
 <Text label="MECHANICAL DESIGN" heading="TODO: heading describing the V2 mechanical redesign.">
 
 V2 rebuilds the frame and cube-holder geometry around a single goal: giving the vision system a full view of the cube. Two Pixy2.1 cameras are mounted to cover all six faces at once, replacing V1's more limited camera placement and the manual face-checking it required — a prerequisite for solving fully autonomously, start to finish.
@@ -46,20 +71,6 @@ TODO: Describe the V2 solve pipeline (vision → solve → execution) and call o
 </Section>
 
 <Section>
-<Text label="ELECTRICAL SYSTEM" heading="TODO: heading for the V2 electrical system.">
-
-V2 replaces V1's exposed jumper-wire wiring with a single custom-designed PCB, consolidating the stepper driver and sensor connections onto one board.
-
-TODO: list the specific ICs, connectors, and power stage on the new PCB.
-
-</Text>
-<Media stacked>
-<Figure img="tmc" alt="TODO: V2 electrical component" blend max={350} />
-<Figure img="nema" alt="TODO: V2 electrical component" blend max={420} />
-</Media>
-</Section>
-
-<Section reverse>
 <Text label="FIRMWARE" heading="TODO: heading for the V2 firmware.">
 
 TODO: Describe what changed in firmware/control architecture for V2 — new timing strategy, communication protocol, error handling, etc.
@@ -73,7 +84,7 @@ TODO: Describe what changed in firmware/control architecture for V2 — new timi
 </Media>
 </Section>
 
-<Section>
+<Section reverse>
 <Text label="SOLVING ALGORITHM & INTERFACE" heading="TODO: heading for the V2 solving algorithm/interface.">
 
 TODO: Describe any changes to the solving algorithm, vision pipeline, or GUI/interface for V2.
