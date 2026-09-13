@@ -368,7 +368,11 @@ main {
 .projects-section {
   position: relative;
   z-index: 1;
-  background: var(--bg);
+  /* The fluid canvas is position: fixed behind everything, so it's still
+     rendering here — fade the section's own background in over its first
+     stretch instead of a flat, opaque cut so the canvas bleeds through
+     softly at the seam rather than ending on a stark line. */
+  background: linear-gradient(to bottom, transparent, var(--bg) 280px);
   padding: 4rem 0 5rem;
 }
 
