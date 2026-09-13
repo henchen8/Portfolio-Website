@@ -601,7 +601,6 @@ main {
   width: 100%;
   height: auto;
   display: block;
-  border-radius: 4px;
 }
 
 .shinkei-stats {
@@ -775,7 +774,6 @@ main {
   position: relative;
   width: 300px;
   height: 530px;
-  border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
 }
@@ -980,7 +978,6 @@ main {
   position: relative;
   width: 100%;
   aspect-ratio: 4 / 5;
-  border-radius: 6px;
   overflow: hidden;
   background: var(--bg-alt);
 }
