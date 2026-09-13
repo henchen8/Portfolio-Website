@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Logo } from "./Logo";
+import { markAppReady } from "@/lib/appReady";
 
 /**
  * Intro loading screen — kept from the original site but rebuilt cleanly:
@@ -29,10 +30,10 @@ export function LoadingScreen() {
 
     const finish = () => {
       const elapsed = performance.now() - start;
-      timer = window.setTimeout(
-        () => setDone(true),
-        Math.max(0, minMs - elapsed)
-      );
+      timer = window.setTimeout(() => {
+        setDone(true);
+        markAppReady();
+      }, Math.max(0, minMs - elapsed));
     };
 
     if (document.readyState === "complete") {

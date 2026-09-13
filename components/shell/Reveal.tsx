@@ -1,11 +1,17 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { onAppReady } from "@/lib/appReady";
 
 /**
  * Fade/rise a section into view on scroll. Replaces the old per-frame
  * scroll-linked opacity injection with a single IntersectionObserver.
  * Honors prefers-reduced-motion (renders visible immediately).
+ *
+ * Waits for the intro loading screen to finish before it starts observing —
+ * otherwise above-the-fold reveals (e.g. the hero) intersect and finish
+ * their fade while still hidden behind the loading overlay, so the "opening"
+ * animation never actually plays for the user.
  */
 export function Reveal({
   children,
@@ -28,19 +34,27 @@ export function Reveal({
       return;
     }
     const el = ref.current;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setVisible(true);
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.12, rootMargin: "0px 0px -60px 0px" }
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
+    let observer: IntersectionObserver | null = null;
+
+    const unsubscribe = onAppReady(() => {
+      observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              setVisible(true);
+              observer?.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.12, rootMargin: "0px 0px -60px 0px" }
+      );
+      observer.observe(el);
+    });
+
+    return () => {
+      unsubscribe();
+      observer?.disconnect();
+    };
   }, []);
 
   return (
