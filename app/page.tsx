@@ -1,9 +1,7 @@
-import Image from "next/image";
 import Link from "next/link";
 import { getAllProjects } from "@/lib/content";
 import { Reveal } from "@/components/shell/Reveal";
 import { FluidBackground } from "@/components/home/FluidBackground";
-import gelloHero from "@/assets/gello/hero.jpg";
 
 function formatProjectDate(date: string) {
   return new Date(date).toLocaleDateString("en-US", {
@@ -103,18 +101,6 @@ export default function HomePage() {
             <Link href="/about" className="hero-editorial-link">
               MORE ABOUT ME <span aria-hidden="true">&#8594;</span>
             </Link>
-          </Reveal>
-
-          <Reveal className="hero-editorial-media">
-            {/* Placeholder photo — swap for the cursor-tracking 3D robot later */}
-            <Image
-              src={gelloHero}
-              alt=""
-              fill
-              priority
-              sizes="(max-width: 900px) 90vw, 45vw"
-              style={{ objectFit: "cover" }}
-            />
           </Reveal>
         </div>
       </section>

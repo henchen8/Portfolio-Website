@@ -194,7 +194,16 @@ main {
 /* ---------------- Hero (editorial variant) ---------------- */
 .hero-editorial-section {
   position: relative;
+  min-height: 100vh;
   padding: 7rem 0 5rem;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Flex items with `margin: auto` in the cross axis center-to-content
+   instead of stretching — pin these back to full width. */
+.hero-editorial-section > .container {
+  width: 100%;
 }
 
 .hero-fluid-canvas {
@@ -225,9 +234,9 @@ main {
 .hero-editorial-grid {
   position: relative;
   z-index: 1;
+  flex: 1;
   display: grid;
-  grid-template-columns: 1.1fr 1fr;
-  gap: 4rem;
+  grid-template-columns: 1fr;
   align-items: center;
 }
 
@@ -272,13 +281,6 @@ main {
 .hero-editorial-link:hover {
   color: var(--accent);
   border-color: var(--accent);
-}
-
-.hero-editorial-media {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 4 / 5;
-  background: var(--bg-alt);
 }
 
 .section-title-italic em {
@@ -1117,10 +1119,6 @@ main {
   .shinkei-links {
     flex-direction: column;
     gap: 1.5rem;
-  }
-  .hero-editorial-grid {
-    grid-template-columns: 1fr;
-    gap: 3rem;
   }
   .hero-meta-row {
     flex-direction: column;
