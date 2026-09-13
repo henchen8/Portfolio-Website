@@ -217,6 +217,9 @@ main {
 .hero-meta-row {
   position: relative;
   z-index: 1;
+  /* Let the cursor pass through to the fluid canvas underneath instead of
+     starving it of mousemove events while it sits on top. */
+  pointer-events: none;
   display: flex;
   justify-content: space-between;
   gap: 1rem;
@@ -234,6 +237,11 @@ main {
 .hero-editorial-grid {
   position: relative;
   z-index: 1;
+  /* Same as .hero-meta-row: pass mouse events through to the canvas below
+     everywhere except the actual link (re-enabled on .hero-editorial-link),
+     otherwise the fluid sim stalls the instant the cursor crosses the
+     heading or tagline text and jumps when it re-emerges. */
+  pointer-events: none;
   flex: 1;
   display: grid;
   grid-template-columns: 1fr;
@@ -269,6 +277,7 @@ main {
 }
 
 .hero-editorial-link {
+  pointer-events: auto;
   font-family: var(--mono);
   font-size: 0.85rem;
   letter-spacing: 0.05em;
