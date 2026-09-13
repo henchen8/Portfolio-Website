@@ -20,9 +20,13 @@ export function FluidBackground() {
         DENSITY_DISSIPATION: 0.98,
         VELOCITY_DISSIPATION: 0.4,
         SPLAT_RADIUS: 0.45,
-        SPLAT_COLOR: { r: 0.55, g: 0.55, b: 0.55 },
+        // This renderer derives on-screen opacity from the splat color's own
+        // brightness (alpha = max(r,g,b)), so a dark color is nearly
+        // invisible against a light page — a saturated, bright color is
+        // what actually reads as a stark mark. Matches --accent.
+        SPLAT_COLOR: { r: 0, g: 0.48, b: 1 },
         COLORFUL: false,
-        SHADING: true,
+        SHADING: false,
         BACK_COLOR: { r: 250, g: 250, b: 248 },
         TRANSPARENT: false,
         BLOOM: false,
