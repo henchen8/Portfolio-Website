@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { getAllProjects } from "@/lib/content";
 import { Reveal } from "@/components/shell/Reveal";
+import { FluidBackground } from "@/components/home/FluidBackground";
 import gelloHero from "@/assets/gello/hero.jpg";
 
 function formatProjectDate(date: string) {
@@ -61,6 +62,7 @@ export default function HomePage() {
     <>
       {/* Hero */}
       <section id="home" className="hero-editorial-section">
+        <FluidBackground />
         <div className="container hero-meta-row">
           <div className="hero-meta-left">
             <p>ROBOTICS &amp; CONTROLS ENGINEER</p>
