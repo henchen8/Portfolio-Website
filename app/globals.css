@@ -450,17 +450,20 @@ main {
 }
 
 .email-icon,
-.linkedin-icon {
+.linkedin-icon,
+.x-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 64px;
   height: 64px;
+  color: var(--ink);
   transition: transform 0.2s ease;
 }
 
 .email-icon:hover,
-.linkedin-icon:hover {
+.linkedin-icon:hover,
+.x-icon:hover {
   transform: scale(1.08);
 }
 
@@ -984,7 +987,8 @@ main {
 
 .about-contact-row {
   display: flex;
-  gap: 2rem;
+  flex-wrap: wrap;
+  gap: 1.25rem 1.5rem;
   margin-top: 1.25rem;
 }
 

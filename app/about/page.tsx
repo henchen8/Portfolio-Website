@@ -71,6 +71,14 @@ export default function AboutPage() {
             >
               LinkedIn <span aria-hidden="true">&#8599;</span>
             </a>
+            <a
+              href={site.twitter}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="about-contact-link"
+            >
+              X <span aria-hidden="true">&#8599;</span>
+            </a>
           </div>
         </Reveal>
       </div>

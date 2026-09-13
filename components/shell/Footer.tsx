@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { Logo } from "./Logo";
+import { XIcon } from "./XIcon";
 import { site } from "@/lib/site";
 import emailIcon from "@/assets/icons/email.png";
 import linkedinIcon from "@/assets/icons/linkedin.png";
@@ -41,6 +42,15 @@ export function Footer() {
               height={40}
               className="linkedin-icon-img"
             />
+          </a>
+          <a
+            href={site.twitter}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="x-icon"
+            aria-label="X profile"
+          >
+            <XIcon size={32} />
           </a>
         </div>
         <p>&copy; 2026 {site.name}. All rights reserved.</p>

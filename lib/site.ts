@@ -9,6 +9,7 @@ export const site = {
   gmailCompose:
     "https://mail.google.com/mail/?view=cm&fs=1&to=henwchen@gmail.com&su=",
   linkedin: "https://linkedin.com/in/henry-w-chen",
+  twitter: "https://x.com/hench3n",
 };
 
 export const hero = {
