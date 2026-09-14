@@ -4,12 +4,20 @@ import { useEffect, useRef } from "react";
 import { onSceneReady } from "@/lib/appReady";
 
 // --- Size: how large/coarse each splat and trail reads as ---
-const SPLAT_RADIUS = 0.45; // 0-1, footprint of each splat
+const SPLAT_RADIUS = 0.375; // 0-1, footprint of each splat
 const SIM_RESOLUTION = 128; // motion grid — lower = chunkier, bigger-looking flow
 const DYE_RESOLUTION = 1024; // color/trail grid — visual sharpness, independent of motion scale
 
 // --- Curl: vorticity/swirliness of the flow (library default 30) ---
-const CURL = 12;
+const CURL = 30;
+
+// How many splats the one-time opening burst deposits (library default is a
+// random 5-24). It decays at the same rate as splats from cursor movement,
+// but dragging keeps injecting new dye every frame, building up far more
+// total substance before it has to fade — which is why the opening burst
+// alone reads as much shorter-lived. Raising this compensates by giving it
+// more to fade through, without changing how cursor-driven splats behave.
+const OPENING_SPLAT_COUNT = 60;
 
 // --- Color ---
 // This renderer derives on-screen opacity from the splat color's own
@@ -50,6 +58,7 @@ export function FluidBackground() {
           SIM_RESOLUTION,
           DYE_RESOLUTION,
           CURL,
+          SPLAT_COUNT: OPENING_SPLAT_COUNT,
           SPLAT_COLOR,
           COLORFUL: false,
           SHADING: false,

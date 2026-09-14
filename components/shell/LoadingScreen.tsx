@@ -6,12 +6,16 @@ import { markAppReady, markSceneReady } from "@/lib/appReady";
 
 /**
  * How long the hero fluid sim gets to run behind the loading screen before
- * it's revealed. Also clears the fluid library's own hardcoded ~500ms delay
- * before it starts responding to hover (it binds `mousemove` in a
- * `setTimeout(500)`), so keep this at 500+ or hover does nothing right as
- * the screen lifts. 0 = sim starts exactly when the screen fully disappears.
+ * it's revealed. 0 = sim starts exactly when the screen fully disappears.
+ *
+ * Note: the fluid library has its own hardcoded ~500ms delay before it
+ * starts responding to hover (it binds `mousemove` in a `setTimeout(500)`),
+ * so at this low a lead-in that dead zone extends past the reveal — a
+ * hover-only swipe right after the screen lifts may do nothing until ~500ms
+ * post-reveal; click-drag still works immediately. Raise this to 500+ if
+ * that gap becomes annoying.
  */
-const FLUID_LEAD_MS = 600;
+const FLUID_LEAD_MS = 20;
 
 /**
  * Intro loading screen — kept from the original site but rebuilt cleanly:
