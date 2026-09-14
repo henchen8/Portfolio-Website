@@ -2,7 +2,16 @@
 
 import { useEffect, useState } from "react";
 import { Logo } from "./Logo";
-import { markAppReady } from "@/lib/appReady";
+import { markAppReady, markSceneReady } from "@/lib/appReady";
+
+/**
+ * How long the hero fluid sim gets to run behind the loading screen before
+ * it's revealed. Also clears the fluid library's own hardcoded ~500ms delay
+ * before it starts responding to hover (it binds `mousemove` in a
+ * `setTimeout(500)`), so keep this at 500+ or hover does nothing right as
+ * the screen lifts. 0 = sim starts exactly when the screen fully disappears.
+ */
+const FLUID_LEAD_MS = 600;
 
 /**
  * Intro loading screen — kept from the original site but rebuilt cleanly:
@@ -27,9 +36,14 @@ export function LoadingScreen() {
     const minMs = reduce ? 200 : 1400;
     const start = performance.now();
     let timer: number;
+    let sceneTimer: number;
 
     const finish = () => {
       const elapsed = performance.now() - start;
+      sceneTimer = window.setTimeout(
+        markSceneReady,
+        Math.max(0, minMs - FLUID_LEAD_MS - elapsed)
+      );
       timer = window.setTimeout(() => {
         setDone(true);
         markAppReady();
@@ -45,6 +59,7 @@ export function LoadingScreen() {
     return () => {
       cancelAnimationFrame(raf);
       window.clearTimeout(timer);
+      window.clearTimeout(sceneTimer);
       window.removeEventListener("load", finish);
       document.body.style.overflow = "";
     };
