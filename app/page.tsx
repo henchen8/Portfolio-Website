@@ -103,6 +103,10 @@ export default function HomePage() {
             </Link>
           </Reveal>
         </div>
+
+        <div className="hero-scroll-cue" aria-hidden="true">
+          <span className="hero-scroll-cue-line" />
+        </div>
       </section>
 
       {/* Projects */}

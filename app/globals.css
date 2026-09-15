@@ -292,6 +292,36 @@ main {
   border-color: var(--accent);
 }
 
+.hero-scroll-cue {
+  position: absolute;
+  left: 50%;
+  bottom: 2rem;
+  z-index: 1;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.hero-scroll-cue-line {
+  display: block;
+  width: 1px;
+  height: 26px;
+  background: var(--faint);
+  transform-origin: top;
+  animation: heroScrollCue 2.6s ease-in-out infinite;
+}
+
+@keyframes heroScrollCue {
+  0%,
+  100% {
+    opacity: 0.12;
+    transform: scaleY(0.7);
+  }
+  50% {
+    opacity: 0.4;
+    transform: scaleY(1);
+  }
+}
+
 .section-title-italic em {
   font-style: italic;
   font-weight: 400;
